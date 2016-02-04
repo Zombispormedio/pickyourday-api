@@ -185,9 +185,10 @@ CompanySchema.statics={
 		this.update(
 	   		{_id: params.company_id, 'review.id_customer': {$ne: user}},
 	    	{$addToSet: {review: review}}, function(err, result){
-	    		console.log(result);
-					if(err) return cb(err);	
 
+					if(err) return cb(err);	
+					if(result.nModified == 0)
+						return cb(0, "El usuario ya ha hecho un review");
 					cb();
 	    });
 

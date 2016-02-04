@@ -177,7 +177,11 @@ CompanySchema.statics={
 			if(err) return cb(err);				
 			cb();
 		});*/
-
+var review = {};
+		review.id_customer = user;
+		review.rating = params.rating;
+		review.description = params.description;
+		review.date = new Date();
 	this.update(
     {_id: params.company_id, 'review.id_customer': {$ne: user}},
     {$addToSet: {review: review}}, function(err){

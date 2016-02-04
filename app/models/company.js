@@ -178,12 +178,6 @@ CompanySchema.statics={
 			cb();
 		});*/
 
-	this.update(
-    {_id: params.company_id, 'review.id_customer': {$ne: user}}, 
-    {$addToSet: {review: review}, function(err){
-				if(err) return cb(err);				
-				cb();
-    })
 
 		/*
 		this.findOneAndUpdate({_id: params.company_id},  {$addToSet:{review:{id_customer: user}}}, {safe:true, upsert:true, new:true},  function(err, company){

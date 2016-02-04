@@ -188,7 +188,7 @@ CompanySchema.statics={
 
 					if(err) return cb(err);	
 					if(result.nModified == 0)
-						return cb(0, "El usuario ya ha hecho un review");
+						return cb(null, "El usuario ya ha hecho un review");
 					cb();
 	    });
 

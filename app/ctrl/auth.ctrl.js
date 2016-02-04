@@ -81,7 +81,7 @@ AuthController.logout=function(token, cb){
 }
 
 AuthController.check=function(query, cb){
-	if(!query.email) return cb("Fields not filled");
+	if(!query || !query.email) return cb("Fields not filled");
 	AuthModel.findOne({email: query.email},function(err, user){
 		if(err)return cb(err);
 

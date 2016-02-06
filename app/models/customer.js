@@ -190,7 +190,7 @@ CustomerSchema.statics={
 				return cb("Event not found");
 			cb(null, event);
 
-		})
+		});
 	},
 
 	modifyEvent: function(user, id, params, cb){
@@ -228,8 +228,8 @@ CustomerSchema.statics={
 			customer.save(function(err){
 				if(err) return cb(err);
 				cb();
-			})
-		})
+			});
+		});
 	},
 
 	newPrePick: function(customerEmail, params, cb){
@@ -279,7 +279,7 @@ CustomerSchema.statics={
 
 
 		query.exec(function(err, customersPrePick){
-			if(user!=0){
+			if(user!==0){
 				var prePicks = customersPrePick.map(function(a){
 					return a.prepicks;
 				});
@@ -304,7 +304,7 @@ CustomerSchema.statics={
 				return cb("Event not found");
 			cb(null, prePick);
 
-		})
+		});
 	},
 
 	deletePrePick: function(user, id, cb){
@@ -321,8 +321,8 @@ CustomerSchema.statics={
 			customer.save(function(err){
 				if(err) return cb(err);
 				cb();
-			})
-		})
+			});
+		});
 	}, 
     modify:function(id, params, cb){
         this.findById(id, function(err, customer){

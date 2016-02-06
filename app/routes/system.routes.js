@@ -19,23 +19,23 @@ router.route("/category")
 			Response.printSuccess(res, "category", category);
 
 		});
-	})
+	});
 	
 router.route("/prePick")
 	.post(AuthController.checkAccess(0), function(req, res){
 		SystemCtrl.calculatePrePicks(req.body, function(err){
 			if(err) Response.printError(res, err);
 				else
-			Response.printSuccess(res, "data", "PrepIcks created");
-		})
+			Response.printSuccess(res, "prepick", "PrepIcks created");
+		});
 	})
 	.get(AuthController.checkAccess(0),function(req, res){
 		SystemCtrl.searchPrePick(req.query, function(err, prePicks){
 			if(err) Response.printError(res, err);
 				else
-			Response.printSuccess(res, "data", prePicks);
-		})
-	})
+			Response.printSuccess(res, "prepicks", prePicks);
+		});
+	});
 
 router.route("/pick")
 	.get(AuthController.checkAccess(0), function (req, res) {
@@ -44,7 +44,7 @@ router.route("/pick")
 			else
 				Response.printSuccess(res, "picks", picks);
 		});
-	})
+	});
 
 	
 router.route("/service")
@@ -53,8 +53,8 @@ router.route("/service")
 			if(err) Response.printError(res, err);
 				else
 			Response.printSuccess(res, "data", services);
-		})
-	})
+		});
+	});
 
 router.route("/default_service")
 	.get(AuthController.checkAccess(0),function(req, res){
@@ -62,14 +62,31 @@ router.route("/default_service")
 			if(err) Response.printError(res, err);
 				else
 			Response.printSuccess(res, "default_services", serviceNames);
-		})
+		});
 	})
 	.post(AuthController.checkAccess(0), function(req, res){
 		SystemCtrl.newServiceName(req.body, function(err, result){
 			if(err) Response.printError(res, err);
 				else
 			Response.printSuccess(res, "default_service", result);
-		})
+		});
+	});
+    
+    
+    router.route("/preferences")
+	.get(AuthController.checkAccess(0),function(req, res){
+		SystemCtrl.getPreferences(req.query, function(err,  preferences){
+			if(err) Response.printError(res, err);
+				else
+			Response.printSuccess(res, "preferences", preferences);
+		});
+	})
+	.post(AuthController.checkAccess(0), function(req, res){
+		SystemCtrl.newPreference(req.body, function(err, result){
+			if(err) Response.printError(res, err);
+				else
+			Response.printSuccess(res, "preference", result);
+		});
 	});
 
 
@@ -93,7 +110,7 @@ router.route("/default_service/:id")
 			if (err) Response.printError(res, err);
 			else
 				Response.printSuccess(res, "default_service", "Default Service deleted");
-		})
+		});
 	});
 
 router.route("/pick/:id")
@@ -111,7 +128,7 @@ router.route("/pick/:id")
 			else
 				Response.printSuccess(res, "pick", "Deleted");
 		});
-	})
+	});
 	
 router.route("/category/:id")
 	.put(AuthController.checkAccess(0), function (req, res) {
@@ -133,6 +150,30 @@ router.route("/category/:id")
 			if (err) Response.printError(res, err);
 			else
 				Response.printSuccess(res, "categories", "Category deleted");
+		});
+	});
+    
+    
+    router.route("/preferences/:id")
+	.put(AuthController.checkAccess(0), function (req, res) {
+		SystemCtrl.modifyPreference(req.params.id, req.body, function (err) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "preference", "Preference modified");
+		});
+	})
+	.get(AuthController.checkAccess(0), function (req, res) {
+		SystemCtrl.getPreferenceById(req.params.id, function (err, preference) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "preference", preference);
+		});
+	})
+    .delete(AuthController.checkAccess(0), function (req, res) {
+		SystemCtrl.deletePreference(req.params.id, function (err) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "Preference", "Preference deleted");
 		});
 	});
     

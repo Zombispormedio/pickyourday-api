@@ -240,7 +240,7 @@ CompanySchema.statics={
 			});
 
 
-		})
+		});
 	},
 
 	searchService: function(user, params, cb){
@@ -458,7 +458,7 @@ CompanySchema.statics={
 				return cb("Promotion not found");
 			cb(null, promotion);
 
-		})
+		});
 	},
 
 	modifyPromotion: function(user, id, params, cb){
@@ -506,7 +506,7 @@ function getServiceRating(services){
 	var rate =0;
 	var rates=[];
 	for(var service in services){
-		if(services[service].services.rating.length != 0){
+		if(services[service].services.rating.length !== 0){
 			for(var rating in services[service].services.rating){
 				rate += services[service].services.rating[rating].rating;
 			}

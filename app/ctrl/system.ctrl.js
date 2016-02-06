@@ -5,6 +5,7 @@ var PrePickCtrl = require(C.ctrl + "prePick.ctrl");
 var PickCtrl = require(C.ctrl + "pick.ctrl");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
+var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
 var SystemModel = require(C.models + "system");
 var Utils = require(C.lib + "utils");
 var async = require("async");
@@ -80,10 +81,40 @@ Controller.getServiceNameById = function (id, cb) {
     ServiceCtrl.findServiceNameById(id, cb);
 }
 
+
+
+//****************Preferences
+
+
+Controller.getPreferences = function (params, cb) {
+    PreferencesCtrl.search(params, cb);
+}
+
+Controller.newPreference = function (params, cb) {
+    PreferencesCtrl.new(params, cb);
+}
+
+Controller.getPreferenceById = function (id, params, cb) {
+    PreferencesCtrl.modify(id, params, cb);
+}
+
+Controller.deletePreference = function (id, cb) {
+    PreferencesCtrl.delete(id, cb);
+}
+
+Controller.gmodifyPreference = function (id, cb) {
+    PreferencesCtrl.findById(id, cb);
+}
+
+
+
+
+//*******************Images
+
 Controller.uploadImage = function (type, image, cb) {
     var img = {};
     img.filename = Utils.generateID();
-   
+
 
 
     async.waterfall([function download(next) {
@@ -92,7 +123,7 @@ Controller.uploadImage = function (type, image, cb) {
             case "url": {
                 img.ext = path.extname(image.url);
                 img.filename += img.ext;
-             
+
                 Utils.download(image.url, img.filename, function (mimeType) {
                     img.mimeType = mimeType;
                     next(null, img);
@@ -103,7 +134,7 @@ Controller.uploadImage = function (type, image, cb) {
             case "data": {
                 img.ext = path.extname(image.filename);
                 img.filename += img.ext;
-            
+
                 var buffer = new Buffer(image.base64, 'base64');
                 fs.writeFile(img.filename, buffer, function (err) {
                     if (err) return next(err);
@@ -124,7 +155,7 @@ Controller.uploadImage = function (type, image, cb) {
     },
 
         function upload(img, client, next) {
-			
+
             client.drive.files.insert({
                 resource: {
                     title: img.filename,
@@ -144,8 +175,8 @@ Controller.uploadImage = function (type, image, cb) {
                 if(err)return next(err);
                 var url=client.hostname+img.filename;
                  fs.unlink(img.filename, function(err){
-					 console.log(err);
-				 });
+                     console.log(err);
+                 });
                 next(null, url);
             });
 
@@ -154,9 +185,6 @@ Controller.uploadImage = function (type, image, cb) {
             if(err)return cb(err);
             cb(null, {src:result});
         });
-
-
-
 
 }
 

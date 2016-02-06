@@ -65,7 +65,7 @@ Controller.search = function (query, cb) {
                         }
                         callback(null, p);
 
-                    })
+                    });
                 },
                 function (p, callback) {
                     ServiceNameModel.findById(p.service.id_name)

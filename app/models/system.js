@@ -30,7 +30,7 @@ SystemSchema.statics = {
                 var client={
                     drive:google.drive({ version: 'v2', auth: oauth }),
                     hostname:result.path
-                }
+                };
                 cb(null, client);
             });
 

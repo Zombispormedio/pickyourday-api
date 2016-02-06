@@ -94,7 +94,7 @@ Controller.newPreference = function (params, cb) {
     PreferencesCtrl.new(params, cb);
 }
 
-Controller.getPreferenceById = function (id, params, cb) {
+Controller.modifyPreference = function (id, params, cb) {
     PreferencesCtrl.modify(id, params, cb);
 }
 
@@ -102,8 +102,8 @@ Controller.deletePreference = function (id, cb) {
     PreferencesCtrl.delete(id, cb);
 }
 
-Controller.gmodifyPreference = function (id, cb) {
-    PreferencesCtrl.findById(id, cb);
+Controller.getPreferenceById = function (id, cb) {
+    PreferencesCtrl.findById(id,cb);
 }
 
 

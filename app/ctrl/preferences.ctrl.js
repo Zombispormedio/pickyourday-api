@@ -7,7 +7,7 @@ var Controller = {};
 
 
 Controller.new = function (body, cb) {
-    if (!body || !body.name) return cb("Fields not Filled");
+    if (!body || !body.name_group) return cb("Fields not Filled");
 
     var preference = new PreferencesModel(body);
     preference.save(function (err, result) {

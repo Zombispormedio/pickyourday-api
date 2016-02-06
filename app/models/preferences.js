@@ -40,6 +40,7 @@ PreferencesSchema.statics={
                 return cb("Company not found");
 
             for(var key in params){
+				  preference[key]=null;
                 preference[key] = params[key];
             }
 

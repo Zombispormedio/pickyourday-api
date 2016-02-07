@@ -48,7 +48,7 @@ router.route("/pick")
 
 
 router.route("/service")
-    .get(AuthControllercheckAdmin()),function(req, res){
+    .get(AuthController.checkAdmin(),function(req, res){
         SystemCtrl.searchService(req.query, function(err, services){
             if(err) Response.printError(res, err);
                 else

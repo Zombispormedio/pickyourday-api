@@ -60,9 +60,6 @@ AuthController.login = function (u, cb) {
         }
     ], function(err, token, role) {
         if(err) return cb(err);
-
-
-
         cb(false, {token:token, role:role});
     });
 
@@ -165,6 +162,10 @@ AuthController.UnableAccess=function(email, cb){
 
     });
 
+};
+
+AuthController.getRole=function(code, cb){
+    SystemCtrl.verifyRoleCode(code, cb);
 };
 
 module.exports = AuthController;

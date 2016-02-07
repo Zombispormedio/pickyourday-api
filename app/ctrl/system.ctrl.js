@@ -224,6 +224,10 @@ Controller.generateRoleCode=function(role, cb){
 
 };
 
+Controller.verifyRoleCode=function(code, cb){
+
+};
+
 
 
 

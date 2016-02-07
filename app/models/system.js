@@ -93,15 +93,18 @@ SystemSchema.statics = {
     },
 
     generateRoleCode:function(seed){
+
         var temp_seed = seed.split("");
 
         var code = "";
 
-        while (code.length < temp_seed.length) {
+        while (code.length < SEED_LENGTH) {
             var random_index = chance.integer({min: 0, max: temp_seed.length - 1 });
             var letter = temp_seed[random_index];
             code += letter;
+
             temp_seed.splice(random_index, 1);
+
         }
         return code;
     },
@@ -127,10 +130,19 @@ SystemSchema.statics = {
         this.findOne({ role_seeds:{$ne:null}}, function(err, system){
             if(err)return cb(err);
 
-            cb(null, system.role_seeds);
+            cb(null, system.role_seeds.toObject());
 
         });
+    },
+
+    commonToSeed:function(code, seed){
+        var code_set = Immutable.Set(code.split("")).toArray().join("");
+
+        var seed_set=Immutable.Set(seed.split("")).toArray().join("");
+
+        return code_set===seed_set;
     }
+
 
 
 };

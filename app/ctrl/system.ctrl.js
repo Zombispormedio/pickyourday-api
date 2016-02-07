@@ -58,27 +58,27 @@ Controller.deletePick = function (id, cb) {
 //******************SERVICES
 Controller.searchService = function (params, cb) {
     ServiceCtrl.search(0, params, cb);
-}
+};
 
 Controller.searchServiceName = function (params, cb) {
     ServiceCtrl.searchServiceName(params, cb);
-}
+};
 
 Controller.newServiceName = function (params, cb) {
     ServiceCtrl.newServiceName(params, cb);
-}
+};
 
 Controller.modifyServiceName = function (id, params, cb) {
     ServiceCtrl.modifyServiceName(id, params, cb);
-}
+};
 
 Controller.deleteServiceName = function (id, cb) {
     ServiceCtrl.deleteServiceName(id, cb);
-}
+};
 
 Controller.getServiceNameById = function (id, cb) {
     ServiceCtrl.findServiceNameById(id, cb);
-}
+};
 
 
 
@@ -225,6 +225,32 @@ Controller.generateRoleCode=function(role, cb){
 };
 
 Controller.verifyRoleCode=function(code, cb){
+
+    SystemModel.getSeeds(function(err, seeds){
+        if(err)return cb(err);
+
+        var seed_master="";
+        var found=false;
+        var keys=Object.keys(seeds);
+        var i=0;
+        while(found===false&&i<keys.length){
+            var key=keys[i];
+            var seed=seeds[key];
+            if(SystemModel.commonToSeed(code, seed)){
+                found=true;
+                seed_master=seed;
+
+            }
+
+            i++;
+
+        }
+        if(!found)return cb("No role");
+
+        cb(null, seed_master);
+
+
+    });
 
 };
 

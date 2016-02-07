@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var Schema = mongoose.Schema;
-var crypto = require("crypto")
+var crypto = require("crypto");
 var C = require("../../config/config");
 
 var Utils = require(C.lib + "utils");
@@ -78,7 +78,7 @@ AuthSchema.statics={
     findByToken:function(token, cb){
         this.findOne({ email:Utils.verify(token).email, token: { "$in" : [token]} }, function(err, result){
             if(err)return cb(err);
-            if(!result)return cb("No Authorization")
+            if(!result)return cb("No Authorization");
             cb(null, result);
         });
     },

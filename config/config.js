@@ -15,25 +15,26 @@ var secure = function (value) {
 
 var secure_path=function(basename){
     return secure(rootfunc(basename));
-}
+};
 
 var secure_special_path=function(basename){
-	return secure(rootSpecialfunc(basename));
-}
+    return secure(rootSpecialfunc(basename));
+};
 
 var Config = Object.create(null);
 Config.prototype = {};
 var config = Object.create(Config.prototype, {
     db: secure(process.env.db),
-	db_secure: secure("mongodb://127.0.0.1:27017/pickyourday"),
+    db_secure: secure("mongodb://127.0.0.1:27017/pickyourday"),
     root: secure(rootPath),
     config: secure_path("config/"),
     routes: secure_path("app/routes/"),
     lib:secure_path("app/lib/"),
     models:secure_path("app/models/"),
     temp:secure_special_path("temp/"),
+    test:secure_path("test/"),
     ctrl:secure_path("app/ctrl/"),
-	secret:secure(process.env.secret)
+    secret:secure(process.env.secret)
 });
 
 

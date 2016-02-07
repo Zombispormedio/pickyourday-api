@@ -1,4 +1,3 @@
-
 var C = require("../../config/config");
 var CategoryCtrl = require(C.ctrl + "category.ctrl");
 var PrePickCtrl = require(C.ctrl + "prePick.ctrl");
@@ -16,44 +15,44 @@ var Controller = {};
 //***************CATEGORIES
 Controller.searchCategory = function (params, cb) {
     CategoryCtrl.search(params, cb);
-}
+};
 
 Controller.newCategory = function (params, cb) {
     CategoryCtrl.new(params, cb);
-}
+};
 
 Controller.modifyCategory = function (id, params, cb) {
     CategoryCtrl.modify(id, params, cb);
-}
+};
 
 Controller.deleteCategory = function (id, cb) {
     CategoryCtrl.delete(id, cb);
-}
+};
 
 Controller.getCategoryById = function (id, cb) {
     CategoryCtrl.findById(id, cb);
-}
+};
 
 //******************PREPICKS
 Controller.calculatePrePicks = function (params, cb) {
     PrePickCtrl.calculatePrePicks(params, cb);
-}
+};
 
 Controller.searchPrePick = function (params, cb) {
     PrePickCtrl.search(0, params, cb);
-}
+};
 
 Controller.searchPick = function (params, cb) {
     PickCtrl.search(params, cb);
-}
+};
 
 Controller.getPickById = function (id, cb) {
     PickCtrl.findById(id, cb);
-}
+};
 
 Controller.deletePick = function (id, cb) {
     PickCtrl.delete(id, cb);
-}
+};
 
 
 //******************SERVICES
@@ -88,23 +87,23 @@ Controller.getServiceNameById = function (id, cb) {
 
 Controller.getPreferences = function (params, cb) {
     PreferencesCtrl.search(params, cb);
-}
+};
 
 Controller.newPreference = function (params, cb) {
     PreferencesCtrl.new(params, cb);
-}
+};
 
 Controller.modifyPreference = function (id, params, cb) {
     PreferencesCtrl.modify(id, params, cb);
-}
+};
 
 Controller.deletePreference = function (id, cb) {
     PreferencesCtrl.delete(id, cb);
-}
+};
 
 Controller.getPreferenceById = function (id, cb) {
     PreferencesCtrl.findById(id,cb);
-}
+};
 
 
 
@@ -152,41 +151,82 @@ Controller.uploadImage = function (type, image, cb) {
             if (err) return next(err);
             next(null, img, client);
         });
-    },
+    },function upload(img, client, next) {
 
-        function upload(img, client, next) {
-
-            client.drive.files.insert({
-                resource: {
-                    title: img.filename,
-                    mimeType: img.mimeType,
-                    parents: [
-                        {
-                            "kind": "drive#fileLink",
-                            "id": "0B-TPTaV5ouD7TUtDXzVxQmhYa1E"
-                        }
-                    ]
-                },
-                media: {
-                    mimeType: img.mimeType,
-                    body: fs.createReadStream(img.filename)
-                }
-            }, function (err) {
-                if(err)return next(err);
-                var url=client.hostname+img.filename;
-                 fs.unlink(img.filename, function(err){
-                     console.log(err);
-                 });
-                next(null, url);
+        client.drive.files.insert({
+            resource: {
+                title: img.filename,
+                mimeType: img.mimeType,
+                parents: [
+                    {
+                        "kind": "drive#fileLink",
+                        "id": "0B-TPTaV5ouD7TUtDXzVxQmhYa1E"
+                    }
+                ]
+            },
+            media: {
+                mimeType: img.mimeType,
+                body: fs.createReadStream(img.filename)
+            }
+        }, function (err) {
+            if(err)return next(err);
+            var url=client.hostname+img.filename;
+            fs.unlink(img.filename, function(err){
+                console.log(err);
             });
-
-
-        }], function (err, result) {
-            if(err)return cb(err);
-            cb(null, {src:result});
+            next(null, url);
         });
 
-}
+
+    }], function (err, result) {
+        if(err)return cb(err);
+        cb(null, {src:result});
+    });
+
+};
+
+Controller.generateRoleCode=function(role, cb){
+
+    SystemModel.getSeeds(function(err, seeds){
+        if(err)return cb(err);
+
+        var seed="";
+        switch(role){
+
+            case 0:{
+                seed=seeds.admin;
+                break;
+            }
+            case 1:{
+                seed=seeds.customer;
+                break;
+            }
+
+            case 2:{
+                seed=seeds.company_boss;
+                break;
+            }
+            case 3:{
+                seed=seeds.company_worker;
+                break;
+            }
+
+            default: return cb("Not Role");
+
+        }
+
+        var role_code=SystemModel.generateRoleCode(seed);
+        cb(null, role_code);
+
+    });
+
+
+
+};
+
+
+
+
 
 
 

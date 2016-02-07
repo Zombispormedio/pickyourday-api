@@ -229,7 +229,7 @@ Controller.verifyRoleCode=function(code, cb){
     SystemModel.getSeeds(function(err, seeds){
         if(err)return cb(err);
 
-        var seed_master="";
+        var key_master="";
         var found=false;
         var keys=Object.keys(seeds);
         var i=0;
@@ -238,7 +238,7 @@ Controller.verifyRoleCode=function(code, cb){
             var seed=seeds[key];
             if(SystemModel.commonToSeed(code, seed)){
                 found=true;
-                seed_master=seed;
+                key_master=key;
 
             }
 
@@ -247,7 +247,20 @@ Controller.verifyRoleCode=function(code, cb){
         }
         if(!found)return cb("No role");
 
-        cb(null, seed_master);
+        var role=-1;
+
+        switch(key_master){
+            case "admin":role=0;
+                break;
+            case "customer": role=1;
+                break;
+            case "company_boss": role=2;
+                break;
+            case "company_worker": role=3;
+                break;
+        }
+
+        cb(null, role);
 
 
     });

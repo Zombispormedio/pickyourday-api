@@ -1,17 +1,20 @@
 var C=require("../config/config");
-var SystemModel = require(C.models + "system");
 
+var SystemCtrl = require(C.ctrl + "system.ctrl");
 module.exports=function(){
-    var seed="B#c$DhMOqRTu7X[";
-    var code=SystemModel.generateRoleCode(seed);
+    var code="1VXqYm*n8[M!GBW";
+    SystemCtrl.verifyRoleCode(code, function(_,role){
+        console.log(role);
+    });
 
-    console.log(SystemModel.commonToSeed(code, seed));
+
 
 };
 
 
 
 /**** ResetRolesSeeds
+var SystemModel = require(C.models + "system");
     SystemModel.resetRoles(function(err, result){
         if(err) return console.log(err);
         console.log(result);

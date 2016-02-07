@@ -1,17 +1,24 @@
 var C=require("../config/config");
 
-var SystemCtrl = require(C.ctrl + "system.ctrl");
+
 module.exports=function(){
-    var code="1VXqYm*n8[M!GBW";
-    SystemCtrl.verifyRoleCode(code, function(_,role){
-        console.log(role);
-    });
+
+
 
 
 
 };
 
 
+
+/*** Check role
+var SystemCtrl = require(C.ctrl + "system.ctrl");
+ var code="1VXqYm*n8[M!GBW";
+    SystemCtrl.verifyRoleCode(code, function(_,role){
+        console.log(role);
+    });
+
+*/
 
 /**** ResetRolesSeeds
 var SystemModel = require(C.models + "system");

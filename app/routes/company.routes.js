@@ -146,7 +146,7 @@ router.route("/category")
                 else
             Response.printSuccess(res, "data", categories);
         } );
-    })
+    });
 
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function (req, res) {

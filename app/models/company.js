@@ -24,7 +24,7 @@ var Resource = new Schema({
 	description: String,
 	phone: String,
 	services: [ServiceSchema],
-	initDate: type:Date
+	initDate: Date
 });
 
 var ReviewSchema = new Schema({

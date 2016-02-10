@@ -9,7 +9,6 @@
   "dependencies": {
     "async": "1.5.2",
     "body-parser": "1.14.2",
-    "bower": "1.7.7",
     "chance": "0.8.0",
     "cors": "2.7.1",
     "express": "4.13.4",
@@ -25,8 +24,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "devstart": "supervisor server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

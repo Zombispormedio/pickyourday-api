@@ -65,23 +65,7 @@ AuthController.login = function (u, cb) {
 
 };
 
-AuthController.checkAccess=function(fn){
-    return function (req, res, next) {
-        var token = req.headers.authorization;
 
-        if(!token)return Response.printError(res,"No Authorization");
-        AuthModel.findByToken(token, function(err,auth){
-            if(err)return Response.printError(res, err);
-            if(!auth)return Response.printError(res,"No Authorization");
-
-            if(!fn(auth.role)) return Response.printError(res,"No Authorization");
-
-
-            req.user=auth.user;
-            next();
-        });
-    };
-};
 
 AuthController.checkAdmin=function(){
     var self=this;

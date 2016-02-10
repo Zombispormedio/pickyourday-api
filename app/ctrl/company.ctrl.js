@@ -277,9 +277,8 @@ Controller.newResource = function(company, params, cb){
 	ResourceCtrl.new(company, params, cb);
 }
 
-Controller.searchResource = function(company, params,cb){
-	params["company.id_company"] = company;
-	ResourceCtrl.search(params, cb);
+Controller.searchResource = function(company, params, cb){
+	ResourceCtrl.search(company, params, cb);
 }
 
 Controller.modifyResource = function(company, params, cb){

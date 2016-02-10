@@ -23,6 +23,7 @@ var Resource = new Schema({
 	name: String,
 	description: String,
 	phone: String,
+	//services: [ServiceSchema],
 	initDate: Date
 });
 

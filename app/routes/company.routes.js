@@ -206,14 +206,14 @@ router.route("/promotion/:id")
     })
 
 router.route("/:id")
-    .get(AuthController.checkAccess(0), function(req, res){
+    .get(AuthController.checkAdmin(), function(req, res){
         CompanyCtrl.findById(req.params.id, function(err, company){
             if(err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "company", company);
         } );
     })
-     .put(AuthController.checkAccess(0), function (req, res) {
+     .put(AuthController.checkCompany(), function (req, res) {
            CompanyCtrl.modify(req.params.id, req.body, function (err, company) {
             if (err) Response.printError(res, err);
             else

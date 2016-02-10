@@ -21,8 +21,11 @@ var RatingSchema = new Schema({
 
 var Resource = new Schema({
 	name: String,
+	surname: String,
 	description: String,
 	phone: String,
+
+
 	//services: [ServiceSchema],
 	initDate: Date
 });
@@ -544,14 +547,32 @@ CompanySchema.statics={
 		})
 	},
 
-    getResources: function(id_company, cb){
-		this.findById(id_company, function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb("Company not found");
-			cb(null, company.resources);
-		})
-    },
-    
+    searchResources: function(id_company, params, cb){
+		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: id_company}}]);
+		for(var key in params){
+			switch(key){
+				case 'beforeInitDate':
+					query.match({'resources.initDate': {'$lte': new Date(params[key])}});
+					break;
+				case 'afterInitDate':
+					query.match({'resources.initDate': {'$gte': new Date(params[key])}});
+					break;				
+				default : 
+					var field = "resources."+key;
+					var match={};
+					match[field] = Utils.like(params[key]);
+					query.match(match);	
+			}
+		}
+
+		query.exec(function(err, companyResource){			
+			var resources = companyResource.map(function(a){
+				return a.resources;
+			});
+			cb(null, resources);
+		});
+	},	
+
 
 
 

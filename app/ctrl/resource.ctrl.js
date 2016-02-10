@@ -5,14 +5,14 @@ var Controller = {};
 
 Controller.new= function(user, body, cb){
 
-	if (!body || !body.id_name || (body.price==null))		
+	if (!body || !body.name)		
 	 	return cb("Fields not Filled");
 
 	CompanyModel.newResource(user, body, function(err){
 		if(err) return (err);
 		cb();
 	});
-};
+}
 
 
 
@@ -23,7 +23,7 @@ Controller.delete = function(user, body, cb){
 		if(err) return cb(err);		
 		cb();
 	});
-};
+}
 
 Controller.modify = function(user, id, body,cb){
 	if(!body || !id )
@@ -33,7 +33,7 @@ Controller.modify = function(user, id, body,cb){
 		if(err) return cb(err);		
 		cb();
 	});
-};
+}
 
 
 Controller.findById = function(user, id, cb){    
@@ -46,10 +46,10 @@ Controller.findById = function(user, id, cb){
 			return cb("Service name not deleted");	
 		cb();
 	})
-};
+}
 
 Controller.search = function(user, query, cb){
-	CompanyModel.getResources(user, function(err, resources){
+	CompanyModel.searchResources(user, query, function(err, resources){
 		if(err) return cb(err);
 
 		if(!resources || resources.length==0 )
@@ -58,4 +58,6 @@ Controller.search = function(user, query, cb){
 		cb(null, resources);
 		
 	});
-};
+}
+
+module.exports = Controller;

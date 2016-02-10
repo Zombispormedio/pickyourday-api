@@ -1,4 +1,3 @@
-
 var C=require("../../config/config");
 var async = require("async");
 var ServiceNameModel = require(C.models+"service_name");

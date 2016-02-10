@@ -94,6 +94,29 @@ router.route("/service")
         })
     });
 
+router.route("/resource")
+	.post(AuthController.checkAccess(2), function(req, res){
+		CompanyCtrl.newResource(req.user, req.body, function(err){
+			if(err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "data", "Resource created");
+		});
+	})
+	.get(AuthController.checkAccess(2), function(req, res){
+		CompanyCtrl.searchResource(req.user, req.query, function(err, resources){
+			if(err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "data", resources);
+		});
+	})
+	.delete(AuthController.checkAccess(2), function (req, res) {
+		CompanyCtrl.deteleResource(req.user, req.body, function (err) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "data", "Resource deleted");
+		})
+	});
+
 router.route("/promotion")
     .post(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.newPromotion(req.user, req.body, function(err){
@@ -149,6 +172,22 @@ router.route("/service/:id")
                 Response.printSuccess(res, "data", "Service modified");
         });
     })
+
+router.route("/resource/:id")
+	.get(AuthController.checkAccess(2), function (req, res) {
+		CompanyCtrl.getResourceById(req.user, req.params.id, function (err, resource) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "data", resource);
+		});
+	})
+	.put(AuthController.checkAccess(2), function (req, res) {
+		CompanyCtrl.modifyResource(req.user, req.params.id, req.body, function (err) {
+			if (err) Response.printError(res, err);
+			else
+				Response.printSuccess(res, "data", "Resource modified");
+		});
+	})	
 
 router.route("/promotion/:id")
     .get(AuthController.checkCompany(), function (req, res) {

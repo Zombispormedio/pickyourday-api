@@ -10,6 +10,7 @@ var ServiceNameModel = require(C.models+"service_name");
 var CategoryModel = require(C.models+"category");
 var PickModel = require(C.models+"pick");
 var AuthCtrl = require(C.ctrl + "auth.ctrl");
+var ResourceCtrl = require(C.ctrl + "resource.ctrl");
 var async = require("async");
 var Controller = {};
 
@@ -240,8 +241,8 @@ Controller.deleteService=function(company, params, cb){
 	ServiceCtrl.delete(company, params, cb);
 }
 
-Controller.getServiceById=function(id, cb){
-	ServiceCtrl.findById(id, cb);
+Controller.getServiceById=function(company, id, cb){
+	ServiceCtrl.findById(company, id, cb);
 }
 
 //***********************PROMOTIONS
@@ -253,16 +254,16 @@ Controller.newPromotion=function(company, params, cb){
 	PromotionCtrl.new(params, cb);
 }
 
-Controller.modifyPromotion = function(company, params, cb){
-	PromotionCtrl.modify(company, params, cb);
+Controller.modifyPromotion = function(company, id, params, cb){
+	PromotionCtrl.modify(company,id,  params, cb);
 }
 
 Controller.deletePromotion=function(company, params, cb){
 	PromotionCtrl.delete(company, params, cb);
 }
 
-Controller.getPromotionById=function(id, cb){
-	PromotionCtrl.findById(id, cb);
+Controller.getPromotionById=function(company,id, cb){
+	PromotionCtrl.findById(company, id, cb);
 }
 
 //*******************CATEGORY
@@ -270,6 +271,28 @@ Controller.searchCategory=function(params, cb){
 	CategoryCtrl.search(params, cb);
 }
 
+
+//*******************RESOURCE
+Controller.newResource = function(company, params, cb){
+	ResourceCtrl.new(company, params, cb);
+}
+
+Controller.searchResource = function(company, params,cb){
+	params["company.id_company"] = company;
+	ResourceCtrl.search(params, cb);
+}
+
+Controller.modifyResource = function(company, params, cb){
+	ResourceCtrl.modify(company, params, cb);
+}
+
+Controller.deleteResource=function(company, params, cb){
+	ResourceCtrl.delete(company, params, cb);
+}
+
+Controller.getResourceById=function(company, id, cb){
+	ResourceCtrl.findById(company, id, cb);
+}
 
 
 

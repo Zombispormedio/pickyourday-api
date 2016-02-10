@@ -152,8 +152,8 @@ CompanySchema.statics={
 		query.exec(cb);	
 	},
     
-   modify:function(id, params, cb){
-        this.findById(id, function(err, company){
+   modify:function(id_company, params, cb){
+        this.findById(id_company, function(err, company){
 			if(err) return cb(err);
 
 		    if(!company)
@@ -174,14 +174,14 @@ CompanySchema.statics={
     },
     
 
-	newReview: function(id_company, params, cb){
+	newReview: function(user, params, cb){
 		var review = {};
-		review.id_customer = id_company;
+		review.id_customer = user;
 		review.rating = params.rating;
 		review.description = params.description;
 		review.date = new Date();
 		this.update(
-	   		{_id: params.company_id, 'review.id_customer': {$ne: id_company}},
+	   		{_id: params.company_id, 'review.id_customer': {$ne: user}},
 	    	{$addToSet: {review: review}}, function(err, result){
 
 					if(err) return cb(err);	
@@ -191,7 +191,7 @@ CompanySchema.statics={
 	    });
 	},
 
-	newRateService: function(id_company, params, cb){
+	newRateService: function(user, params, cb){
 		this.findOne({_id: params.company_id},  function(err, company){
 			if(err)return cb(err);
 			if(!company)return cb("Company not found");
@@ -199,7 +199,7 @@ CompanySchema.statics={
 		
 			var service = company.services.id(params.service_id);
 			if(!service) return cb("Service not found");
-			service.rating.push( {id_customer: id_company, rating: params.rating, date: new Date()});
+			service.rating.push( {id_customer: user, rating: params.rating, date: new Date()});
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -222,7 +222,7 @@ CompanySchema.statics={
 			});
 
 
-		});
+		})
 	},
 
 	searchService: function(id_company, params, cb){
@@ -440,7 +440,7 @@ CompanySchema.statics={
 				return cb("Promotion not found");
 			cb(null, promotion);
 
-		});
+		})
 	},
 
 	modifyPromotion: function(id_company, id, params, cb){
@@ -512,7 +512,7 @@ CompanySchema.statics={
 		})
 	},
 	modifyPromotion: function(id_company, id, params, cb){
-		this.findOne({_id: id_company}, function(err, company){
+		this.findOne({_id: user}, function(err, company){
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found");
 
@@ -538,8 +538,8 @@ CompanySchema.statics={
 
 			var resource = company.resource.id(id);
 			if(!resource)
-				return cb("Resource not found");
-			cb(null, resource);
+				return cb("Promotion not found");
+			cb(null, promotion);
 
 		})
 	},
@@ -562,7 +562,7 @@ function getServiceRating(services){
 	var rate =0;
 	var rates=[];
 	for(var service in services){
-		if(services[service].services.rating.length !== 0){
+		if(services[service].services.rating.length != 0){
 			for(var rating in services[service].services.rating){
 				rate += services[service].services.rating[rating].rating;
 			}

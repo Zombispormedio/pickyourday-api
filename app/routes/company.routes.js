@@ -138,7 +138,7 @@ router.route("/promotion")
             else
                 Response.printSuccess(res, "data", "Promotion deleted");
         })
-    });
+    })
 router.route("/category")
     .get(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.searchCategory(req.query, function(err, categories){
@@ -146,7 +146,7 @@ router.route("/category")
                 else
             Response.printSuccess(res, "data", categories);
         } );
-    });
+    })
 
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function (req, res) {

@@ -550,7 +550,7 @@ CompanySchema.statics={
 			if(!company)return cb("Company not found");
 			cb(null, company.resources);
 		})
-    };
+    },
     
 
 

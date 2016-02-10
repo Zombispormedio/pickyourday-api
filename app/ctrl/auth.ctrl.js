@@ -76,7 +76,6 @@ AuthController.checkAccess=function(fn){
 
             if(!fn(auth.role)) return Response.printError(res,"No Authorization");
 
-
             req.user=auth.user;
             next();
         });

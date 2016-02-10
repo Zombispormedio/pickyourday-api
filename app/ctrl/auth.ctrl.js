@@ -74,7 +74,7 @@ AuthController.checkAccess=function(fn){
             if(err)return Response.printError(res, err);
             if(!auth)return Response.printError(res,"No Authorization");
 
-            //if(!fn(auth.role)) return Response.printError(res,"No Authorization");
+            if(!fn(auth.role)) return Response.printError(res,"No Authorization");
 
             req.user=auth.user;
             next();

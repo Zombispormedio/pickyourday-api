@@ -213,7 +213,7 @@ router.route("/:id")
                 Response.printSuccess(res,  company);
         } );
     })
-     .put(AuthController.checkCompany(), function (req, res) {
+     .put(AuthController.checkAdmin(), function (req, res) {
            CompanyCtrl.modify(req.params.id, req.body, function (err, company) {
             if (err) Response.printError(res, err);
             else

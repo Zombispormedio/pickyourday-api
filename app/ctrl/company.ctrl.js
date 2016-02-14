@@ -152,7 +152,7 @@ Controller.findById = function(id, cb){
 					});
 				},
 				function(comp, callback){
-					CompanyModel.formatReviews(id, function(err, reviews){
+					CompanyModel.formatReviews(comp._id, function(err, reviews){
 						comp.review_ratings= reviews;
 						callback(null, comp);
 					})

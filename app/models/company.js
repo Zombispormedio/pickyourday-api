@@ -106,6 +106,7 @@ var CompanySchema = new Schema({
 	}],
 	phone: [String],
 	keywords: [String],
+	web: String,
 	location:{
         name:String,
 		country: String,
@@ -125,6 +126,7 @@ var CompanySchema = new Schema({
 	review: [ReviewSchema],
 	resources: [Resource],
 	dateTable: [DateTable],
+
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,
 	lastAccess: Date,

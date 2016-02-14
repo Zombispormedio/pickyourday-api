@@ -23,7 +23,7 @@ router.route("")
                 Response.printError(res, err)
             }
             else
-                Response.printSuccess(res, "company", req.showUser);
+                Response.printSuccess(res, req.showUser);
         });
     }
         )
@@ -31,7 +31,7 @@ router.route("")
         CompanyCtrl.search(req.query, function(err, companies){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "companies", companies);
+                Response.printSuccess(res,  companies);
         });
     });
 
@@ -41,7 +41,7 @@ router.route("/profile")
         CompanyCtrl.findById(req.user, function (err, company) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", company);
+                Response.printSuccess(res, company);
         });
     });
 
@@ -50,14 +50,14 @@ router.route("/pick")
         CompanyCtrl.searchPick(req.user, req.query, function (err, picks) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", picks);
+                Response.printSuccess(res, picks);
         });
     })
     .delete(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.deletePick(req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Pick deleted");
+                Response.printSuccess(res,  "Pick deleted");
         })
     });
 
@@ -66,7 +66,7 @@ router.route("/serviceName")
         CompanyCtrl.searchServiceName(req.query, function(err, serviceNames){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", serviceNames);
+            Response.printSuccess(res, serviceNames);
         })
     })
 
@@ -76,21 +76,21 @@ router.route("/service")
         CompanyCtrl.newService(req.user, req.body, function(err){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Service created");
+                Response.printSuccess(res, "Service created");
         });
     })
     .get(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.searchService(req.user, req.query, function(err, services){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", services);
+                Response.printSuccess(res, services);
         });
     })
     .delete(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.deleteService(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Service deleted");
+                Response.printSuccess(res,  "Service deleted");
         })
     });
 
@@ -99,21 +99,21 @@ router.route("/resource")
 		CompanyCtrl.newResource(req.user, req.body, function(err){
 			if(err) Response.printError(res, err);
 			else
-				Response.printSuccess(res, "data", "Resource created");
+				Response.printSuccess(res,  "Resource created");
 		});
 	})
 	.get(AuthController.checkCompany(), function(req, res){
 		CompanyCtrl.searchResource(req.user, req.query, function(err, resources){
 			if(err) Response.printError(res, err);
 			else
-				Response.printSuccess(res, "data", resources);
+				Response.printSuccess(res,  resources);
 		});
 	})
 	.delete(AuthController.checkCompany(), function (req, res) {
 		CompanyCtrl.deteleResource(req.user, req.body, function (err) {
 			if (err) Response.printError(res, err);
 			else
-				Response.printSuccess(res, "data", "Resource deleted");
+				Response.printSuccess(res, "Resource deleted");
 		})
 	});
 
@@ -122,21 +122,21 @@ router.route("/promotion")
         CompanyCtrl.newPromotion(req.user, req.body, function(err){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Promotion created");
+                Response.printSuccess(res,  "Promotion created");
         });
     })
     .get(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.searchPromotion(req.user, req.query, function(err, promotions){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", promotions);
+                Response.printSuccess(res, promotions);
         });
     })
     .delete(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.deletePromotion(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Promotion deleted");
+                Response.printSuccess(res,  "Promotion deleted");
         })
     })
 router.route("/category")
@@ -144,7 +144,7 @@ router.route("/category")
         CompanyCtrl.searchCategory(req.query, function(err, categories){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", categories);
+            Response.printSuccess(res, categories);
         } );
     })
 
@@ -153,7 +153,7 @@ router.route("/pick/:id")
         CompanyCtrl.getPickById(req.params.id, function (err, service) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", service);
+                Response.printSuccess(res, service);
         });
     })
 
@@ -162,14 +162,14 @@ router.route("/service/:id")
         CompanyCtrl.getServiceById(req.user, req.params.id, function (err, service) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", service);
+                Response.printSuccess(res, service);
         });
     })
     .put(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.modifyService(req.user, req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Service modified");
+                Response.printSuccess(res, "Service modified");
         });
     })
 
@@ -178,14 +178,14 @@ router.route("/resource/:id")
 		CompanyCtrl.getResourceById(req.user, req.params.id, function (err, resource) {
 			if (err) Response.printError(res, err);
 			else
-				Response.printSuccess(res, "data", resource);
+				Response.printSuccess(res, resource);
 		});
 	})
 	.put(AuthController.checkCompany(), function (req, res) {
 		CompanyCtrl.modifyResource(req.user, req.params.id, req.body, function (err) {
 			if (err) Response.printError(res, err);
 			else
-				Response.printSuccess(res, "data", "Resource modified");
+				Response.printSuccess(res,  "Resource modified");
 		});
 	})	
 
@@ -194,14 +194,14 @@ router.route("/promotion/:id")
         CompanyCtrl.getPromotionById(req.user, req.params.id, function (err, promotion) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", promotion);
+                Response.printSuccess(res,  promotion);
         });
     })
     .put(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.modifyPromotion(req.user, req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Promotion modified");
+                Response.printSuccess(res,"Promotion modified");
         });
     })
 
@@ -210,21 +210,21 @@ router.route("/:id")
         CompanyCtrl.findById(req.params.id, function(err, company){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "company", company);
+                Response.printSuccess(res,  company);
         } );
     })
      .put(AuthController.checkCompany(), function (req, res) {
            CompanyCtrl.modify(req.params.id, req.body, function (err, company) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "company", company);
+                Response.printSuccess(res,  company);
         });
     })
     .delete(AuthController.checkAdmin(),function (req, res) {
         CompanyCtrl.delete(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "company", "Deleted");
+                Response.printSuccess(res, "Deleted");
 
         });
     });

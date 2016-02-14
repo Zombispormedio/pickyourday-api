@@ -1,8 +1,8 @@
 var Response = {};
 
-Response.printSuccess = function(res, key, data){
+Response.printSuccess = function(res,data){
 	var keyData = {};
-	keyData[key] = data;
+	keyData.data = data;
 	res.jsonp(keyData);
 };
 

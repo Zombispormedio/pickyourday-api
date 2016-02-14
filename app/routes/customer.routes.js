@@ -24,7 +24,7 @@ router.route("")
                 Response.printError(res, err)
             }
             else
-                Response.printSuccess(res, "customer", req.showUser);
+                Response.printSuccess(res, req.showUser);
         });
     }
         )
@@ -32,7 +32,7 @@ router.route("")
         CustomerCtrl.search(req.query, function (err, customers) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "customers", customers);
+                Response.printSuccess(res,customers);
         });
     })
 
@@ -44,7 +44,7 @@ router.route("/profile")
         CustomerCtrl.findById(req.user, function (err, customer) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", customer);
+                Response.printSuccess(res,customer);
         });
     });
 
@@ -54,14 +54,14 @@ router.route("/pick")
         CustomerCtrl.newPick(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Pick created");
+                Response.printSuccess(res,  "Pick created");
         });
     })
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.searchPick(req.user, req.query, function (err, picks) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", picks);
+                Response.printSuccess(res,  picks);
         });
     })
 
@@ -71,7 +71,7 @@ router.route("/event")
         CustomerCtrl.newEvent(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Event created");
+                Response.printSuccess(res,  "Event created");
         })
     })
 
@@ -79,14 +79,14 @@ router.route("/event")
         CustomerCtrl.searchEvent(req.user, req.query, function (err, events) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", events);
+                Response.printSuccess(res,  events);
         })
     })
     .delete(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.deleteEvent(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Event deleted");
+                Response.printSuccess(res, "Event deleted");
         })
     });
 
@@ -95,14 +95,14 @@ router.route("/prePick")
         CustomerCtrl.searchPrePick(req.user, req.query, function(err, events){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", events);
+            Response.printSuccess(res, events);
         })
     })
     .delete(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.deletePrePick(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "PrePick deleted");
+                Response.printSuccess(res,"PrePick deleted");
         })
     });
 
@@ -120,7 +120,7 @@ router.route("/rateService")
         CustomerCtrl.newRateService(req.user, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Service rated");
+                Response.printSuccess(res, "Service rated");
         })
     })
 
@@ -129,7 +129,7 @@ router.route("/category")
         CustomerCtrl.searchCategory(req.query, function(err, categories){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", categories);
+            Response.printSuccess(res,categories);
         } );
     })
 
@@ -138,7 +138,7 @@ router.route("/service")
         CustomerCtrl.searchService(req.query, function(err, services){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", services);
+            Response.printSuccess(res,services);
         })
     })
 
@@ -147,7 +147,7 @@ router.route("/company")
         CustomerCtrl.searchCompany(req.query, function(err, services){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", services);
+            Response.printSuccess(res, services);
         })
     })
 
@@ -165,7 +165,7 @@ router.route("/service/:id")
         CustomerCtrl.getServiceById(req.query, req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", event);
+                Response.printSuccess(res,  event);
         });
     })
 router.route("/company/:id")
@@ -173,7 +173,7 @@ router.route("/company/:id")
         CustomerCtrl.getCompanyById(req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", event);
+                Response.printSuccess(res,  event);
         });
     })
 
@@ -182,14 +182,14 @@ router.route("/event/:id")
         CustomerCtrl.getEventById(req.user, req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", event);
+                Response.printSuccess(res, event);
         });
     })
     .put(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.modifyEvent(req.user, req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Event modified");
+                Response.printSuccess(res, "Event modified");
         });
     })
 
@@ -198,7 +198,7 @@ router.route("/prePick/:id")
         CustomerCtrl.getPrePickById(req.user, req.params.id, function (err, prePick) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", prePick);
+                Response.printSuccess(res,  prePick);
         });
     })
 
@@ -208,14 +208,14 @@ router.route("/pick/:id")
         CustomerCtrl.getPickById(req.params.id, function (err, pick) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", pick);
+                Response.printSuccess(res,  pick);
         });
     })
     .delete(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.deletePick(req.params.id, function (err, pick) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", pick);
+                Response.printSuccess(res,  pick);
         });
     });
 
@@ -224,7 +224,7 @@ router.route("/:id")
         CustomerCtrl.findById(req.params.id, function (err, customer) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "customer", customer);
+                Response.printSuccess(res,  customer);
         });
     })
 
@@ -232,14 +232,14 @@ router.route("/:id")
            CustomerCtrl.modify(req.params.id, req.body, function (err, customer) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "customer", customer);
+                Response.printSuccess(res,  customer);
         });
     })
     .delete(AuthController.checkAdmin(),function (req, res) {
         CustomerCtrl.delete(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "customer", "Deleted");
+                Response.printSuccess(res, "Deleted");
 
         });
     });

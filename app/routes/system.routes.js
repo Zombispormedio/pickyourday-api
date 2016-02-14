@@ -9,14 +9,14 @@ router.route("/category")
         SystemCtrl.searchCategory(req.query, function(err, categories){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "categories", categories);
+            Response.printSuccess(res, categories);
         } );
     })
     .post(AuthController.checkAdmin(), function (req, res){
         SystemCtrl.newCategory(req.body, function(err, category){
         if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "category", category);
+            Response.printSuccess(res, category);
 
         });
     });
@@ -26,14 +26,14 @@ router.route("/prePick")
         SystemCtrl.calculatePrePicks(req.body, function(err){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "prepick", "PrepIcks created");
+            Response.printSuccess(res, "PrepIcks created");
         });
     })
     .get(AuthController.checkAdmin(),function(req, res){
         SystemCtrl.searchPrePick(req.query, function(err, prePicks){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "prepicks", prePicks);
+            Response.printSuccess(res, prePicks);
         });
     });
 
@@ -42,7 +42,7 @@ router.route("/pick")
         SystemCtrl.searchPick(req.query, function (err, picks) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "picks", picks);
+                Response.printSuccess(res, picks);
         });
     });
 
@@ -52,7 +52,7 @@ router.route("/service")
         SystemCtrl.searchService(req.query, function(err, services){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", services);
+            Response.printSuccess(res, services);
         });
     });
 
@@ -61,14 +61,14 @@ router.route("/default_service")
         SystemCtrl.searchServiceName(req.query, function(err, serviceNames){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "default_services", serviceNames);
+            Response.printSuccess(res,  serviceNames);
         });
     })
     .post(AuthController.checkAdmin(), function(req, res){
         SystemCtrl.newServiceName(req.body, function(err, result){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "default_service", result);
+            Response.printSuccess(res, result);
         });
     });
 
@@ -78,14 +78,14 @@ router.route("/default_service")
         SystemCtrl.getPreferences(req.query, function(err,  preferences){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "preferences", preferences);
+            Response.printSuccess(res, preferences);
         });
     })
         .post(AuthController.checkAdmin(), function(req, res){
         SystemCtrl.newPreference(req.body, function(err, result){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "preference", result);
+            Response.printSuccess(res, result);
         });
     });
 
@@ -95,21 +95,21 @@ router.route("/default_service/:id")
         SystemCtrl.modifyServiceName(req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "default_service", "Default Service modified");
+                Response.printSuccess(res,  "Default Service modified");
         });
     })
     .get(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.getServiceNameById(req.params.id, function (err, default_service) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "default_service", default_service);
+                Response.printSuccess(res,default_service);
         });
     })
     .delete(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.deleteServiceName(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "default_service", "Default Service deleted");
+                Response.printSuccess(res, "Default Service deleted");
         });
     });
 
@@ -119,14 +119,14 @@ router.route("/pick/:id")
         SystemCtrl.getPickById(req.params.id, function (err, pick) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "pick", pick);
+                Response.printSuccess(res, pick);
         });
     })
     .delete(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.deletePick(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "pick", "Deleted");
+                Response.printSuccess(res,"Deleted");
         });
     });
 
@@ -135,21 +135,21 @@ router.route("/category/:id")
         SystemCtrl.modifyCategory(req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "category", "Category modified");
+                Response.printSuccess(res, "Category modified");
         });
     })
     .get(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.getCategoryById(req.params.id, function (err, category) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "category", category);
+                Response.printSuccess(res,  category);
         });
     })
     .delete(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.deleteCategory(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "categories", "Category deleted");
+                Response.printSuccess(res,  "Category deleted");
         });
     });
 
@@ -159,21 +159,21 @@ router.route("/category/:id")
         SystemCtrl.modifyPreference(req.params.id, req.body, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "preference", "Preference modified");
+                Response.printSuccess(res,  "Preference modified");
         });
     })
         .get(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.getPreferenceById(req.params.id, function (err, preference) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "preference", preference);
+                Response.printSuccess(res,preference);
         });
     })
         .delete(AuthController.checkAdmin(), function (req, res) {
         SystemCtrl.deletePreference(req.params.id, function (err) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Preference", "Preference deleted");
+                Response.printSuccess(res,  "Preference deleted");
         });
     });
 
@@ -183,7 +183,7 @@ router.route("/category/:id")
         SystemCtrl.uploadImage(req.params.type, req.body, function (err, image) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "image", image);
+                Response.printSuccess(res, image);
         });
     });
 

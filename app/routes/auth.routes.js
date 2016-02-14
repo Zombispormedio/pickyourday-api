@@ -12,7 +12,7 @@ router.route("")
             if(err)
                 Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", user);
+                Response.printSuccess(res,  user);
         });
     });
 
@@ -22,7 +22,7 @@ router.route("/logout")
             if(err)
                 Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", "Successful");
+                Response.printSuccess(res,  "Successful");
         });
     });
 
@@ -32,7 +32,7 @@ router.route("/check")
             if(err)
                 Response.printError(res, err);
             else
-                Response.printSuccess(res, "data", user);
+                Response.printSuccess(res,  user);
         });
     });
 
@@ -42,7 +42,7 @@ router.route("/role/:role")
         if(err)
             Response.printError(res, err);
         else
-            Response.printSuccess(res, "role", role);
+            Response.printSuccess(res,  role);
     });
 });
 

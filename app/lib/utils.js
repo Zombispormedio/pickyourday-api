@@ -2,6 +2,7 @@ var Utils = {};
 var jwt = require('jsonwebtoken');
 var fs = require("fs");
 var request = require("request");
+var _=require("lodash");
 var C = require("../../config/config");
 Utils.validatePresenceOf = function (value) {
     return value && value.length;
@@ -61,6 +62,18 @@ Utils.removeAccents = function (text)
         return ret;
     });
 };
+
+
+
+Utils.mergeMongoObjects=function(dst, src){
+	var keysDST=Object.keys(dst.toObject());
+	var keysSRC=Object.keys(src);
+	console.log(_.union(keysDST, keysSRC));
+	
+	return dst;
+}
+
+
 
 
 module.exports = Utils;

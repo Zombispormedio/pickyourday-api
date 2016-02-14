@@ -178,12 +178,13 @@ CompanySchema.statics={
 		
 		    if(!company)
 				return cb("Company not found");
-
+/*
 			for(var key in company){
 				delete company[key];
 				company[key] = params[key];
 			}
-			
+			*/
+			company=Utils.mergeMongoObjects(company, params);
 		
 			
 			

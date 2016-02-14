@@ -39,13 +39,28 @@ Controller.search = function(query, cb){
 				function(callback){
 					var c=companie.toObject();
 					async.map(c.services, function(service, next){
-						ServiceNameModel.findById(service["id_name"])
-						.select('name duration keywords description')
-						.exec(function(err, service_name){
-							if(err) return next(err);	
-							service.default=service_name;				
-							next(null, service);
-						});
+						async.waterfall([function(subNext){
+							ServiceNameModel.findById(service["id_name"])
+							.select('name duration keywords description')
+							.exec(function(err, service_name){
+								if(err) return subNext(err);	
+								service.default=service_name;				
+								subNext(null, service);
+							});
+						},function(service, subNext){
+							console.log(company._id, service._id)
+							CompanyModel.formatServideRating(company._id, service._id, function(err, avg){
+								if(err) return subNext(err);
+								service.avgRating = avg;
+								subNext(null, service);
+							})
+						}
+
+					],function(err, result){
+						if(err) return next(err);
+						next(null, result);
+					});
+
 					},function(err, result){
 						if(err) return cb(err);	
 						c.services = result;

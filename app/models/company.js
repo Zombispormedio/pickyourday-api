@@ -7,6 +7,7 @@ var Utils = require(C.lib+"utils");
 var Schema = mongoose.Schema;
 var CustomType = require("./customType.js");
 var GeolocationType = CustomType.GeolocationSchema;
+var ImageType=CustomType.ImageSchema;
 
 var C=require("../../config/config");
 
@@ -52,7 +53,7 @@ var PromotionSchema = new Schema({
 	endDate: {
 		type: Date
 	},
-	photos: [String],
+	images: [ImageType],
 	useLimit: Number,
 	description: String,
 	timesUsed: Number,
@@ -100,10 +101,7 @@ var CompanySchema = new Schema({
 		required: true
 	}, 
 	description: String,
-	images: [{
-		src:String,
-		alt:String
-	}],
+	images: [ImageType],
 	phone: [String],
 	keywords: [String],
 	web: String,
@@ -186,7 +184,7 @@ CompanySchema.statics={
 			*/
 			company=Utils.mergeMongoObjects(company, params);
 		
-			
+		
 			
 			
 			company.lastUpdate=new Date();

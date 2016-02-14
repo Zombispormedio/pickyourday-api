@@ -8,7 +8,7 @@ var HistoryPromotionSchema = new Schema({
 	initDate: Date,
 	endDate:Date,
 	deletedDate: Date,
-	photos: [String],
+	images: [ ImageType],
 	useLimit: Number,
 	description: String,
 	timesUsed: Number,

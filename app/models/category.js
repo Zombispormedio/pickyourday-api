@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 var C = require("../../config/config");
 
 var Utils=require(C.lib+"utils");
-
+var CustomType = require("./customType.js");
+var ImageType=CustomType.ImageSchema;
 
 var CategorySchema = new Schema({
 	name : {
@@ -13,14 +14,8 @@ var CategorySchema = new Schema({
 		required: true
 	},
 	description: String,
-	image: {
-		src:String,
-		alt:String
-	}, 
-    icon:{
-        src:String,
-        alt:String
-    },
+	image: ImageType, 
+    icon: ImageType,
     color:String
 });
 

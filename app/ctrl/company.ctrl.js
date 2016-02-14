@@ -114,6 +114,7 @@ Controller.findById = function(id, cb){
 							subNext(null, service);
 						});
 					},function(service, subNext){
+						console.log(company._id, service._id)
 						CompanyModel.formatServideRating(company._id, service._id, function(err, avg){
 							if(err) return subNext(err);
 							service.avgRating = avg;

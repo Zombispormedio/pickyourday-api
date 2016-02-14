@@ -8,7 +8,7 @@ Utils.validatePresenceOf = function (value) {
 };
 
 Utils.like = function (value) {
-    return new RegExp('^' + value + '$', "i")
+   return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig")
 }
 
 Utils.sign = function (data) {
@@ -33,6 +33,28 @@ Utils.download = function (uri, filename, callback) {
     });
 }
 
+
+Utils.removeAccents = function (text)
+{
+    var __r = 
+    {
+        'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Æ':'E',
+        'È':'E','É':'E','Ê':'E','Ë':'E',
+        'Ì':'I','Í':'I','Î':'I',
+        'Ò':'O','Ó':'O','Ô':'O','Ö':'O',
+        'Ù':'U','Ú':'U','Û':'U','Ü':'U',
+    };
+    
+    return text.replace(/[ÀÁÂÃÄÅÆÈÉÊËÌÍÎÒÓÔÖÙÚÛÜ]/gi, function(m)
+    {
+        var ret = __r[m.toUpperCase()];
+
+        if (m === m.toLowerCase())
+            ret = ret.toLowerCase();
+
+        return ret;
+    });
+};
 
 
 module.exports = Utils;

@@ -598,7 +598,36 @@ CompanySchema.statics={
 		});
 	},	
 
+	formatReviews: function(id_company, cb){
+		//query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
+		
 
+		var query = this.aggregate(
+		[   { "$project" : { "hourly" : "$review" } },
+	    	{ "$unwind" : "$hourly" },
+		    {$group : {	        	
+		           _id:   "$hourly.rating"  ,
+		           count: { $sum: 1 }
+		        }
+		    }
+	    ]
+		)
+
+		query.exec(function(err, reviewsReting){
+			if(err) return cb(err);
+			reviewsFormat = {};
+			var count=0;
+			for(var i=0; i<6; i++){
+				if(reviewsReting[count]._id == i){
+					reviewsFormat[i] =  reviewsReting[count].count;
+					count++;
+				}else
+					reviewsFormat[i] = 0;
+			}
+
+			cb(null, reviewsFormat)
+		});
+	}
 
 
 };
@@ -619,6 +648,7 @@ function getServiceRating(services){
 	}
 	return rates;			
 }
+
 
 module.exports = mongoose.model("Company", CompanySchema);
 

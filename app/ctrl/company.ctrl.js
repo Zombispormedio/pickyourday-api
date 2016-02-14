@@ -74,6 +74,12 @@ Controller.search = function(query, cb){
 						comp.category = category;
 						callback(null, comp);
 					});
+				},
+				function(comp, callback){
+					CompanyModel.formatReviews(comp._id, function(err, reviews){
+						comp.review_ratings= reviews;
+						callback(null, comp);
+					})
 				}
 			],function(err, result){
 				if(err) return next(err);
@@ -296,7 +302,7 @@ Controller.searchPromotion=function(company, params, cb){
 }
 
 Controller.newPromotion=function(company, params, cb){
-	PromotionCtrl.new(company,params, cb);
+	PromotionCtrl.new(params, cb);
 }
 
 Controller.modifyPromotion = function(company, id, params, cb){

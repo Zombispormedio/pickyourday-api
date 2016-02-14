@@ -175,14 +175,18 @@ CompanySchema.statics={
    modify:function(id_company, params, cb){
         this.findById(id_company, function(err, company){
 			if(err) return cb(err);
-
+		
 		    if(!company)
 				return cb("Company not found");
 
-			for(var key in params){
-				company[key]=null;
+			for(var key in company){
+				delete company[key];
 				company[key] = params[key];
 			}
+			
+		
+			
+			
 			
 			company.lastUpdate=new Date();
 		

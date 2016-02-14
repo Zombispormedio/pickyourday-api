@@ -60,7 +60,7 @@ router.route("/default_service")
     .get(AuthController.checkAdmin(),function(req, res){
         SystemCtrl.searchServiceName(req.query, function(err, serviceNames){
             if(err) Response.printError(res, err);
-                else
+            else
             Response.printSuccess(res,  serviceNames);
         });
     })

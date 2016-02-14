@@ -599,9 +599,6 @@ CompanySchema.statics={
 	},	
 
 	formatReviews: function(id_company, cb){
-		//query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
-		
-
 		var query = this.aggregate(
 		[   { "$project" : { "hourly" : "$review" } },
 	    	{ "$unwind" : "$hourly" },

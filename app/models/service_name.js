@@ -37,18 +37,20 @@ Service_NameSchema.statics={
 		var self = this;
 		query.exec(function(err, defaultNames){
 			if(err) return cb(err);
-           
-	
-			if(params.name !=null && params.name != ""){
-                
+			if(params.name !=null && params.name != ""){           
 				var name = Utils.removeAccents(params.name);
-				self.find({'keywords': Utils.likeLowerCase(name)}).exec(function(err, defaultNameKeyword){
-					
+				self.find({'keywords': Utils.likeLowerCase(name)}).exec(function(err, defaultNameKeyword){				
 					if(err) return cb(err);
-					return cb(null, defaultNameKeyword);
+					if(defaultNameKeyword.lenght > 0)
+						for(var i=0; i<defaultNameKeyword.length; i++){
+							if (!in_array(defaultNameKeyword[i]._id, defaultNames))
+								 defaultNames = defaultNameKeyword[i];
+						}
+
+
+					return cb(null, defaultNames);
 				});
-			}else{
-             
+			}else{         
                 cb(null, defaultNames);
             }
 			

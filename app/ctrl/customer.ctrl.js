@@ -145,13 +145,12 @@ Controller.searchThings = function(params, cb){
             if(names && names.length > 0)
                 idDefaultNames = names.map(function(a){  
                     return a._id;
-                });
-               
+                });              
             async.map(idDefaultNames, function(idDefaultName, next){
                 var query = {"id_name":idDefaultName};
-                console.log(query);
-                ServiceCtrl.search(0,query, function(err, services){
-                    console.log(services);
+
+                ServiceCtrl.search(0,query, function(err, services){  
+                console.log(services);          
                     if(err) return next(err);
                     if(services != "Services not found"){
                         return next(null, services);

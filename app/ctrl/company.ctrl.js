@@ -74,6 +74,12 @@ Controller.search = function(query, cb){
 						comp.category = category;
 						callback(null, comp);
 					});
+				},
+				function(comp, callback){
+					CompanyModel.formatReviews(id, function(err, reviews){
+						comp.review_ratings= reviews;
+						callback(null, comp);
+					})
 				}
 			],function(err, result){
 				if(err) return next(err);

@@ -602,6 +602,7 @@ CompanySchema.statics={
 		var query = this.aggregate(
 		[   { "$project" : { "hourly" : "$review" } },
 	    	{ "$unwind" : "$hourly" },
+	    	{$match: {_id: id_company}},
 		    {$group : {	        	
 		           _id:   "$hourly.rating"  ,
 		           count: { $sum: 1 },		          
@@ -611,7 +612,6 @@ CompanySchema.statics={
 		)
 
 		query.exec(function(err, reviewsRating){
-
 			if(err) return cb(err);
 			reviewsFormat = {};
 			var count=0;
@@ -634,7 +634,7 @@ CompanySchema.statics={
 			}
 			if(reviesTotal > 0)
 				avg = avg/reviesTotal;
-			reviewsFormat.avg = avg;
+			reviewsFormat.avg = Utils.round(avg, 0.5);;
 
 			cb(null, reviewsFormat)
 		});
@@ -659,6 +659,7 @@ function getServiceRating(services){
 	}
 	return rates;			
 }
+
 
 
 module.exports = mongoose.model("Company", CompanySchema);

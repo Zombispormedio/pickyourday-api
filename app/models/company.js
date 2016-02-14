@@ -604,23 +604,37 @@ CompanySchema.statics={
 	    	{ "$unwind" : "$hourly" },
 		    {$group : {	        	
 		           _id:   "$hourly.rating"  ,
-		           count: { $sum: 1 }
+		           count: { $sum: 1 },		          
 		        }
-		    }
+		    },
 	    ]
 		)
 
-		query.exec(function(err, reviewsReting){
+		query.exec(function(err, reviewsRating){
+
 			if(err) return cb(err);
 			reviewsFormat = {};
 			var count=0;
+			var avg=0;
+			var reviesTotal=0;
 			for(var i=0; i<6; i++){
-				if(reviewsReting[count]._id == i){
-					reviewsFormat[i] =  reviewsReting[count].count;
+				var posReview=-1;
+				for(var x=0; x<reviewsRating.length; x++)
+					if(reviewsRating[x]._id == i){
+						posReview = x;
+						break;
+					}
+				if(posReview != -1){
+					reviewsFormat[i] =  reviewsRating[posReview].count;
 					count++;
+					avg+=(reviewsRating[posReview].count*i);
+					reviesTotal+=reviewsRating[posReview].count;
 				}else
 					reviewsFormat[i] = 0;
 			}
+			if(reviesTotal > 0)
+				avg = avg/reviesTotal;
+			reviewsFormat.avg = avg;
 
 			cb(null, reviewsFormat)
 		});

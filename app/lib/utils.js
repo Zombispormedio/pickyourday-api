@@ -11,6 +11,10 @@ Utils.like = function (value) {
    return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig")
 }
 
+Utils.likeLowerCase = function (value) {
+    return new RegExp('^' + value + '$', "i")
+}
+
 Utils.sign = function (data) {
     data.created = new Date().getTime();
     return jwt.sign(data, C.secret);

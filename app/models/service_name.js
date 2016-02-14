@@ -34,11 +34,16 @@ Service_NameSchema.statics={
 					query.where(key).equals(Utils.like(params[key]));
 			}
 		}
+		var self = this;
 		query.exec(function(err, defaultNames){
 			if(err) return cb(err);
 			if(params.name != null || params.name != ""){
-				//var query = this.find({});
-
+				var name = Utils.removeAccents(params.name);
+				self.find({'keywords': Utils.likeLowerCase(name)}).exec(function(err, defaultNameKeyword){
+					
+					if(err) return cb(err);
+					return cb(null, defaultNameKeyword);
+				});
 			}
 			cb(null, defaultNames);
 		});		

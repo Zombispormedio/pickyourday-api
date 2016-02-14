@@ -19,16 +19,20 @@ var RatingSchema = new Schema({
 	date: Date
 });
 
-var Resource = new Schema({
-	name: String,
-	surname: String,
-	description: String,
-	phone: String,
 
-	
-	//services: [ServiceSchema],
-	initDate: Date
+var DateTime = new Schema({
+	initDate: String,
+	endDate: String,
+})
+
+var DateTable = new Schema({
+	times: [DateTime],
+	day: {
+		type: String, 
+		enum: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
+	}
 });
+
 
 var ReviewSchema = new Schema({
 	id_customer: {
@@ -68,6 +72,16 @@ var ServiceSchema = new Schema({
 	dateCreated: Date
 });
 
+var Resource = new Schema({
+	name: String,
+	surname: String,
+	description: String,
+	phone: String,
+
+	
+	services: [ServiceSchema],
+	initDate: Date
+});
 
 var CompanySchema = new Schema({
 	cif:{
@@ -92,7 +106,7 @@ var CompanySchema = new Schema({
 	}],
 	phone: [String],
 	keywords: [String],
-	locations:[{
+	location:{
         name:String,
 		country: String,
 		province: String,
@@ -100,7 +114,7 @@ var CompanySchema = new Schema({
 		zipcode: String,
 		address: String,
 		geolocation: GeolocationType
-	}],
+	},
 	category:{
 		type: Schema.ObjectId, 
 		ref: "Category",
@@ -110,6 +124,7 @@ var CompanySchema = new Schema({
 	services: [ServiceSchema],
 	review: [ReviewSchema],
 	resources: [Resource],
+	dateTable: [DateTable],
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,
 	lastAccess: Date,

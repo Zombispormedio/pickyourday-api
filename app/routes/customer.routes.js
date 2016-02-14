@@ -156,7 +156,7 @@ router.route("/search")
         CustomerCtrl.searchThings(req.query, function(err, things){
             if(err) Response.printError(res, err);
                 else
-            Response.printSuccess(res, "data", things);
+            Response.printSuccess(res, things);
         })
     })
 

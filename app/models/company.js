@@ -180,6 +180,7 @@ CompanySchema.statics={
 				return cb("Company not found");
 
 			for(var key in params){
+				company[key]=null;
 				company[key] = params[key];
 			}
 			

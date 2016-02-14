@@ -11,6 +11,7 @@ var CategoryModel = require(C.models+"category");
 var PickModel = require(C.models+"pick");
 var AuthCtrl = require(C.ctrl + "auth.ctrl");
 var ResourceCtrl = require(C.ctrl + "resource.ctrl");
+var CustomerModel = require(C.models+"customer");
 var async = require("async");
 var Controller = {};
 
@@ -50,13 +51,27 @@ Controller.search = function(query, cb){
 						c.services = result;
 						callback(null, c);
 					});
+				},function(comp, callback){
+					async.map(companie.review, function(rev, next){
+						CustomerModel.findById(rev["id_customer"])
+						.select('name')
+						.exec(function(err, rev_customer){
+							if(err) return next(err);
+							rev.id_customer=rev_customer;
+							next(null, rev);
+						});
+					}, function(err, result){
+						if(err) return cb(err);
+						comp.review=result;
+						callback(null, comp);
+					})
 				},
 				function(comp, callback){
 					CategoryModel.findById(comp.category)
 					.select('name description color icon image')
 					.exec(function(err, category){
 						if(err) return callback(err);
-						comp.category_metadata = category;
+						comp.category = category;
 						callback(null, comp);
 					});
 				}
@@ -92,20 +107,44 @@ Controller.findById = function(id, cb){
 						next(null, service);
 					});
 				},function(err, result){
-					if(err) return cb(err);	
+					if(err) return callback(err);	
 					company.services = result;
 					callback(null, company);
 				});
 			},
 			function(comp, callback){
 				CategoryModel.findById(comp.category)
-				.select('name description')
+				.select('name description color icon image')
 				.exec(function(err, category){
 					if(err) return callback(err);
-					comp.category_metadata = category;
+					comp.category = category;
 					callback(null, comp);
 				});
-			}
+			}, 
+			function(comp, callback){
+				async.map(company.review, function(rev, next){
+					CustomerModel.findById(rev["id_customer"])
+					.select('name')
+					.exec(function(err, rev_customer){
+						if(err) return next(err);
+						rev.id_customer=rev_customer;
+						next(null, rev);
+					});
+				}, function(err, result){
+					if(err) return cb(err);
+					comp.review=result;
+					callback(null, comp);
+				})
+			},
+				function(comp, callback){
+					CategoryModel.findById(comp.category)
+					.select('name description color icon image')
+					.exec(function(err, category){
+						if(err) return callback(err);
+						comp.category = category;
+						callback(null, comp);
+					});
+				}
 		],function(err, result){
 			if(err) return cb(err);
 			cb(null, result);

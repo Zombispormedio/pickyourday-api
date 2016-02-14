@@ -151,6 +151,15 @@ router.route("/company")
         })
     })
 
+router.route("/search")
+    .get(AuthController.checkCustomer(),function(req,res){
+        CustomerCtrl.searchThings(req.query, function(err, things){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, "data", things);
+        })
+    })
+
 router.route("/service/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.getServiceById(req.query, req.params.id, function (err, event) {

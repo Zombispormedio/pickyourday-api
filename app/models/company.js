@@ -25,7 +25,7 @@ var Resource = new Schema({
 	description: String,
 	phone: String,
 
-
+	
 	//services: [ServiceSchema],
 	initDate: Date
 });
@@ -229,6 +229,7 @@ CompanySchema.statics={
 	},
 
 	searchService: function(id_company, params, cb){
+
 		var query;
 		if(id_company != 0)
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
@@ -237,6 +238,7 @@ CompanySchema.statics={
 
 		var greaterRating=false;
 		var lessRating=false;
+
 		for(var key in params){
 			switch(key){
 				case 'id_name':
@@ -274,10 +276,12 @@ CompanySchema.statics={
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
+
 			}
 		}
 
 		query.exec(function(err, companyService){
+
 			if(companyService.length != 0)
 				if(greaterRating || lessRating)	{
 					var rates = getServiceRating(companyService);

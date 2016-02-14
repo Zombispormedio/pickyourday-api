@@ -12,6 +12,8 @@ var PickModel = require(C.models+"pick");
 var async = require("async");
 var Controller = {};
 
+
+
 Controller.newUser = function (body, cb) { //datos del body, callback
 
     if (!body || !body.email || !body.password) return cb("Fields not Filled");
@@ -115,8 +117,63 @@ Controller.delete = function (id, cb) {
         if (err) return cb(err);
         cb(null, "Customer deleted");
     });
+}
+
+Controller.searchThings = function(params, cb){
+    things = {};
+    things["prepicks"] = {};
+    things["companies"] = {};
+    //busca por nombre de empresa
+
+    //busca por keywords
+    things["services"] = {};
+    //busca por nombre de servicios y luego por keywords
+    /*ServiceCtrl.search(0, params, function(err, services){
+        if(err) return cb(err);
+        things["services"] = services;
+        cb(null, things);
+    });*/
+    async.waterfall([
+        function getDefaultName(callback) {
+            ServiceCtrl.searchServiceName(params, function(err, default_names){
+                if(err) return callback(err);
+                callback(null, things, default_names);
+            });
+        }, function getServicesByDefaultName(things, names, callback){
+            var idDefaultNames;
+            if(names && names.length > 0)
+                idDefaultNames = names.map(function(a){  
+                    return a._id;
+                });
+            async.map(idDefaultNames, function(idDefaultName, next){
+                var query = {"id_name":idDefaultName};
+                ServiceCtrl.search(0,query, function(err, services){
+                    if(err) return next(err);
+                    if(services != "Services not found"){
+                        return next(null, services);
+                    }                        
+                    next();
+                })
+            }, function(err, result){
+                if(err) return callback(err);
+                for(var i=0; i<result.length; i++)
+                    if(result[i] != null)
+                        things.services = result[i];
+                callback(null, things);
+            }) 
+        }
+    
+
+     ], function (err, data) {
+        if (err) return cb(err);
+        cb(null, data);
+    });
+
+    //busca por keywords
 
 
+
+    
 }
 
 //****************PICKS

@@ -34,7 +34,14 @@ Service_NameSchema.statics={
 					query.where(key).equals(Utils.like(params[key]));
 			}
 		}
-		query.exec(cb);		
+		query.exec(function(err, defaultNames){
+			if(err) return cb(err);
+			if(params.name != null || params.name != ""){
+				//var query = this.find({});
+
+			}
+			cb(null, defaultNames);
+		});		
 	},
 
 	modify: function(id, params, cb){

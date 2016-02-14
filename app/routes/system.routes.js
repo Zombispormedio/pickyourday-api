@@ -64,7 +64,7 @@ router.route("/default_service")
             Response.printSuccess(res, "default_services", serviceNames);
         });
     })
-    .post(AuthController.checkAccess(0), function(req, res){
+    .post(AuthController.checkAdmin(), function(req, res){
         SystemCtrl.newServiceName(req.body, function(err, result){
             if(err) Response.printError(res, err);
                 else

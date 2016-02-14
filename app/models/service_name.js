@@ -41,10 +41,12 @@ Service_NameSchema.statics={
 				var name = Utils.removeAccents(params.name);
 				self.find({'keywords': Utils.likeLowerCase(name)}).exec(function(err, defaultNameKeyword){				
 					if(err) return cb(err);
-					if(defaultNameKeyword.lenght > 0)
+
+					if(defaultNameKeyword.length > 0)
 						for(var i=0; i<defaultNameKeyword.length; i++){
-							if (!in_array(defaultNameKeyword[i]._id, defaultNames))
-								 defaultNames = defaultNameKeyword[i];
+							//if (!in_array(defaultNameKeyword[i], defaultNames))
+								 defaultNames[defaultNames.length-1] = defaultNameKeyword[i];
+
 						}
 
 

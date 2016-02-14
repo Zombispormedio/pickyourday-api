@@ -638,6 +638,21 @@ CompanySchema.statics={
 
 			cb(null, reviewsFormat)
 		});
+	},
+
+	formatServideRating: function(id_company, id_service, cb){
+		this.findServiceById(id_company, id_service, function(err, service){
+
+			if(service.rating.length != 0){
+				var rate=0;
+
+				for(var rating in service.rating)
+					rate += service.rating[rating].rating;
+			
+				rate = rate / service.rating.length;
+				return cb(null, Utils.round(rate));
+			}else return cb(null, 0);
+		})
 	}
 
 

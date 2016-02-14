@@ -141,14 +141,19 @@ Controller.searchThings = function(params, cb){
                 callback(null, things, default_names);
             });
         }, function getServicesByDefaultName(things, names, callback){
-            var idDefaultNames;
+            var idDefaultNames ;
+
             if(names && names.length > 0)
                 idDefaultNames = names.map(function(a){  
                     return a._id;
-                });              
+                }); 
+            else if(names)
+                idDefaultNames = names._id;
+
+ 
             async.map(idDefaultNames, function(idDefaultName, next){
                 var query = {"id_name":idDefaultName};
-
+                console.log(query);
                 ServiceCtrl.search(0,query, function(err, services){  
                          
                     if(err) return next(err);

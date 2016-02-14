@@ -37,8 +37,9 @@ Service_NameSchema.statics={
 		var self = this;
 		query.exec(function(err, defaultNames){
 			if(err) return cb(err);
+			console.log(params);
 			if(params.name != null || params.name != ""){
-				//var name = Utils.removeAccents(params.name);
+				var name = Utils.removeAccents(params.name);
 				self.find({'keywords': Utils.likeLowerCase(name)}).exec(function(err, defaultNameKeyword){
 					
 					if(err) return cb(err);

@@ -48,6 +48,8 @@ Utils.removeAccents = function (text)
         'Ò':'O','Ó':'O','Ô':'O','Ö':'O',
         'Ù':'U','Ú':'U','Û':'U','Ü':'U',
     };
+    if(text == null)
+        return text;
     
     return text.replace(/[ÀÁÂÃÄÅÆÈÉÊËÌÍÎÒÓÔÖÙÚÛÜ]/gi, function(m)
     {

@@ -150,7 +150,7 @@ Controller.searchThings = function(params, cb){
                 var query = {"id_name":idDefaultName};
 
                 ServiceCtrl.search(0,query, function(err, services){  
-                console.log(services);          
+                         
                     if(err) return next(err);
                     if(services != "Services not found"){
                         return next(null, services);

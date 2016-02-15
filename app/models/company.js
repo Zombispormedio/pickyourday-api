@@ -617,7 +617,7 @@ CompanySchema.statics={
 			var count=0;
 			var avg=0;
 			var reviesTotal=0;
-			for(var i=0; i<6; i++){
+			for(var i=1; i<6; i++){
 				var posReview=-1;
 				for(var x=0; x<reviewsRating.length; x++)
 					if(reviewsRating[x]._id == i){

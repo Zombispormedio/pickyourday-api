@@ -45,7 +45,7 @@ Service_NameSchema.statics={
 					if(defaultNameKeyword.length > 0)
 						for(var i=0; i<defaultNameKeyword.length; i++){
 							//if (!in_array(defaultNameKeyword[i], defaultNames))
-								 defaultNames[defaultNames.length-1] = defaultNameKeyword[i];
+								 defaultNames[defaultNames.length] = defaultNameKeyword[i];
 
 						}
 

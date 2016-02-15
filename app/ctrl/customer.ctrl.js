@@ -121,12 +121,12 @@ Controller.delete = function (id, cb) {
 
 Controller.searchThings = function(params, cb){
     things = {};
-    things["prepicks"] = {};
-    things["companies"] = {};
+    things["prepicks"] = [];
+    things["companies"] = [];
     //busca por nombre de empresa
 
     //busca por keywords
-    things["services"] = {};
+    things["services"] = [];
     //busca por nombre de servicios y luego por keywords
     /*ServiceCtrl.search(0, params, function(err, services){
         if(err) return cb(err);
@@ -147,13 +147,10 @@ Controller.searchThings = function(params, cb){
                 idDefaultNames = names.map(function(a){  
                     return a._id;
                 }); 
-            else if(names)
-                idDefaultNames = names._id;
-
- 
+            
             async.map(idDefaultNames, function(idDefaultName, next){
                 var query = {"id_name":idDefaultName};
-                console.log(query);
+                           
                 ServiceCtrl.search(0,query, function(err, services){  
                          
                     if(err) return next(err);
@@ -164,9 +161,13 @@ Controller.searchThings = function(params, cb){
                 })
             }, function(err, result){
                 if(err) return callback(err);
-                for(var i=0; i<result.length; i++)
+                
+                for(var i=0; i<result.length; i++){
                     if(result[i] != null)
-                        things.services = result[i];
+                        things.services.push(result[i]);
+                                      
+                }
+
                 callback(null, things);
             }) 
         }

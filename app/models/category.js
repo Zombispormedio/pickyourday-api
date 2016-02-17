@@ -35,11 +35,9 @@ CategorySchema.statics={
 
 		    if(!category)
 				return cb("Category not found");
-          
-			for(var key in params){
-				category[key] = params[key];
-			}
-            
+                
+                
+            	category=Utils.mergeMongoObjects(category, params);
            
 
 			category.save(function(err, result){

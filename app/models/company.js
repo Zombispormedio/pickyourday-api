@@ -24,7 +24,7 @@ var RatingSchema = new Schema({
 var DateTime = new Schema({
 	initDate: String,
 	endDate: String,
-})
+});
 
 var DateTable = new Schema({
 	times: [DateTime],
@@ -176,12 +176,7 @@ CompanySchema.statics={
 		
 		    if(!company)
 				return cb("Company not found");
-/*
-			for(var key in company){
-				delete company[key];
-				company[key] = params[key];
-			}
-			*/
+
 			company=Utils.mergeMongoObjects(company, params);
 		
 		
@@ -209,8 +204,8 @@ CompanySchema.statics={
 	    	{$addToSet: {review: review}}, function(err, result){
 
 					if(err) return cb(err);	
-					if(result.nModified == 0)
-						return cb("El usuario ya ha hecho un review");
+					if(result.nModified === 0){return cb("El usuario ya ha hecho un review");}
+						
 					cb();
 	    });
 	},
@@ -246,7 +241,7 @@ CompanySchema.statics={
 			});
 
 
-		})
+		});
 	},
 
 	searchService: function(id_company, params, cb){
@@ -292,11 +287,12 @@ CompanySchema.statics={
 				case 'lessRating':
 					lessRating=true;
 					break;
-				default : 
+				default : {
 					var field = "services."+key;
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
+                }
 
 			}
 		}
@@ -322,7 +318,7 @@ CompanySchema.statics={
 					}
 				}
 
-			if(id_company != 0){		
+			if(id_company !== 0){		
 				var services = companyService.map(function(a){
 					return a.services;
 				});
@@ -348,7 +344,7 @@ CompanySchema.statics={
 			
 			cb(null, service);
 
-		})
+		});
 	},
 
 	modifyService: function(id_company, id, params, cb){
@@ -386,8 +382,8 @@ CompanySchema.statics={
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
-			})
-		})
+			});
+		});
 	},
 
 	newPromotion: function(id_company, params, cb){
@@ -404,7 +400,7 @@ CompanySchema.statics={
 			});
 
 
-		})
+		});
 	},
 
 	searchPromotion: function(id_company, params, cb){
@@ -468,7 +464,7 @@ CompanySchema.statics={
 				return cb("Promotion not found");
 			cb(null, promotion);
 
-		})
+		});
 	},
 
 	modifyPromotion: function(id_company, id, params, cb){
@@ -503,12 +499,12 @@ CompanySchema.statics={
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
-			})
-		})
+			});
+		});
 	},
 
     newResource: function(id_company, params, cb){
-    	var resource = {};
+    	
 
     	this.findOne({_id: id_company}, function(err, company){
 			if(err)return cb(err);
@@ -521,7 +517,7 @@ CompanySchema.statics={
 				if(err) return cb(err);				
 				cb();
 			});
-		})
+		});
     },
 
     deleteResource: function(id_company, id, cb){
@@ -536,11 +532,11 @@ CompanySchema.statics={
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
-			})
-		})
+			});
+		});
 	},
-	modifyPromotion: function(id_company, id, params, cb){
-		this.findOne({_id: user}, function(err, company){
+	modifyResource: function(id_company, id, params, cb){
+		this.findOne({_id: id_company}, function(err, company){
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found");
 
@@ -567,9 +563,9 @@ CompanySchema.statics={
 			var resource = company.resource.id(id);
 			if(!resource)
 				return cb("Promotion not found");
-			cb(null, promotion);
+			cb(null, resource);
 
-		})
+		});
 	},
 
     searchResources: function(id_company, params, cb){
@@ -608,12 +604,11 @@ CompanySchema.statics={
 		           count: { $sum: 1 },		          
 		        }
 		    },
-	    ]
-		)
+	    ]);
 
 		query.exec(function(err, reviewsRating){
 			if(err) return cb(err);
-			reviewsFormat = {};
+			var reviewsFormat = {};
 			var count=0;
 			var avg=0;
 			var reviesTotal=0;
@@ -634,16 +629,16 @@ CompanySchema.statics={
 			}
 			if(reviesTotal > 0)
 				avg = avg/reviesTotal;
-			reviewsFormat.avg = Utils.round(avg, 0.5);;
+			reviewsFormat.avg = Utils.round(avg, 0.5);
 
-			cb(null, reviewsFormat)
+			cb(null, reviewsFormat);
 		});
 	},
 
 	formatServideRating: function(id_company, id_service, cb){
 		this.findServiceById(id_company, id_service, function(err, service){
 
-			if(service.rating.length != 0){
+			if(service.rating.length !== 0){
 				var rate=0;
 
 				for(var rating in service.rating)
@@ -652,7 +647,7 @@ CompanySchema.statics={
 				rate = rate / service.rating.length;
 				return cb(null, Utils.round(rate));
 			}else return cb(null, 0);
-		})
+		});
 	}
 
 
@@ -663,7 +658,7 @@ function getServiceRating(services){
 	var rate =0;
 	var rates=[];
 	for(var service in services){
-		if(services[service].services.rating.length != 0){
+		if(services[service].services.rating.length !== 0){
 			for(var rating in services[service].services.rating){
 				rate += services[service].services.rating[rating].rating;
 			}

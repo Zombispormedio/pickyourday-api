@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-
+var Utils = require(C.lib+"utils");
 
 
 var PreferencesSchema = new Schema({
@@ -17,7 +17,11 @@ var PreferencesSchema = new Schema({
         enum: ["keywords", "yes_no", "options"]
     },
         text:String,
-        options:[String]
+        options:[String],
+        relations:[{
+            question:Schema.ObjectId,
+            answer:String
+        }]
     }]
 
 
@@ -39,10 +43,7 @@ PreferencesSchema.statics={
             if(!preference)
                 return cb("Company not found");
 
-            for(var key in params){
-				  preference[key]=null;
-                preference[key] = params[key];
-            }
+          	preference=Utils.mergeMongoObjects(preference, params);
 
             preference.save(function(err){
                 if(err) return cb(err);

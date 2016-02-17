@@ -1,15 +1,15 @@
-var mongoose = require("mongoose");
-
 var C = require("../../config/config");
 
-var Utils = require(C.lib+"utils");
-
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+
+
+var Utils = require(C.lib+"utils");
 var CustomType = require("./customType.js");
 var GeolocationType = CustomType.GeolocationSchema;
 var ImageType=CustomType.ImageSchema;
 
-var C=require("../../config/config");
+
 
 var RatingSchema = new Schema({
 	id_customer: {

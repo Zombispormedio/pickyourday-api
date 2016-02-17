@@ -1,10 +1,10 @@
-var mongoose = require("mongoose");
-
-var Schema = mongoose.Schema;
-var GeolocationType = require("./customType.js").GeolocationSchema;
-
 var C = require("../../config/config");
 
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
+
+
+var GeolocationType = require("./customType.js").GeolocationSchema;
 var Utils = require(C.lib + "utils");
 
 var EventSchema = new Schema({

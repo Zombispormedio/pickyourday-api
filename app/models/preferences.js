@@ -15,7 +15,7 @@ var PreferencesSchema = new Schema({
     questions:[{
         type: {
         type: String,
-        enum: ["keywords", "yes_no", "options"]
+        enum: ["keywords", "yes_no", "options", "date"]
     },
         text:String,
         options:[String],

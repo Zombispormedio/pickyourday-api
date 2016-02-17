@@ -1,7 +1,7 @@
+var C = require("../../config/config");
+
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-
-var C = require("../../config/config");
 
 var Utils=require(C.lib+"utils");
 var CustomType = require("./customType.js");

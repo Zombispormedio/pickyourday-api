@@ -1,8 +1,9 @@
-var mongoose = require("mongoose");
+var C = require("../../config/config");
 
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var crypto = require("crypto");
-var C = require("../../config/config");
+
 
 var Utils = require(C.lib + "utils");
 

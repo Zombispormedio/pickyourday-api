@@ -1,3 +1,4 @@
+var C = require("../../config/config");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var Utils = require(C.lib+"utils");
@@ -52,5 +53,5 @@ PreferencesSchema.statics={
 
         });
     }
-}
+};
 module.exports = mongoose.model("Preferences", PreferencesSchema);

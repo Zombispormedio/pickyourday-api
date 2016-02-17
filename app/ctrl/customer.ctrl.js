@@ -149,9 +149,8 @@ Controller.searchThings = function(params, cb){
                 }); 
             
             async.map(idDefaultNames, function(idDefaultName, next){
-                var query = {"id_name":idDefaultName};
-                           
-                ServiceCtrl.search(0,query, function(err, services){  
+                params.id_name = idDefaultName;        
+                ServiceCtrl.search(0,params, function(err, services){  
                          
                     if(err) return next(err);
                     if(services != "Services not found"){
@@ -164,12 +163,12 @@ Controller.searchThings = function(params, cb){
                 
                 for(var i=0; i<result.length; i++){
                     if(result[i] != null)
-                        things.services.push(result[i]);
-                                      
+                        things.services.push(result[i]);                                     
                 }
-
                 callback(null, things);
             }) 
+        }, function getCompanies(things, callback){
+            CompanyCtrl.searchCompany
         }
     
 

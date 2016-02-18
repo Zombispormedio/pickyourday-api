@@ -1,8 +1,6 @@
 var express = require("express");
 var C = require("./config/config.js");
 
-
-
 var app = express();
 
 

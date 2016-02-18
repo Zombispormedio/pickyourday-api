@@ -168,7 +168,11 @@ Controller.searchThings = function(params, cb){
                 callback(null, things);
             }) 
         }, function getCompanies(things, callback){
-            CompanyCtrl.searchCompany
+            CompanyCtrl.search(query, function(err, companies){
+                if(err) return callback(err);
+                things.companies = companies;
+                callback(null, things);
+            })
         }
     
 

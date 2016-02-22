@@ -80,7 +80,7 @@ var Resource = new Schema({
 	phone: String,
 
 	
-	services: [ServiceSchema],
+	services: [Schema.ObjectId],
 	initDate: Date
 });
 
@@ -106,7 +106,6 @@ var CompanySchema = new Schema({
 	keywords: [String],
 	web: String,
 	location:{
-        name:String,
 		country: String,
 		province: String,
 		city: String,
@@ -135,12 +134,17 @@ var CompanySchema = new Schema({
 
 CompanySchema.statics={
 	search:function(params, cb){ 
-		var query = this.find({});
+		params = Utils.filterParams(params);
+		var query;
+		if(params.category != null && params.category.length > 0)
+			query =this.find({ 'category': { $in: params.category } });
+		else
+			query = this.find({});
 		for(var key in params){
 			switch(key){
 				case 'cif':
 				case 'email':
-				case 'category':
+				case 'category':				
 					query.where(key).equals(params[key]);
 					break;
 				case 'beforeRegister':
@@ -161,13 +165,24 @@ CompanySchema.statics={
 				case 'afterAccess':
 					query.where('lastAccess').gt(params[key]);
 					break;
-				default:query.where(key).equals(Utils.like(params[key]));
+				case 'keywords':
+					query.where(key).equals(Utils.likeLowerCase(params[key]));
+					break;
+				case 'idCompanies':
+					query.where( {'_id': { $nin: params.idCompanies }});
+					break;
+				default:
+					query.where(key).equals(Utils.like(params[key]));
 
 			}
 			
 		}
-		
-		query.exec(cb);	
+	
+		query.exec(function(err, companies){
+			if(err) return cb(err);
+
+			cb(null, companies);
+		});	
 	},
     
    modify:function(id_company, params, cb){
@@ -245,8 +260,8 @@ CompanySchema.statics={
 	},
 
 	searchService: function(id_company, params, cb){
-
 		var query;
+		params = Utils.filterParams(params);
 		if(id_company != 0)
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
 		else
@@ -287,6 +302,9 @@ CompanySchema.statics={
 				case 'lessRating':
 					lessRating=true;
 					break;
+				case 'category':				
+					query.where('category').equals(params[key]);
+					break;
 				default : {
 					var field = "services."+key;
 					var match={};
@@ -324,6 +342,8 @@ CompanySchema.statics={
 				});
 				return cb(null, services);
 			}
+
+
 			
 			cb(null, companyService);
 		});
@@ -560,7 +580,7 @@ CompanySchema.statics={
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found");
 
-			var resource = company.resource.id(id);
+			var resource = company.resources.id(id);
 			if(!resource)
 				return cb("Promotion not found");
 			cb(null, resource);
@@ -592,7 +612,38 @@ CompanySchema.statics={
 			});
 			cb(null, resources);
 		});
-	},	
+	},
+
+	asignService: function(id_company, id_service, id_resource , cb){
+		this.findOne({_id: id_company}, function(err, company){
+			if(err) return cb(err);
+		    if(!company)return cb("Company not found");
+
+	    	var resource = company.resources.id(id_resource);
+	    	if(!resource) return cb("Resource not found");
+	    	if(resource.services.indexOf(id_service) == -1)
+	    		resource.services.push(id_service);
+	    	else
+	    		return cb("Service already asigned");
+			company.save(function(err){
+				if(err) return cb(err);				
+				cb();
+			});
+
+		});
+	},
+
+	getServicesAsigned: function(id_company, id_resource, cb){
+		this.findOne({_id: id_company}, function(err, company){
+			if(err) return cb(err);
+		    if(!company)return cb("Company not found");
+
+	    	var resource = company.resources.id(id_resource);
+	    	if(!resource) return cb("Resource not found");
+	    	cb(null, resource.services);
+			
+		});
+	},
 
 	formatReviews: function(id_company, cb){
 		var query = this.aggregate(

@@ -88,6 +88,17 @@ Utils.round = function(value, step) {
     return Math.round(value * inv) / inv;
 }
 
+Utils.filterParams= function(params){
+    var newParams = {};
+    for(var key in params){
+        if(params[key] != undefined)
+            newParams[key] = params[key];
+    }
+      
+
+    return newParams;
+}
+
 
 
 module.exports = Utils;

@@ -73,6 +73,7 @@ Controller.new= function(user, body, cb){
 Controller.search = function(user, query, cb){
 	CompanyModel.searchService(user, query, function(err, services){
 		if(err) return cb(err);
+		
 
 		if(!services || services.length==0 )
 			return cb(null, "Services not found");

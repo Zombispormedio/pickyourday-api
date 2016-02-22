@@ -286,6 +286,8 @@ Controller.newRateService = function(user, body, cb){
 };
 
 
+
+
 //*********************PICKS
 Controller.searchPick=function(company, params, cb){
 	params["company.id_company"] = company;
@@ -374,6 +376,29 @@ Controller.getResourceById=function(company, id, cb){
 	ResourceCtrl.findById(company, id, cb);
 }
 
+Controller.asignService = function(company, params, cb){
+	if (!company || !params.idService || !params.idResource ) return cb("Fields not Filled");
+	CompanyModel.asignService(company, params.idService, params.idResource, cb);
+}
+
+Controller.getServicesAsigned = function(company, params, cb){
+	if(!company || !params || !params.idResource) return cb("Fields not filled");
+
+	CompanyModel.getServicesAsigned(company, resource, function(err, idsService){
+		services = [];
+		async.map(idsService, function(idService, callback){
+			ServiceCtrl.findById(company, idService,function(err, service){
+				if(err) return callback(err);
+				services.push(service);
+				callback(null, services);
+			})
+		}, function(err, result){
+			if(err) return cb(err);
+			
+			cb(null, result);
+		})
+	})
+}
 
 
 

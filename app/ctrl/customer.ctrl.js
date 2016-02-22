@@ -137,7 +137,6 @@ Controller.searchThings = function(params, cb){
         function getDefaultName(callback) {
             ServiceCtrl.searchServiceName(params, function(err, default_names){
                 if(err) return callback(err);
-
                 callback(null, things, default_names);
             });
         }, function getServicesByDefaultName(things, names, callback){
@@ -147,11 +146,12 @@ Controller.searchThings = function(params, cb){
                 idDefaultNames = names.map(function(a){  
                     return a._id;
                 }); 
-            
+          
             async.map(idDefaultNames, function(idDefaultName, next){
-                params.id_name = idDefaultName;        
-                ServiceCtrl.search(0,params, function(err, services){  
-                         
+                var paramsTemp = {};
+                paramsTemp.id_name = idDefaultName;  
+                paramsTemp.category = params.category;     
+                ServiceCtrl.search(0,paramsTemp, function(err, services){                           
                     if(err) return next(err);
                     if(services != "Services not found"){
                         return next(null, services);
@@ -165,13 +165,42 @@ Controller.searchThings = function(params, cb){
                     if(result[i] != null)
                         things.services.push(result[i]);                                     
                 }
+
                 callback(null, things);
             }) 
-        }, function getCompanies(things, callback){
-            CompanyCtrl.search(query, function(err, companies){
+        }, function getCompaniesByCategory(things, callback){
+            var paramsTemp = {};
+            paramsTemp.category = params.category;
+            paramsTemp.name = params.name;  
+            paramsTemp.location = params.location;   
+            things.params = paramsTemp;
+            CompanyCtrl.search(paramsTemp, function(err, companies){
                 if(err) return callback(err);
-                things.companies = companies;
-                callback(null, things);
+                if(companies !='No companies')
+                    things.companies = companies;
+                callback(null, things) 
+            })
+            
+        }, function getCompaniesByKeywords(things, callback){
+            var paramsTemp = {};
+            paramsTemp.category = params.category;
+            paramsTemp.keywords = params.name;   
+            paramsTemp.location = params.location; 
+            if(things.companies != undefined && things.companies.length > 0){
+                idCompanies = things.companies.map(function(a){  
+                    return a._id;
+                });   
+                paramsTemp.idCompanies = idCompanies; 
+            }                      
+            CompanyCtrl.search(paramsTemp, function(err, companies){
+                if(err) return callback(err);
+
+                 if(companies !='No companies')
+                    for(var i=0; i<companies.length; i++){
+                        if(companies[i] != null)
+                            things.companies.push(companies[i]);                                     
+                    }
+                callback(null, things) 
             })
         }
     
@@ -180,10 +209,6 @@ Controller.searchThings = function(params, cb){
         if (err) return cb(err);
         cb(null, data);
     });
-
-    //busca por keywords
-
-
 
     
 }

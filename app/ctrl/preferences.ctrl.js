@@ -141,7 +141,7 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
 
     ], function (err, result) {
         if (err) return cb(err);
-        cb(result);
+        cb(null, result);
     });
 };
 

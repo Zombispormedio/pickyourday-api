@@ -72,12 +72,11 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
 
             PreferencesModel.find({}, function (err, pref) {
                 if (err) return next(err);
-                console.log(pref);
+            
                 worker.pref = pref;
                 next(null, worker);
             });
         }, function reducePreferencesByCustomer(worker, next) {
-
 
             worker.pref.forEach(function (pref) {
                 pref.questions = pref.questions.reduce(function (prev, question) {
@@ -105,8 +104,6 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
                         } else {
                             quest_dump = false;
                         }
-
-
                     }
 
                     if (quest_dump) {

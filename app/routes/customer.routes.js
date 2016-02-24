@@ -139,8 +139,8 @@ router.route("/service")
             if(err) Response.printError(res, err);
                 else
             Response.printSuccess(res,services);
-        })
-    })
+        });
+    });
 
 router.route("/company")
     .get(AuthController.checkCustomer(),function(req,res){
@@ -148,8 +148,8 @@ router.route("/company")
             if(err) Response.printError(res, err);
                 else
             Response.printSuccess(res, services);
-        })
-    })
+        });
+    });
 
 router.route("/search")
     .get(AuthController.checkCustomer(),function(req,res){
@@ -157,8 +157,26 @@ router.route("/search")
             if(err) Response.printError(res, err);
                 else
             Response.printSuccess(res, things);
-        })
-    })
+        });
+    });
+    
+    
+    router.route("/preferences")
+    .get(AuthController.checkCustomer(),function(req,res){
+        CustomerCtrl.getCustomPreferences(req.user, function(err, preferences){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, preferences);
+        });
+    });
+    
+    
+    
+    
+    
+    
+    
+    
 
 router.route("/service/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
@@ -167,7 +185,7 @@ router.route("/service/:id")
             else
                 Response.printSuccess(res,  event);
         });
-    })
+    });
 router.route("/company/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.getCompanyById(req.params.id, function (err, event) {
@@ -175,7 +193,7 @@ router.route("/company/:id")
             else
                 Response.printSuccess(res,  event);
         });
-    })
+    });
 
 router.route("/event/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
@@ -191,7 +209,7 @@ router.route("/event/:id")
             else
                 Response.printSuccess(res, "Event modified");
         });
-    })
+    });
 
 router.route("/prePick/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
@@ -200,7 +218,7 @@ router.route("/prePick/:id")
             else
                 Response.printSuccess(res,  prePick);
         });
-    })
+    });
 
 
 router.route("/pick/:id")

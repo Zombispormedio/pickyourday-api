@@ -40,9 +40,10 @@ var PrepickSchema = new Schema({
 });
 
 var CustomerSchema = new Schema({
-    preferences: {
-
-    },
+    preferences: [{
+        question: Schema.ObjectId,
+        answer:{}
+    }],
     email: {
         type: String,
         unique: true,

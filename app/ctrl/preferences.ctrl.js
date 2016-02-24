@@ -1,10 +1,11 @@
+var _=require("lodash");
+var async=require("async");
 
 var C=require("../../config/config");
-
 var PreferencesModel = require(C.models+"preferences");
+
+
 var Controller = {};
-
-
 
 Controller.new = function (body, cb) {
     if (!body || !body.name_group) return cb("Fields not Filled");
@@ -57,8 +58,55 @@ Controller.delete = function(id, cb){
         if(!preferences)
             return cb("Preferences not deleted");
         cb();
-    })
-}
+    });
+};
+
+
+Controller.getPreferencesByCustomer=function(customer, cb){
+    var customer_pref=customer.preferences;
+    
+    async.waterfall([
+        
+        function getPreferences(next){
+            var worker={};
+            
+            PreferencesModel.find({}, function(err, pref){
+                if(err)return next(err);
+                
+                worker.pref=pref.toObject();
+                next(null, worker);
+            });
+        }, function reducePreferencesByCustomer(worker, next){
+          
+           
+           worker.pref.forEach(function(pref){
+               pref.questions=pref.questions.reduce(function(prev, question){
+        
+                   if(question.relations.length!==0 && customer_pref.length>0){
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                   }else{
+                       prev.push(question);
+                   }
+                     
+                   return prev;
+                   
+               });
+   
+           });
+           
+        }
+        
+    ], function(err, result){
+        if(err)return cb(err);
+        cb(result);
+    });
+};
 
 
 

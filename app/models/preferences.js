@@ -21,7 +21,8 @@ var PreferencesSchema = new Schema({
         options:[String],
         relations:[{
             question:Schema.ObjectId,
-            answer:{}
+            answer:{},
+            not_equality:Boolean
         }]
     }]
 

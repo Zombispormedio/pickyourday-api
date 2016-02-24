@@ -81,16 +81,25 @@ Controller.getPreferencesByCustomer=function(customer, cb){
            
            worker.pref.forEach(function(pref){
                pref.questions=pref.questions.reduce(function(prev, question){
-        
+                    var quest_dump=true;
                    if(question.relations.length!==0 && customer_pref.length>0){
+                       var rels=question.relations;
+                       var i=0;
+                       while(i<rels.length&&quest_dump===true){
+                           var relation=rels[i];
+                           var customer_quest=_.find(customer_pref, function(o){return o.question===relation.question;});
+                           
+                           if(relation.answer!==customer_quest.answer){
+                              quest_dump=false;
+                           }
+                           
+                           i++;
+                       }
                        
-                       
-                       
-                       
-                       
-                       
-                       
-                   }else{
+                 
+                   }
+                   
+                   if(quest_dump){
                        prev.push(question);
                    }
                      

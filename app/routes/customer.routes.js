@@ -168,6 +168,13 @@ router.route("/search")
                 else
             Response.printSuccess(res, preferences);
         });
+    })
+    .post(AuthController.checkCustomer(), function(req,res){
+        CustomerCtrl.addOrUpdatePreferences(req.user, req.body, function(err, preferences){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, preferences);
+        });
     });
     
     

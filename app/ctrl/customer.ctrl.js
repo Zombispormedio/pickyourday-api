@@ -326,6 +326,36 @@ Controller.getCustomPreferences=function(id, cb){
     });
 };
 
+Controller.addOrUpdatePreferences=function(customer_id, pair, cb){
+    console.log(pair);
+   async.waterfall([
+       function add(next){
+           CustomerModel.update(
+               {_id:customer_id, 'preferences.question':{$ne:pair.question}},
+               {$addToSet:{preferences:pair}}, function(err, result){
+                if(err)return next(err);
+                console.log(result);
+                
+                next(null, result.nModified);   
+               });
+       },function(modified,next ){
+           if(modified===1)next();
+               CustomerModel.update(
+                   {_id:customer_id, "preferences.question":pair.question},
+                   {$set:{"preferences.$":pair}},function(err){
+                       if(err)return next(err);
+                       next();
+                   }
+               );
+           
+       }
+       
+   ], function(err){
+       if(err)return cb(err);
+       cb(null, "Saved Preference");
+   });
+};
+
 
 
 

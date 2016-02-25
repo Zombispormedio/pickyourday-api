@@ -72,24 +72,28 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
 
             PreferencesModel.find({}, function (err, pref) {
                 if (err) return next(err);
-            
-                worker.pref = pref;
+               
+                worker.pref = pref.map(function(a){return a.toObject();});
                 next(null, worker);
             });
         }, function reducePreferencesByCustomer(worker, next) {
 
             worker.pref.forEach(function (pref) {
-                pref.questions = pref.questions.reduce(function (prev, question) {
+               pref.questions = pref.questions.reduce(function (prev, question) {
+                    
+              
                     var quest_dump = true;
                     if (question.relations.length > 0) {
+                           
                         if (customer_pref.length > 0) {
                             var rels = question.relations;
                             var i = 0;
                             while (i < rels.length && quest_dump === true) {
                                 var relation = rels[i];
-                                var customer_quest = _.find(customer_pref, function (o) { return o.question === relation.question; });
-
-                                if (customer_pref !== void 0) {
+                          
+                                var customer_quest = _.find(customer_pref, function (o) { return  relation.question.equals(o.question); });
+                          
+                                if (customer_quest !== void 0) {
                                     //Type date to do
                                     if (relation.answer !== customer_quest.answer) {
                                         quest_dump = false;
@@ -101,6 +105,7 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
 
                                 i++;
                             }
+                         
                         } else {
                             quest_dump = false;
                         }
@@ -113,6 +118,7 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
                     return prev;
 
                 }, []);
+               
 
             });
 
@@ -123,16 +129,20 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
             worker.pref.forEach(function (pref) {
 
                 pref.questions.forEach(function (element) {
-                    var id=element._id;
-                    
-                    var index=_.find(customer_pref, function(o){return o.question===id;});
-                    
-                    if(index!==void 0){
-                        element.answer=index.answer;
+                  
+
+                    var index = _.find(customer_pref, function (o) { return  element._id.equals(o.question); });
+                
+                    if (index !== void 0) {
+                        element.answer = index.answer;
+                       
                     }
                 });
+                   
 
             });
+            
+            next(null, worker.pref);
 
         }
 
@@ -141,6 +151,7 @@ Controller.getPreferencesByCustomer = function (customer, cb) {
         cb(null, result);
     });
 };
+
 
 
 

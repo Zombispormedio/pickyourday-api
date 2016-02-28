@@ -20,7 +20,7 @@ router.route("")
         AuthController.register(2, req.body, req.user, function (err) {
             if (err) {
                 CompanyCtrl.rollback(req.user);
-                Response.printError(res, err)
+                Response.printError(res, err);
             }
             else
                 Response.printSuccess(res, req.showUser);
@@ -43,7 +43,14 @@ router.route("/profile")
             else
                 Response.printSuccess(res, company);
         });
-    });
+    })
+    .put(AuthController.checkCompany(), function(req, res) {
+        CompanyCtrl.updateProfile(req.user, req.body, function (err, company) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, company);
+        });
+    }) ;
 
 router.route("/pick")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -58,7 +65,7 @@ router.route("/pick")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  "Pick deleted");
-        })
+        });
     });
 
 router.route("/serviceName")
@@ -67,8 +74,8 @@ router.route("/serviceName")
             if(err) Response.printError(res, err);
                 else
             Response.printSuccess(res, serviceNames);
-        })
-    })
+        });
+    });
 
 
 router.route("/service")
@@ -91,7 +98,7 @@ router.route("/service")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  "Service deleted");
-        })
+        });
     });
 
 router.route("/resource")
@@ -114,7 +121,7 @@ router.route("/resource")
 			if (err) Response.printError(res, err);
 			else
 				Response.printSuccess(res, "Resource deleted");
-		})
+		});
 	});
 router.route("/servicesAsigned")
     .get(AuthController.checkCompany(), function(req, res){
@@ -123,7 +130,7 @@ router.route("/servicesAsigned")
             else
                 Response.printSuccess(res,  services);
         });
-    })
+    });
 
 router.route("/asignService")
     .post(AuthController.checkCompany(), function(req, res){
@@ -132,7 +139,7 @@ router.route("/asignService")
             else
                 Response.printSuccess(res,  "Service asigned");
         });
-    })
+    });
 
 router.route("/promotion")
     .post(AuthController.checkCompany(), function(req, res){
@@ -154,8 +161,8 @@ router.route("/promotion")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  "Promotion deleted");
-        })
-    })
+        });
+    });
 
 router.route("/category")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -164,7 +171,7 @@ router.route("/category")
                 else
             Response.printSuccess(res, categories);
         } );
-    })
+    });
 
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -173,7 +180,7 @@ router.route("/pick/:id")
             else
                 Response.printSuccess(res, service);
         });
-    })
+    });
 
 router.route("/service/:id")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -189,7 +196,7 @@ router.route("/service/:id")
             else
                 Response.printSuccess(res, "Service modified");
         });
-    })
+    });
 
 router.route("/resource/:id")
 	.get(AuthController.checkCompany(), function (req, res) {
@@ -205,7 +212,7 @@ router.route("/resource/:id")
 			else
 				Response.printSuccess(res,  "Resource modified");
 		});
-	})	
+	});	
 
 router.route("/promotion/:id")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -221,7 +228,7 @@ router.route("/promotion/:id")
             else
                 Response.printSuccess(res,"Promotion modified");
         });
-    })
+    });
 
 router.route("/:id")
     .get(AuthController.checkAdmin(), function(req, res){

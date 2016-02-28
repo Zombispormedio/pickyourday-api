@@ -1,4 +1,4 @@
-
+var _=require("lodash");
 var C=require("../../config/config");
 
 var CompanyModel = require(C.models+"company");
@@ -94,7 +94,7 @@ Controller.search = function(query, cb){
 					CompanyModel.formatReviews(comp._id, function(err, reviews){
 						comp.review_ratings= reviews;
 						callback(null, comp);
-					})
+					});
 				}
 			],function(err, result){
 				if(err) return next(err);
@@ -261,7 +261,7 @@ Controller.delete = function (id, cb) {
     });
 
 
-}
+};
 
 
 
@@ -273,7 +273,7 @@ Controller.newReview = function(user, body, cb){
 	CompanyModel.newReview(user, body, function(err){
 		if(err) return cb(err);
 		cb();
-	})
+	});
 };
 
 Controller.newRateService = function(user, body, cb){
@@ -347,39 +347,39 @@ Controller.deletePromotion=function(company, params, cb){
 
 Controller.getPromotionById=function(company,id, cb){
 	PromotionCtrl.findById(company, id, cb);
-}
+};
 
 //*******************CATEGORY
 Controller.searchCategory=function(params, cb){
 	CategoryCtrl.search(params, cb);
-}
+};
 
 
 //*******************RESOURCE
 Controller.newResource = function(company, params, cb){
 	ResourceCtrl.new(company, params, cb);
-}
+};
 
 Controller.searchResource = function(company, params, cb){
 	ResourceCtrl.search(company, params, cb);
-}
+};
 
 Controller.modifyResource = function(company, params, cb){
 	ResourceCtrl.modify(company, params, cb);
-}
+};
 
 Controller.deleteResource=function(company, params, cb){
 	ResourceCtrl.delete(company, params, cb);
-}
+};
 
 Controller.getResourceById=function(company, id, cb){
 	ResourceCtrl.findById(company, id, cb);
-}
+};
 
 Controller.asignService = function(company, params, cb){
 	if (!company || !params.idService || !params.idResource ) return cb("Fields not Filled");
 	CompanyModel.asignService(company, params.idService, params.idResource, cb);
-}
+};
 
 Controller.getServicesAsigned = function(company, params, cb){
 	if(!company || !params || !params.idResource) return cb("Fields not filled");
@@ -391,14 +391,14 @@ Controller.getServicesAsigned = function(company, params, cb){
 				if(err) return callback(err);
 				services.push(service);
 				callback(null, services);
-			})
+			});
 		}, function(err, result){
 			if(err) return cb(err);
 			
 			cb(null, result);
-		})
-	})
-}
+		});
+	});
+};
 
 
 
@@ -406,6 +406,21 @@ Controller.rollback=function(id){
 	CompanyModel.findById(id,function(err, company){
 		company.remove();
 	});
-}
+};
+
+
+
+Controller.updateProfile=function(company_id, params, cb){
+    var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location"]);
+    
+    CompanyModel.update({_id:company_id}, f_params, function(err, result){
+       if(err)return result;
+       cb(null, result); 
+    });
+};
+
+
+
+
 
 module.exports = Controller;

@@ -472,7 +472,7 @@ Controller.updateProfile=function(company_id, params, cb){
     CompanyModel.update({_id:company_id}, f_params, function(err, result){
        if(err)return cb(err);
 	   
-	       CompanyModel.findById(company_id, funtion(err, company){
+	       CompanyModel.findById(company_id, function(err, company){
 			   if(err)return cb(err);
 			          cb(null, company); 
 		   });

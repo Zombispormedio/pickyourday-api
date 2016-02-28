@@ -1,6 +1,7 @@
 var C=require("../../config/config");
 var async = require("async");
 var CompanyModel = require(C.models+"company");
+var ServiceCtrl = require(C.ctrl+"service.ctrl");
 var Controller = {};
 
 Controller.new= function(user, body, cb){
@@ -46,7 +47,7 @@ Controller.findById = function(user, id, cb){
 			return cb("Service name not deleted");	
 		cb();
 	})
-}
+};
 
 Controller.search = function(user, query, cb){
 	CompanyModel.searchResources(user, query, function(err, resources){
@@ -54,25 +55,35 @@ Controller.search = function(user, query, cb){
 
 		if(!resources || resources.length==0 )
 			return cb(null, "Resources not found");
-		resources=resources.toObject();
-		async.waterfall([
-			function(callback){
-				services=resources.services;
-				async.map(company.services, function(service, next){
-					
+		
+		async.map(resources, function(resource, next){	
+            if(!resource) return next();
+			async.waterfall([
+				function(callback){				
+					async.map(resource.services, function(service, next){						
+						ServiceCtrl.findById(user, service, function(err, serv){
+							console.log(serv);
+							if(err) return next(err);	
+							service=serv;
+							
+							next(null, service);
+						});
+					},function(err, result){
+						if(err) return callback(err);							
+						resource.services = result;
+						callback(null, resource);
+					});
+				}
+			],function(err, result){
+				if(err) return next(err);
+				//resources.push(result);
+				next(null, result);
+			});
 
-				},function(err, result){
-					if(err) return callback(err);	
-					company.services = result;
-					callback(null, company);
-				});
-			},],function(err, result){
+		}, function(err, result){
 			if(err) return cb(err);
 			cb(null, result);
-		});
-
-		cb(null, resources);
-		
+		});	
 	});
 }
 

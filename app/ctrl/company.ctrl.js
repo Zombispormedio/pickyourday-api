@@ -62,7 +62,7 @@ Controller.search = function(query, cb){
 					});
 
 					},function(err, result){
-						if(err) return cb(err);	
+						if(err) return callback(err);	
 						c.services = result;
 						callback(null, c);
 					});
@@ -94,7 +94,35 @@ Controller.search = function(query, cb){
 					CompanyModel.formatReviews(comp._id, function(err, reviews){
 						comp.review_ratings= reviews;
 						callback(null, comp);
-					});
+					})
+				},
+				function(comp, callback){
+					async.map(comp.resources, function(resource, next){	
+						async.waterfall([
+							function(subCallback){				
+								async.map(resource.services, function(service, next){						
+									ServiceCtrl.findById(comp._id, service, function(err, serv){
+										if(err) return next(err);	
+										service=serv;							
+										next(null, service);
+									});
+								},function(err, result){
+									if(err) return subCallback(err);							
+									resource.services = result;
+									subCallback(null, resource);
+								});
+							}
+						],function(err, result){
+							if(err) return next(err);
+							next(null, result);
+						});
+
+					}, function(err, result){
+						if(err) return callback(err);
+						comp.resources = result;
+						callback(null, comp);
+					});	
+
 				}
 			],function(err, result){
 				if(err) return next(err);
@@ -172,21 +200,49 @@ Controller.findById = function(id, cb){
 					callback(null, comp);
 				})
 			},
-				function(comp, callback){
-					CategoryModel.findById(comp.category)
-					.select('name description color icon image')
-					.exec(function(err, category){
-						if(err) return callback(err);
-						comp.category = category;
-						callback(null, comp);
+			function(comp, callback){
+				CategoryModel.findById(comp.category)
+				.select('name description color icon image')
+				.exec(function(err, category){
+					if(err) return callback(err);
+					comp.category = category;
+					callback(null, comp);
+				});
+			},
+			function(comp, callback){
+				CompanyModel.formatReviews(comp._id, function(err, reviews){
+					comp.review_ratings= reviews;
+					callback(null, comp);
+				})
+			},
+			function(comp, callback){
+				async.map(comp.resources, function(resource, next){	
+					async.waterfall([
+						function(subCallback){				
+							async.map(resource.services, function(service, next){						
+								ServiceCtrl.findById(id, service, function(err, serv){
+									if(err) return next(err);	
+									service=serv;							
+									next(null, service);
+								});
+							},function(err, result){
+								if(err) return subCallback(err);							
+								resource.services = result;
+								subCallback(null, resource);
+							});
+						}
+					],function(err, result){
+						if(err) return next(err);
+						next(null, result);
 					});
-				},
-				function(comp, callback){
-					CompanyModel.formatReviews(comp._id, function(err, reviews){
-						comp.review_ratings= reviews;
-						callback(null, comp);
-					})
-				}
+
+				}, function(err, result){
+					if(err) return callback(err);
+					comp.resources = result;
+					callback(null, comp);
+				});	
+
+			},
 		],function(err, result){
 			if(err) return cb(err);
 			cb(null, result);

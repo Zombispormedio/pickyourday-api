@@ -470,8 +470,13 @@ Controller.updateProfile=function(company_id, params, cb){
     var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords"]);
     
     CompanyModel.update({_id:company_id}, f_params, function(err, result){
-       if(err)return result;
-       cb(null, result); 
+       if(err)return cb(err);
+	   
+	       CompanyModel.findById(company_id, funtion(err, company){
+			   if(err)return cb(err);
+			          cb(null, company); 
+		   });
+
     });
 };
 

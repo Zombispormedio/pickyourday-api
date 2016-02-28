@@ -54,6 +54,22 @@ Controller.search = function(user, query, cb){
 
 		if(!resources || resources.length==0 )
 			return cb(null, "Resources not found");
+		resources=resources.toObject();
+		async.waterfall([
+			function(callback){
+				services=resources.services;
+				async.map(company.services, function(service, next){
+					
+
+				},function(err, result){
+					if(err) return callback(err);	
+					company.services = result;
+					callback(null, company);
+				});
+			},],function(err, result){
+			if(err) return cb(err);
+			cb(null, result);
+		});
 
 		cb(null, resources);
 		

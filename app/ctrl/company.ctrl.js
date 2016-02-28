@@ -377,7 +377,7 @@ Controller.getResourceById=function(company, id, cb){
 };
 
 Controller.asignService = function(company, params, cb){
-	if (!company || !params.idService || !params.idResource ) return cb("Fields not Filled");
+	if (!company || !params.service || !params.resource ) return cb("Fields not Filled");
 	CompanyModel.asignService(company, params.idService, params.idResource, cb);
 };
 

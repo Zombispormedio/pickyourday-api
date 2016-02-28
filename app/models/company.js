@@ -699,7 +699,9 @@ CompanySchema.statics={
 				return cb(null, Utils.round(rate));
 			}else return cb(null, 0);
 		});
-	}
+	},
+
+	
 
 
 };

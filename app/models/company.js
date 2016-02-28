@@ -58,6 +58,7 @@ var PromotionSchema = new Schema({
 	description: String,
 	timesUsed: Number,
 	ownCustomers: Boolean,
+	services:[Schema.ObjectId],
 	dateCreated: Date
 });
 
@@ -79,7 +80,7 @@ var Resource = new Schema({
 	description: String,
 	phone: String,
 
-	
+	picks: [Schema.ObjectId],
 	services: [Schema.ObjectId],
 	initDate: Date
 });
@@ -582,7 +583,7 @@ CompanySchema.statics={
 
 			var resource = company.resources.id(id);
 			if(!resource)
-				return cb("Promotion not found");
+				return cb("Resource not found");
 			cb(null, resource);
 
 		});
@@ -701,7 +702,15 @@ CompanySchema.statics={
 		});
 	},
 
-	
+	asignPick: function(id_company, id_resource, id_pick, cb){
+		this.findResourceById(id_company, id_resource, function(err, resource){
+			if(err) return cb(err);
+		    resource.picks.push(id_pick);
+			cb();
+		});
+	},
+
+
 
 
 };

@@ -32,11 +32,14 @@ SystemSchema.statics = {
         this.findOne({drive:{$ne:null}}, function(err, system){
             if(err)return cb(err);
             var result=system.drive;
+           
 
             var oauth2Client = new OAuth2Client(result.CLIENT_ID, result.CLIENT_SECRET, result.REDIRECT_URL);
             oauth2Client.setCredentials(result.token);
+      
 
             self.refreshTokensDrive(oauth2Client, system, function(err, oauth){
+                
                 if(err)return cb(err);
                 var client={
                     drive:google.drive({ version: 'v2', auth: oauth }),
@@ -56,7 +59,10 @@ SystemSchema.statics = {
         if(expiry_date>now){
             return  cb(null, oauth);
         }
+    
+       
         oauth.refreshAccessToken(function(err, tokens) {
+      
             if(err)return cb(err);
             system.drive.token=tokens;
             oauth.setCredentials(tokens);

@@ -51,6 +51,15 @@ router.route("/profile")
                 Response.printSuccess(res, company);
         });
     }) ;
+    
+router.route("/timetable")
+        .put(AuthController.checkCompany(), function(req, res) {
+        CompanyCtrl.createOrUpdateTimetable(req.user, req.body, function (err, company) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, company);
+        });
+    });
 
 router.route("/pick")
     .get(AuthController.checkCompany(), function (req, res) {

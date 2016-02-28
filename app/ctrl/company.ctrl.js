@@ -79,7 +79,7 @@ Controller.search = function(query, cb){
 						if(err) return cb(err);
 						comp.review=result;
 						callback(null, comp);
-					})
+					});
 				},
 				function(comp, callback){
 					CategoryModel.findById(comp.category)
@@ -94,7 +94,7 @@ Controller.search = function(query, cb){
 					CompanyModel.formatReviews(comp._id, function(err, reviews){
 						comp.review_ratings= reviews;
 						callback(null, comp);
-					})
+					});
 				},
 				function(comp, callback){
 					async.map(comp.resources, function(resource, next){	
@@ -162,7 +162,7 @@ Controller.findById = function(id, cb){
 							if(err) return subNext(err);
 							service.avgRating = avg;
 							subNext(null, service);
-						})
+						});
 					}
 
 					],function(err, result){
@@ -467,11 +467,39 @@ Controller.rollback=function(id){
 
 
 Controller.updateProfile=function(company_id, params, cb){
-    var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location"]);
+    var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords"]);
     
     CompanyModel.update({_id:company_id}, f_params, function(err, result){
        if(err)return result;
        cb(null, result); 
+    });
+};
+
+
+Controller.createOrUpdateTimetable=function(company_id, params, cb){
+    async.waterfall([
+        function add(next){
+            CustomerModel.update(
+              {_id:company_id, 'dateTable.day':{$ne:params.day}},
+              {$addToSet:{dateTable:params}}, function(err, result){
+                  if(err)return next(err);
+                  next(null, result.nModified);
+              } 
+            );
+        }, function(modified, next){
+            if(modified===1)next();
+            CustomerModel.update(
+                {_id:company_id, "dateTable.day":params.day},
+                {$set:{"dateTable.$":params}}, function(err){
+                    if(err)return next(err);
+                    next();
+                }
+            );
+        }
+        
+    ], function(err){
+        if(err)return cb(err);
+        cb(null, "Saved TimeTable");
     });
 };
 

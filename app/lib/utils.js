@@ -36,7 +36,7 @@ Utils.download = function (uri, filename, callback) {
             callback(res.headers["content-type"]);
         });
     });
-}
+};
 
 
 Utils.removeAccents = function (text)
@@ -86,7 +86,7 @@ Utils.round = function(value, step) {
     step || (step = 1.0);
     var inv = 1.0 / step;
     return Math.round(value * inv) / inv;
-}
+};
 
 Utils.filterParams= function(params){
     var newParams = {};
@@ -97,7 +97,7 @@ Utils.filterParams= function(params){
       
 
     return newParams;
-}
+};
 
 
 

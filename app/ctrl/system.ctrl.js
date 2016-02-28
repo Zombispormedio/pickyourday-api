@@ -114,7 +114,7 @@ Controller.uploadImage = function (type, image, cb) {
     var img = {};
     img.filename = Utils.generateID();
 
-
+    
 
     async.waterfall([function download(next) {
 

@@ -390,7 +390,7 @@ Controller.searchPromotion=function(company, params, cb){
 }
 
 Controller.newPromotion=function(company, params, cb){
-	PromotionCtrl.new(params, cb);
+	PromotionCtrl.new(company, params, cb);
 }
 
 Controller.modifyPromotion = function(company, id, params, cb){

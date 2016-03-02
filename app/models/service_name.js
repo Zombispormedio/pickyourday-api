@@ -15,7 +15,11 @@ var Service_NameSchema = new Schema({
     },
     duration: Number,
     keywords: [String],
-    description: String
+    description: String,
+    category:{
+		type: Schema.ObjectId, 
+		ref: "Category"
+	}
 });
 
 Service_NameSchema.statics = {

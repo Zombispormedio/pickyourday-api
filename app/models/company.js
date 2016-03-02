@@ -68,6 +68,7 @@ var ServiceSchema = new Schema({
 		ref: "Service_name"
 	},
 	description: String,
+    name:String,
 	duration: Number,
 	price: Number,
 	rating: [RatingSchema],

@@ -28,7 +28,7 @@ router.route("")
     }
         )
     .get(AuthController.checkAdmin(), function(req, res){
-        CompanyCtrl.search(req.query, function(err, companies){
+        CompanyCtrl.getAll(req.query, function(err, companies){
             if(err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  companies);

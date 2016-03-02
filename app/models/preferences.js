@@ -23,7 +23,8 @@ var PreferencesSchema = new Schema({
             question:Schema.ObjectId,
             answer:{},
             not_equality:Boolean
-        }]
+        }],
+        keywords:[String]
     }]
 
 

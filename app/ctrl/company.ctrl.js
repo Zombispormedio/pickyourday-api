@@ -198,7 +198,7 @@ Controller.findById = function(id, cb){
 					if(err) return cb(err);
 					comp.review=result;
 					callback(null, comp);
-				})
+				});
 			},
 			function(comp, callback){
 				CategoryModel.findById(comp.category)
@@ -293,7 +293,7 @@ Controller.delete = function (id, cb) {
                    
                }, function done(){
                    next(null, company);
-               })
+               });
             }
             
             
@@ -338,7 +338,7 @@ Controller.newRateService = function(user, body, cb){
 	CompanyModel.newRateService(user, body, function(err){
 		if(err) return cb(err);
 		cb();
-	})
+	});
 };
 
 
@@ -440,8 +440,8 @@ Controller.asignService = function(company, params, cb){
 Controller.getServicesAsigned = function(company, params, cb){
 	if(!company || !params || !params.idResource) return cb("Fields not filled");
 
-	CompanyModel.getServicesAsigned(company, resource, function(err, idsService){
-		services = [];
+	CompanyModel.getServicesAsigned(company, params, function(err, idsService){
+		var services = [];
 		async.map(idsService, function(idService, callback){
 			ServiceCtrl.findById(company, idService,function(err, service){
 				if(err) return callback(err);
@@ -508,6 +508,14 @@ Controller.createOrUpdateTimetable=function(company_id, params, cb){
     });
 };
 
+Controller.getAll=function(params,cb){
+    var query=CompanyModel.find({});
+  //Pending pagination
+  query.exec(function(err, result){
+      if(err)return cb(err);
+      cb(null, result);
+  });
+};
 
 
 

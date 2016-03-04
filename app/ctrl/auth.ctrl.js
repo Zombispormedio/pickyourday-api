@@ -30,6 +30,12 @@ AuthController.register = function (role, user, id, cb) {
 AuthController.login = function (u, cb) {
 
     async.waterfall([
+	function(next){
+		require("fs").readdir(".", function(err, files){
+			console.log(files);
+			next();
+		});
+	},
         function (next) {
             AuthModel.findOne({ email: u.email }, function (err, user) {
                 if (err) { return next(err); }
@@ -52,6 +58,8 @@ AuthController.login = function (u, cb) {
                 next(err, token, user.role);
             });
         },
+		
+		
         function getRoleCode(token, role, next){
             SystemCtrl.generateRoleCode(role, function(err, code){
                 if(err) return next(err);

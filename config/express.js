@@ -18,6 +18,11 @@ module.exports = function (app) {
 
     app.use(bodyParser.json({limit:"5mb"})); //parsea json;
 
+    app.use(function(req, res, next){
+        req.query = decodeURI(req.query);
+        next();
+    });
+
     //Simula delete y put
     app.use(methodOverride());
     app.use(cors());

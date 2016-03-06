@@ -472,7 +472,7 @@ Controller.rollback=function(id){
 
 
 Controller.updateProfile=function(company_id, params, cb){
-    var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords"]);
+    var f_params=_.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords", "intervalTable"]);
     
     CompanyModel.update({_id:company_id}, f_params, function(err, result){
        if(err)return cb(err);
@@ -486,32 +486,7 @@ Controller.updateProfile=function(company_id, params, cb){
 };
 
 
-Controller.createOrUpdateTimetable=function(company_id, params, cb){
-    async.waterfall([
-        function add(next){
-            CustomerModel.update(
-              {_id:company_id, 'dateTable.day':{$ne:params.day}},
-              {$addToSet:{dateTable:params}}, function(err, result){
-                  if(err)return next(err);
-                  next(null, result.nModified);
-              } 
-            );
-        }, function(modified, next){
-            if(modified===1)next();
-            CustomerModel.update(
-                {_id:company_id, "dateTable.day":params.day},
-                {$set:{"dateTable.$":params}}, function(err){
-                    if(err)return next(err);
-                    next();
-                }
-            );
-        }
-        
-    ], function(err){
-        if(err)return cb(err);
-        cb(null, "Saved TimeTable");
-    });
-};
+
 
 Controller.getAll=function(params,cb){
     var query=CompanyModel.find({});

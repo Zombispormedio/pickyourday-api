@@ -41,7 +41,7 @@ Controller.search = function (query, cb) {
 };
 
 Controller.findById = function (id, cb) {
-   /* PickCtrl.formatDatePick("56bb6ba820120d102693281d", new Date(), 30, function(err, datePick){
+    /*PickCtrl.formatDatePick("56bb6ba820120d102693281d", new Date(), 30, function(err, datePick){
          return cb(null, datePick);
     });*/
 
@@ -170,10 +170,12 @@ Controller.searchThings = function(params, cb){
                 });
             }, function(err, result){
                 if(err) return callback(err);
-                
+                console.log(result);
                 for(var i=0; i<result.length; i++){
                     if(result[i] != null)
-                        things.services.push(result[i]);                                     
+                        for(var x=0; x<result[i].length; x++)
+                            if(result[i][x] != null)
+                                things.services.push(result[i][x]);                                     
                 }
 
                 callback(null, things);
@@ -187,8 +189,10 @@ Controller.searchThings = function(params, cb){
             things.params = paramsTemp;
             CompanyCtrl.search(paramsTemp, function(err, companies){
                 if(err) return callback(err);
-                if(companies !='No companies')
-                    things.companies = companies;
+                if(companies !='No companies'){
+                    for(var i=0; i<companies.length; i++)
+                        things.companies.push = companies[i];
+                }
                 callback(null, things);
             });
             

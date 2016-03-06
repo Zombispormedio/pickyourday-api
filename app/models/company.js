@@ -80,7 +80,6 @@ var Resource = new Schema({
 	surname: String,
 	description: String,
 	phone: String,
-
 	picks: [Schema.ObjectId],
 	services: [Schema.ObjectId],
 	initDate: Date
@@ -138,9 +137,7 @@ CompanySchema.statics={
 	search:function(params, cb){ 
 		params = Utils.filterParams(params);
 		var query;
-		if(params.category != null && params.category.length > 0)
-			query =this.find({ 'category': { $in: params.category } });
-		else
+
 			query = this.find({});
 		for(var key in params){
 			switch(key){
@@ -305,7 +302,7 @@ CompanySchema.statics={
 					lessRating=true;
 					break;
 				case 'category':				
-					query.where('category').equals(params[key]);
+					query.match({'category':params[key]});
 					break;
 				default : {
 					var field = "services."+key;

@@ -21,8 +21,8 @@ var RatingSchema = new Schema({
 });
 
 var HourTime = new Schema({
-	initial: String,
-	end: String
+	initial: Date,
+	end: Date
 });
 
 

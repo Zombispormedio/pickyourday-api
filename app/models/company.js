@@ -34,7 +34,7 @@ var WeekTable = new Schema({
 	}
 });
 
-var IntervalTable=newSchema({
+var IntervalTable=new Schema({
 	init:Date,
 	end:Date,
 	week:WeekTable

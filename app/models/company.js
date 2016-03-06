@@ -19,15 +19,15 @@ var RatingSchema = new Schema({
 	rating: Number,
 	date: Date
 });
-
-
+/*
 var HourTime = new Schema({
 	init: String,
-	end: String,
-});
+	end: String
+});*/
 
+/*
 var WeekTable = new Schema({
-	times: [HourTime],
+	//times: [HourTime],
 	day: {
 		type: String, 
 		enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -39,7 +39,7 @@ var IntervalTable=new Schema({
 	end:Date,
 	week:WeekTable
 });
-
+*/
 
 var ReviewSchema = new Schema({
 	id_customer: {
@@ -129,7 +129,7 @@ var CompanySchema = new Schema({
 	services: [ServiceSchema],
 	review: [ReviewSchema],
 	resources: [Resource],
-	intervalTable: [IntervalTable],
+	//intervalTable: [IntervalTable],
 
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,

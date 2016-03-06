@@ -43,8 +43,8 @@ Controller.search = function (query, cb) {
 Controller.findById = function (id, cb) {
    /* PickCtrl.formatDatePick("56bb6ba820120d102693281d", new Date(), 30, function(err, datePick){
          return cb(null, datePick);
-    });
-*/
+    });*/
+
     
 
 
@@ -140,9 +140,11 @@ Controller.searchThings = function(params, cb){
         things["services"] = services;
         cb(null, things);
     });*/
-    async.waterfall([
+    async.waterfall([ 
         function getDefaultName(callback) {
-            ServiceCtrl.searchServiceName(params, function(err, default_names){
+            var paramsTemp = {};
+            paramsTemp.name = params.name;
+            ServiceCtrl.searchServiceName(paramsTemp, function(err, default_names){
                 if(err) return callback(err);
                 callback(null, things, default_names);
             });
@@ -157,7 +159,8 @@ Controller.searchThings = function(params, cb){
             async.map(idDefaultNames, function(idDefaultName, next){
                 var paramsTemp = {};
                 paramsTemp.id_name = idDefaultName;  
-                paramsTemp.category = params.category;     
+                if(params.category != "")
+                    paramsTemp.category = params.category;    
                 ServiceCtrl.search(0,paramsTemp, function(err, services){                           
                     if(err) return next(err);
                     if(services != "Services not found"){
@@ -177,7 +180,8 @@ Controller.searchThings = function(params, cb){
             });
         }, function getCompaniesByCategory(things, callback){
             var paramsTemp = {};
-            paramsTemp.category = params.category;
+            if(params.category !="")
+                paramsTemp.category = params.category;
             paramsTemp.name = params.name;  
             paramsTemp.location = params.location;   
             things.params = paramsTemp;
@@ -190,7 +194,8 @@ Controller.searchThings = function(params, cb){
             
         }, function getCompaniesByKeywords(things, callback){
             var paramsTemp = {};
-            paramsTemp.category = params.category;
+            if(params.category != "")
+                paramsTemp.category = params.category;
             paramsTemp.keywords = params.name;   
             paramsTemp.location = params.location; 
             if(things.companies !== undefined && things.companies.length > 0){

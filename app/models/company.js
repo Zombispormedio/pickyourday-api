@@ -260,9 +260,10 @@ CompanySchema.statics={
 
 	searchService: function(id_company, params, cb){
 		var query;
+		console.log(params);
 		if(id_company != 0){
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
-		}else if(params["category"] == undefined)
+		}else if(params["category"] == undefined || params["category"] == '')
 			query = this.aggregate([{$unwind:"$services"}]);
 		else
 			query = this.aggregate([{$unwind:"$services"},{$match: {category : mongoose.Types.ObjectId(params["category"])}}]);
@@ -311,6 +312,7 @@ CompanySchema.statics={
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
+
 			}
 		}
 

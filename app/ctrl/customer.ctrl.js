@@ -153,7 +153,7 @@ Controller.searchThings = function(params, cb){
                 }); 
             var paramsTemp = {};
             paramsTemp.idDefaultNames = idDefaultNames;  
-            if(params.category != undefined)
+            if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;   
             ServiceCtrl.search(0,paramsTemp, function(err, services){                           
                 if(err) return next(err);
@@ -162,7 +162,7 @@ Controller.searchThings = function(params, cb){
             });
         }, function getCompaniesByCategory(things, callback){
             var paramsTemp = {};
-            if(params.category !=undefined)
+            if(params.category !=undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.name = params.name;  
             paramsTemp.location = params.location;   
@@ -178,7 +178,7 @@ Controller.searchThings = function(params, cb){
             
         }, function getCompaniesByKeywords(things, callback){
             var paramsTemp = {};
-            if(params.category != undefined)
+            if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.keywords = params.name;   
             paramsTemp.location = params.location; 

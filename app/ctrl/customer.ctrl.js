@@ -140,6 +140,7 @@ Controller.searchThings = function(params, cb){
         things["services"] = services;
         cb(null, things);
     });*/
+    var self =this;
     async.waterfall([ 
         function getDefaultName(callback) {
             var paramsTemp = {};
@@ -170,13 +171,14 @@ Controller.searchThings = function(params, cb){
                 });
             }, function(err, result){
                 if(err) return callback(err);
-                console.log(result);
                 for(var i=0; i<result.length; i++){
                     if(result[i] != null)
                         for(var x=0; x<result[i].length; x++)
-                            if(result[i][x] != null)
-                                things.services.push(result[i][x]);                                     
-                }
+                            if(result[i][x] != null){
+                                if(!self.containsService(result[i][x].services._id, things.services))
+                                    things.services.push(result[i][x]);                                     
+                            }
+            }
 
                 callback(null, things);
             });
@@ -371,6 +373,14 @@ Controller.addOrUpdatePreferences=function(customer_id, pair, cb){
    });
 };
 
+Controller.containsService = function(service_id, services){
+        console.log(service_id);
+    for(var i=0; i<services.length; i++){
+        if(services[i].services._id == service_id)
+            return true;
+    }
+    return false;
+}
 
 
 

@@ -19,15 +19,15 @@ var RatingSchema = new Schema({
 	rating: Number,
 	date: Date
 });
-/*
-var HourTime = new Schema({
-	init: String,
-	end: String
-});*/
 
-/*
+var HourTime = new Schema({
+	initial: String,
+	end: String
+});
+
+
 var WeekTable = new Schema({
-	//times: [HourTime],
+	times: [HourTime],
 	day: {
 		type: String, 
 		enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -35,11 +35,11 @@ var WeekTable = new Schema({
 });
 
 var IntervalTable=new Schema({
-	init:Date,
+	initial:Date,
 	end:Date,
 	week:WeekTable
 });
-*/
+
 
 var ReviewSchema = new Schema({
 	id_customer: {
@@ -129,7 +129,7 @@ var CompanySchema = new Schema({
 	services: [ServiceSchema],
 	review: [ReviewSchema],
 	resources: [Resource],
-	//intervalTable: [IntervalTable],
+	intervalTable: [IntervalTable],
 
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,
@@ -267,12 +267,12 @@ CompanySchema.statics={
 	searchService: function(id_company, params, cb){
 		var query;
 		console.log(params);
-		if(id_company != 0){
+		if(id_company !== 0){
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
-		}else if(params["category"] == undefined || params["category"] == '')
+		}else if(params.category === undefined || params.category=== '')
 			query = this.aggregate([{$unwind:"$services"}]);
 		else
-			query = this.aggregate([{$unwind:"$services"},{$match: {category : mongoose.Types.ObjectId(params["category"])}}]);
+			query = this.aggregate([{$unwind:"$services"},{$match: {category :new mongoose.Types.ObjectId(params.category)}}]);
 		
 		var greaterRating=false;
 		var lessRating=false;

@@ -41,9 +41,15 @@ Controller.search = function (query, cb) {
 };
 
 Controller.findById = function (id, cb) {
+   /* PickCtrl.formatDatePick("56bb6ba820120d102693281d", new Date(), 30, function(err, datePick){
+         return cb(null, datePick);
+    });
+*/
+    
+
+
     CustomerModel.findById(id, function (err, customer) {
         if (err) return cb(err);
-
         if (!customer)
             return cb(null, "No user");
 

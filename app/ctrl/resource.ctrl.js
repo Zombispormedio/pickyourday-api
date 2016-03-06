@@ -62,7 +62,6 @@ Controller.search = function(user, query, cb){
 				function(callback){				
 					async.map(resource.services, function(service, next){						
 						ServiceCtrl.findById(user, service, function(err, serv){
-							console.log(serv);
 							if(err) return next(err);	
 							service=serv;
 							
@@ -76,7 +75,6 @@ Controller.search = function(user, query, cb){
 				}
 			],function(err, result){
 				if(err) return next(err);
-				//resources.push(result);
 				next(null, result);
 			});
 

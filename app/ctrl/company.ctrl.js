@@ -368,7 +368,6 @@ Controller.searchService=function(company, params, cb){
 }
 
 Controller.newService=function(company, params, cb){
-
 	ServiceCtrl.new(company, params, cb);
 }
 
@@ -435,6 +434,12 @@ Controller.getResourceById=function(company, id, cb){
 Controller.asignService = function(company, params, cb){
 	if (!company || !params.service || !params.resource ) return cb("Fields not Filled");
 	CompanyModel.asignService(company, params.idService, params.idResource, cb);
+};
+
+
+Controller.asignPick = function(company, params, cb){
+	if (!company || !params.idResource || !params.idPick ) return cb("Fields not Filled");
+	CompanyModel.asignPick(company, params.idResource, params.pick._id, cb);
 };
 
 Controller.getServicesAsigned = function(company, params, cb){

@@ -6,23 +6,32 @@ var CompanyModel = require(C.models + "company");
 var CustomerModel = require(C.models + "customer");
 var ServiceNameModel = require(C.models + "service_name");
 var CategoryModel = require(C.models + "category");
+var ServiceCtrl = require(C.ctrl + "service.ctrl");
+var Utils=require(C.lib+"utils");
 var Controller = {};
 
 Controller.new = function (body, cb) {
     if (!body || !body.id_customer || !body.company || !body.initDate || !body.state)
         return cb("Fields not filled");
-
     var pick = new PickModel(body);
     pick.dateCreated = new Date();
 
-    pick.save(function (err) {
-        if (err) return cb(err);
-        cb();
+    ServiceCtrl.findById(body.company.id_company, body.company.id_service, function(err, service){
+        if(err) return cb(err);
+        if(!service) return cb(null, "Service not found");
+        pick.duration = service.duration;
+        pick.save(function (err) {
+            if (err) return cb(err);
+            cb();
 
-    });
+        });
+    })
+
+
 };
 
 Controller.search = function (query, cb) {
+console.log(query);
     PickModel.search(query, function (err, picks) {
 
         if (err) return cb(err);
@@ -127,7 +136,6 @@ Controller.findById = function (id, cb) {
 };
 
 Controller.delete = function (id, cb) {
-
     if (!id) return cb("Fields not Filled");
 
     PickModel.findByIdAndRemove(id, function (err, pick) {
@@ -138,6 +146,73 @@ Controller.delete = function (id, cb) {
         cb();
     })
 
-}
+};
+
+Controller.formatDatePick = function(id_company, date, rangeDays, cb){
+        if(!rangeDays) rangeDays=30;
+
+        var datePick = [];
+        for (var i=0; i<rangeDays; i++)
+            datePick.push(i);
+
+        var firstDate = new Date();
+        firstDate.setDate(date.getDate());
+        if(!date)
+            date = new Date();
+
+        var beforeInitDate = new Date();
+        beforeInitDate.setDate(date.getDate());
+        beforeInitDate.setHours(23);
+        beforeInitDate.setMinutes(59);
+
+        var afterInitDate = new Date();
+        afterInitDate.setDate(date.getDate());
+        afterInitDate.setHours(0);
+        afterInitDate.setMinutes(0);
+
+        var self = this;
+
+        var paramsTemp = {"company.id_company":id_company};
+        async.map(datePick, function(day, next){ 
+            async.waterfall([
+                function(callback){
+                    datePick[day] = [];
+                    if(day > 0)
+                        beforeInitDate.setDate(beforeInitDate.getDate()+1);
+                    paramsTemp.beforeInitDate = beforeInitDate;
+                    if(day == 0)
+                        paramsTemp.afterInitDate = firstDate;
+                    else{
+                        afterInitDate.setDate(afterInitDate.getDate()+1);
+                        paramsTemp.afterInitDate = afterInitDate;
+                    }
+                   // datePick[day].push(paramsTemp);
+                   var picksData = [];
+
+                    self.search(paramsTemp,function(err, picks){
+                        if(err) return callback(err); 
+                         async.map(picks, function(pick, subNext){                      
+                            picksData.push({"pick":pick._id, "init":pick.initDate, "duration":pick.duration});                           
+                            subNext(null, picksData);                      
+                        }, function(err, result){
+                            if(err) return callback(err); 
+                            datePick[day].push(result);                               
+                            callback(null, result);
+                        });
+                    });
+                }
+            ],function(err, result){
+                if(err) return next(err);            
+                next(null, result);
+            });
+
+        }, function(err, result){
+            if(err) return cb(err);           
+            cb(null, result);
+        }); 
+
+
+    };
+
 
 module.exports = Controller;

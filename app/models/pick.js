@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var C=require("../../config/config");
 var Utils=require(C.lib+"utils");
+var async = require("async");
 
 var PickSchema = new Schema({
 	id_customer: { 
@@ -25,6 +26,7 @@ var PickSchema = new Schema({
 		type: Date,
 		required: true
 	},
+	duration: Number,
 	dateCreated: Date,
 	observation: String,
 	state: {
@@ -39,25 +41,23 @@ PickSchema.statics={
 	search:function(params, cb){ //en params no meter id, todos los demas datos si
 		var query = this.find({});
 		for(var key in params){
-
 			switch(key){
-
 				case "id_customer":  
 				case "company.id_company":
 				case "company.id_service":
 					query.where(key).equals(params[key].toString());
 					break;	
 				case 'beforeInitDate':
-					query.where('initDate').lte(params[key]);
+					query.where('initDate').lt(params[key]);
 					break;
 				case 'afterInitDate':
-					query.where('initDate').gte(params[key]);
+					query.where('initDate').gt(params[key]);
 					break;		
 				case 'beforeDateCreated':
-					query.where('dateCreated').lte(params[key]);
+					query.where('dateCreated').lt(params[key]);
 					break;
 				case 'afterDateCreated':
-					query.where('dateCreated').gte(params[key]);
+					query.where('dateCreated').gt(params[key]);
 					break;
 				default:
 					query.where(key).equals(Utils.like(params[key]));
@@ -65,7 +65,7 @@ PickSchema.statics={
 		}	
 		query.exec(cb);
 		
-	}
+	},
 
 };
 

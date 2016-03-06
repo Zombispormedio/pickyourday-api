@@ -99,6 +99,16 @@ Utils.filterParams= function(params){
     return newParams;
 };
 
+Utils.parseDate = function(date){
+   var yyyy = date.getFullYear().toString();
+   var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based
+   var dd  = date.getDate().toString();
+
+   var h = date.getHours().toString();
+   var m = date.getMinutes().toString();
+   return yyyy +"-"+ (mm[1]?mm:"0"+mm[0]) +"-"+ (dd[1]?dd:"0"+dd[0]); 
+
+}
 
 
 module.exports = Utils;

@@ -19,7 +19,9 @@ module.exports = function (app) {
     app.use(bodyParser.json({limit:"5mb"})); //parsea json;
 
     app.use(function(req, res, next){
-       // req.query = decodeURI(req.query);
+        for(var query in req.query){
+            req.query[query] = decodeURI(req.query[query]);
+        }
         next();
     });
 

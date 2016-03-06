@@ -165,6 +165,15 @@ router.route("/promotion")
         });
     });
 
+router.route("/timelineResource")
+    .get(AuthController.checkCompany(), function(req, res){
+        CompanyCtrl.getTimeLineResource(req.user, req.query, function(err, timeLine){
+            if(err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, timeLine);
+        });
+    });
+
 router.route("/category")
     .get(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.searchCategory(req.query, function(err, categories){
@@ -173,6 +182,8 @@ router.route("/category")
             Response.printSuccess(res, categories);
         } );
     });
+
+
 
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function (req, res) {

@@ -153,6 +153,8 @@ Controller.searchThings = function(params, cb){
                 }); 
             var paramsTemp = {};
             paramsTemp.idDefaultNames = idDefaultNames;  
+            paramsTemp["location.city"] = params["location.city"]; 
+            paramsTemp["location.country"] = params["location.country"]; 
             if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;   
             ServiceCtrl.search(0,paramsTemp, function(err, services){                           
@@ -166,7 +168,8 @@ Controller.searchThings = function(params, cb){
             if(params.category !=undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.name = params.name;  
-            paramsTemp.location = params.location;   
+            paramsTemp["location.city"] = params["location.city"];
+            paramsTemp["location.country"] = params["location.country"];   
             things.params = paramsTemp;
             CompanyCtrl.search(paramsTemp, function(err, companies){
                 if(err) return callback(err);
@@ -182,7 +185,8 @@ Controller.searchThings = function(params, cb){
             if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.keywords = params.name;   
-            paramsTemp.location = params.location; 
+            paramsTemp["location.city"] = params["location.city"]; 
+            paramsTemp["location.country"] = params["location.country"];
             if(things.companies != undefined && things.companies.length > 0){
                 var idCompanies = things.companies.map(function(a){  
                     return a._id;
@@ -352,7 +356,6 @@ Controller.addOrUpdatePreferences=function(customer_id, pair, cb){
 };
 
 Controller.containsService = function(service_id, services){
-        console.log(service_id);
     for(var i=0; i<services.length; i++){
         if(services[i].services._id == service_id)
             return true;

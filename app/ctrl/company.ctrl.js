@@ -431,6 +431,15 @@ Controller.getResourceById=function(company, id, cb){
 	ResourceCtrl.findById(company, id, cb);
 };
 
+Controller.getTimeLineResource = function(company, params, cb){
+	if(params.resource == undefined || params.resource =="")
+		params.resource = 0;
+	if(params.date == undefined || params.date == "")
+		params.date = new Date();	
+	
+	ResourceCtrl.getTimeLine(company, params.resource, params.date, cb);
+};
+
 Controller.asignService = function(company, params, cb){
 	if (!company || !params.service || !params.resource ) return cb("Fields not Filled");
 	CompanyModel.asignService(company, params.idService, params.idResource, cb);

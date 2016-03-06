@@ -2,6 +2,7 @@ var C=require("../../config/config");
 var async = require("async");
 var CompanyModel = require(C.models+"company");
 var ServiceCtrl = require(C.ctrl+"service.ctrl");
+var PickCtrl = require(C.ctrl + "pick.ctrl");
 var Controller = {};
 
 Controller.new= function(user, body, cb){
@@ -40,12 +41,12 @@ Controller.modify = function(user, id, body,cb){
 Controller.findById = function(user, id, cb){    
 	if (!id) return cb("Fields not Filled");
 
-	CompanyModel.findResourceById(user, id, function (err,serviceName){
+	CompanyModel.findResourceById(user, id, function (err, resource){
     	if(err) return cb(err);
 
-		if(!serviceName)
-			return cb("Service name not deleted");	
-		cb();
+		if(!resource)
+			return cb("Resource not found");	
+		cb(null, resource);
 	})
 };
 
@@ -83,6 +84,78 @@ Controller.search = function(user, query, cb){
 			cb(null, result);
 		});	
 	});
+};
+
+Controller.getTimeLine = function(company, idResource, date, cb){
+	var endDate = new Date();
+	endDate.setDate(date.getDate());
+    endDate.setHours(23);
+    endDate.setMinutes(59);
+    var self = this;
+    async.waterfall([
+    	function getPicks(callback){
+    		var paramsTemp = {};
+    		paramsTemp["company.id_company"] = company;
+    		paramsTemp.beforeInitDate = endDate;
+    		paramsTemp.afterInitDate = date;
+    		PickCtrl.search(paramsTemp, function(err, picks){
+    			if(err) return callback(err);
+				callback(null, picks);
+    		});
+
+    	}, function getResources(picks, callback){
+
+    		if(idResource != 0){
+    			self.findById(company, idResource, function(err, resource){
+    				if(err) return callback(err);
+    				var resources = [];
+    				resources.push(resource);
+    				callback(null, resources, picks);
+    			});
+    		}else{
+				var paramsTemp ={};
+				self.search(company, paramsTemp, function(err, resources){
+					if(err) return callback(err);
+					callback(null, resources, picks);
+				});
+    		}
+
+    	}, function formatTimeLine(resources, picks, callback){
+			var timeLine = [];
+			if(resources != null && resources.length > 0){
+				for(var resource in resources){
+					timeLine.push([]);
+					timeLine[resource].push(resources[resource]);
+				}
+
+				for(var pick in picks){
+
+					for(var resource in resources){
+						var found = false;
+						if(resources[resource].picks != null)
+							for(var pickAux in resources[resource].picks){							
+								if(resources[resource].picks[pickAux].equals(picks[pick]._id)){
+									timeLine[resource].push({"pick":picks[pick]});
+									pickAux = resources[resource].picks.length;
+									found = true;
+								}								
+							}
+						if(found)
+							resource = resources.length;
+					}
+				}
+				
+				callback(null, timeLine);
+
+			}else return callback(null, timeLine);
+    	}
+
+
+    ], function(err, result){
+    	if(err) return cb(err);
+    	cb(null, result);
+    });
+
 }
 
 module.exports = Controller;

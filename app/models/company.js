@@ -144,6 +144,8 @@ CompanySchema.statics={
 		params = Utils.filterParams(params);
 		var query;
 
+
+
 			query = this.find({});
 		for(var key in params){
 			switch(key){
@@ -266,7 +268,6 @@ CompanySchema.statics={
 
 	searchService: function(id_company, params, cb){
 		var query;
-		console.log(params);
 		if(id_company !== 0){
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
 		}else if(params.category === undefined || params.category=== '')
@@ -279,6 +280,7 @@ CompanySchema.statics={
 
 		for(var key in params){
 			switch(key){
+
 				case 'id_name':
 					var field = "services."+key;
 					var match={};
@@ -313,6 +315,13 @@ CompanySchema.statics={
 					query.match( {'services.id_name': { '$in': params[key] }});
 					break;
 				case 'category': break;
+				case 'location.country': 
+				case 'location.city': 
+					var field = ""+key;
+					var match={};
+					match[field] = Utils.like(params[key]);
+					query.match(match);	
+					break;
 				default : 
 					var field = "services."+key;
 					var match={};

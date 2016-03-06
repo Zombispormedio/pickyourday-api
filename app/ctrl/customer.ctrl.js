@@ -157,7 +157,8 @@ Controller.searchThings = function(params, cb){
                 paramsTemp.category = params.category;   
             ServiceCtrl.search(0,paramsTemp, function(err, services){                           
                 if(err) return next(err);
-                things.services = services;
+                if(services != "Services not found")
+                    things.services = services;
                 callback(null, things);
             });
         }, function getCompaniesByCategory(things, callback){

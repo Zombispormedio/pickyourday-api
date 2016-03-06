@@ -24,9 +24,9 @@ var Service_NameSchema = new Schema({
 
 Service_NameSchema.statics = {
     search: function (params, cb) { //en params no meter id, todos los demas datos si
+        params = Utils.filterParams(params);
         var query = this.find({});
         for (var key in params) {
-
             switch (key) {
                 case 'greaterDuration':
                     query.where('duration').gte(params[key]);

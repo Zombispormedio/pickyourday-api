@@ -11,6 +11,8 @@ var CustomerModel = require(C.models + "customer");
 var PickModel = require(C.models+"pick");
 var PreferencesCtrl=require(C.ctrl+"preferences.ctrl");
 
+
+var Utils = require(C.lib+"utils");
 var Controller = {};
 
 
@@ -127,19 +129,12 @@ Controller.delete = function (id, cb) {
 };
 
 Controller.searchThings = function(params, cb){
-   var things = {};
+    params = Utils.filterParams(params);
+    var things = {};
     things.prepicks = [];
     things.companies = [];
-    //busca por nombre de empresa
-
-    //busca por keywords
     things.services = [];
-    //busca por nombre de servicios y luego por keywords
-    /*ServiceCtrl.search(0, params, function(err, services){
-        if(err) return cb(err);
-        things["services"] = services;
-        cb(null, things);
-    });*/
+
     var self =this;
     async.waterfall([ 
         function getDefaultName(callback) {
@@ -150,41 +145,24 @@ Controller.searchThings = function(params, cb){
                 callback(null, things, default_names);
             });
         }, function getServicesByDefaultName(things, names, callback){
-            var idDefaultNames ;
-
+             var paramsTemp = {};
+             var idDefaultNames = [];
             if(names && names.length > 0)
                 idDefaultNames = names.map(function(a){  
                     return a._id;
                 }); 
-          
-            async.map(idDefaultNames, function(idDefaultName, next){
-                var paramsTemp = {};
-                paramsTemp.id_name = idDefaultName;  
-                if(params.category != "")
-                    paramsTemp.category = params.category;    
-                ServiceCtrl.search(0,paramsTemp, function(err, services){                           
-                    if(err) return next(err);
-                    if(services != "Services not found"){
-                        return next(null, services);
-                    }                        
-                    next();
-                });
-            }, function(err, result){
-                if(err) return callback(err);
-                for(var i=0; i<result.length; i++){
-                    if(result[i] != null)
-                        for(var x=0; x<result[i].length; x++)
-                            if(result[i][x] != null){
-                                if(!self.containsService(result[i][x].services._id, things.services))
-                                    things.services.push(result[i][x]);                                     
-                            }
-            }
-
+            var paramsTemp = {};
+            paramsTemp.idDefaultNames = idDefaultNames;  
+            if(params.category != undefined)
+                paramsTemp.category = params.category;   
+            ServiceCtrl.search(0,paramsTemp, function(err, services){                           
+                if(err) return next(err);
+                things.services = services;
                 callback(null, things);
             });
         }, function getCompaniesByCategory(things, callback){
             var paramsTemp = {};
-            if(params.category !="")
+            if(params.category !=undefined)
                 paramsTemp.category = params.category;
             paramsTemp.name = params.name;  
             paramsTemp.location = params.location;   
@@ -193,18 +171,18 @@ Controller.searchThings = function(params, cb){
                 if(err) return callback(err);
                 if(companies !='No companies'){
                     for(var i=0; i<companies.length; i++)
-                        things.companies.push = companies[i];
+                        things.companies.push(companies[i]);
                 }
                 callback(null, things);
             });
             
         }, function getCompaniesByKeywords(things, callback){
             var paramsTemp = {};
-            if(params.category != "")
+            if(params.category != undefined)
                 paramsTemp.category = params.category;
             paramsTemp.keywords = params.name;   
             paramsTemp.location = params.location; 
-            if(things.companies !== undefined && things.companies.length > 0){
+            if(things.companies != undefined && things.companies.length > 0){
                 var idCompanies = things.companies.map(function(a){  
                     return a._id;
                 });   
@@ -212,7 +190,6 @@ Controller.searchThings = function(params, cb){
             }                      
             CompanyCtrl.search(paramsTemp, function(err, companies){
                 if(err) return callback(err);
-
                  if(companies !='No companies')
                     for(var i=0; i<companies.length; i++){
                         if(companies[i] != null)

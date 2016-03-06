@@ -260,12 +260,13 @@ CompanySchema.statics={
 
 	searchService: function(id_company, params, cb){
 		var query;
-		params = Utils.filterParams(params);
-		if(id_company != 0)
+		if(id_company != 0){
 			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
-		else
+		}else if(params["category"] == undefined)
 			query = this.aggregate([{$unwind:"$services"}]);
-
+		else
+			query = this.aggregate([{$unwind:"$services"},{$match: {category : mongoose.Types.ObjectId(params["category"])}}]);
+		
 		var greaterRating=false;
 		var lessRating=false;
 
@@ -301,16 +302,15 @@ CompanySchema.statics={
 				case 'lessRating':
 					lessRating=true;
 					break;
-				case 'category':				
-					query.match({'category':params[key]});
+				case 'idDefaultNames':
+					query.match( {'services.id_name': { '$in': params[key] }});
 					break;
-				default : {
+				case 'category': break;
+				default : 
 					var field = "services."+key;
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
-                }
-
 			}
 		}
 
@@ -708,9 +708,6 @@ CompanySchema.statics={
 		});
 	},
 
-
-
-
 };
 
 
@@ -729,7 +726,6 @@ function getServiceRating(services){
 	}
 	return rates;			
 }
-
 
 
 module.exports = mongoose.model("Company", CompanySchema);

@@ -31,7 +31,6 @@ Controller.new = function (body, cb) {
 };
 
 Controller.search = function (query, cb) {
-console.log(query);
     PickModel.search(query, function (err, picks) {
 
         if (err) return cb(err);
@@ -155,6 +154,8 @@ Controller.formatDatePick = function(id_company, date, rangeDays, cb){
         for (var i=0; i<rangeDays; i++)
             datePick.push(i);
 
+        var formatDate = [];
+
         var firstDate = new Date();
         firstDate.setDate(date.getDate());
         if(!date)
@@ -171,12 +172,11 @@ Controller.formatDatePick = function(id_company, date, rangeDays, cb){
         afterInitDate.setMinutes(0);
 
         var self = this;
-
         var paramsTemp = {"company.id_company":id_company};
-        async.map(datePick, function(day, next){ 
+
+        async.eachSeries(datePick, function(day, next){ 
             async.waterfall([
                 function(callback){
-                    datePick[day] = [];
                     if(day > 0)
                         beforeInitDate.setDate(beforeInitDate.getDate()+1);
                     paramsTemp.beforeInitDate = beforeInitDate;
@@ -186,29 +186,27 @@ Controller.formatDatePick = function(id_company, date, rangeDays, cb){
                         afterInitDate.setDate(afterInitDate.getDate()+1);
                         paramsTemp.afterInitDate = afterInitDate;
                     }
-                   // datePick[day].push(paramsTemp);
-                   var picksData = [];
 
-                    self.search(paramsTemp,function(err, picks){
-                        if(err) return callback(err); 
-                         async.map(picks, function(pick, subNext){                      
-                            picksData.push({"pick":pick._id, "init":pick.initDate, "duration":pick.duration});                           
-                            subNext(null, picksData);                      
-                        }, function(err, result){
-                            if(err) return callback(err); 
-                            datePick[day].push(result);                               
-                            callback(null, result);
-                        });
+
+                    self.search(paramsTemp,function(err, picks){    
+                        if(err) return callback(err);
+                        if(picks != null && picks.length > 0)
+                            for(var pick in picks)
+                                formatDate.push({"pick":picks[pick], "init":picks[pick].initDate, "duration":picks[pick].duration});  
+                        else
+                            formatDate.push(picks);
+                        
+                        callback(null, null);
                     });
                 }
             ],function(err, result){
-                if(err) return next(err);            
-                next(null, result);
+                if(err) return next(err);  
+                next(null, null);
             });
 
         }, function(err, result){
             if(err) return cb(err);           
-            cb(null, result);
+            cb(null, formatDate);
         }); 
 
 

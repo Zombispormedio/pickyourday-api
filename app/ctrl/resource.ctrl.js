@@ -86,6 +86,64 @@ Controller.search = function(user, query, cb){
 	});
 };
 
+Controller.getResourcesByService = function(company, idService, cb){
+	var self = this;
+    async.waterfall([
+    	function getServices(callback){
+    		var paramsTemp ={};
+    		self.search(company, paramsTemp, function(err, resources){
+    			if(err) return callback(err);
+				callback(null, resources);
+    		})
+    	}, function getResources(resources, callback){
+    		if(idService != 0){
+    			ServiceCtrl.findById(company, idService, function(err, service){
+    				if(err) return callback(err);
+    				var services = [];
+    				services.push(service);
+    				callback(null, resources, services);
+    			});
+    		}else{
+				var paramsTemp ={};
+				ServiceCtrl.search(company, paramsTemp, function(err, services){
+					if(err) return callback(err);
+					callback(null, resources, services);
+				});
+    		}
+    	}, function(resources, services, callback){
+    		var resourcesByService = [];
+			if(services != null && services.length > 0){
+				for(var service in services){
+					resourcesByService.push([]);
+					resourcesByService[service].push(services[service]);
+				}
+
+				for(var service in services){				
+					for(var resource in resources){
+						var found = false;
+						if(resources[resource].services != null)
+							for(var serviceAux in resources[resource].services){						
+								if(resources[resource].services[serviceAux]._id.equals(services[service]._id)){
+									resourcesByService[service].push({"resource":resources[resource]});
+									serviceAux = resources[resource].services.length;
+									found = true;
+								}								
+							}
+						if(found)
+							resource = resources.length;
+					}
+				}
+			}
+
+			callback(null, resourcesByService);
+    	}
+
+    ], function(err, result){
+    	if(err) return cb(err);
+    	cb(null, result);
+    });
+};
+
 Controller.getTimeLine = function(company, idResource, date, cb){
 	var endDate = new Date();
 	endDate.setDate(date.getDate());
@@ -157,5 +215,8 @@ Controller.getTimeLine = function(company, idResource, date, cb){
     });
 
 }
+
+
+
 
 module.exports = Controller;

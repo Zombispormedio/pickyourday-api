@@ -315,12 +315,7 @@ Controller.delete = function (id, cb) {
         if (err) return cb(err);
         cb(null, "Company deleted");
     });
-
-
 };
-
-
-
 
 
 Controller.newReview = function(user, body, cb){
@@ -348,32 +343,32 @@ Controller.newRateService = function(user, body, cb){
 Controller.searchPick=function(company, params, cb){
 	params["company.id_company"] = company;
 	PickCtrl.search(params, cb);
-}
+};
 
 Controller.deletePick=function(params, cb){
 	PickCtrl.delete(params, cb);
-}
+};
 
 Controller.getPickById=function(id, cb){
 	PickCtrl.findById(id, cb);
-}
+};
 
 //***********************SERVICES
 Controller.searchServiceName=function(params, cb){
 	ServiceCtrl.searchServiceName(params, cb);
-}
+};
 
 Controller.searchService=function(company, params, cb){
 	ServiceCtrl.search(company, params, cb);
-}
+};
 
 Controller.newService=function(company, params, cb){
 	ServiceCtrl.new(company, params, cb);
-}
+};
 
 Controller.modifyService = function(company, params, cb){
 	ServiceCtrl.modify(company, params, cb);
-}
+};
 
 Controller.deleteService=function(company, params, cb){
 	ServiceCtrl.delete(company, params, cb);
@@ -439,6 +434,12 @@ Controller.getTimeLineResource = function(company, params, cb){
 	
 	ResourceCtrl.getTimeLine(company, params.resource, params.date, cb);
 };
+
+Controller.getResourcesByService = function(company, params, cb){
+	if(params.service == undefined || params.service == "")
+		params.service = 0;
+	ResourceCtrl.getResourcesByService(company, params.service, cb);
+}
 
 Controller.asignService = function(company, params, cb){
 	if (!company || !params.service || !params.resource ) return cb("Fields not Filled");

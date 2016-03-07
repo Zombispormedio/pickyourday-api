@@ -133,6 +133,15 @@ router.route("/servicesAsigned")
         });
     });
 
+router.route("/resourcesbyservice")
+    .get(AuthController.checkCompany(), function(req, res){
+        CompanyCtrl.getResourcesByService(req.user, req.query, function(err, resources){
+            if(err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  resources);
+        });
+    });
+
 router.route("/asignService")
     .post(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.asignService(req.user, req.body, function(err){

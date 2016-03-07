@@ -18,17 +18,17 @@ Controller.new= function(user, body, cb){
 
 
 
-Controller.delete = function(user, body, cb){
-	if (!body || !body._id) return cb("Fields not Filled");
+Controller.delete = function(user, id, cb){
+	if (!body || !id) return cb("Fields not Filled");
 
-	CompanyModel.deleteResource(user, body._id, function(err){
+	CompanyModel.deleteResource(user, id, function(err){
 		if(err) return cb(err);		
 		cb();
 	});
 }
 
 Controller.modify = function(user, id, body,cb){
-	if(!body || !id )
+	if(!id )
 		return cb("Fields not filled");
 
 	CompanyModel.modifyResource(user, id, body, function(err){

@@ -42,10 +42,10 @@ Controller.modify = function(user, id, body, cb){
     });
 };
 
-Controller.delete = function(user, body, cb){
-    if (!body || !body._id) return cb("Fields not Filled");
+Controller.delete = function(user, id, cb){
+    if (!id) return cb("Fields not Filled");
 
-    CompanyModel.deletePromotion(user, body._id, function(err){
+    CompanyModel.deletePromotion(user, id, function(err){
         if(err) return cb(err);
         cb();
     });

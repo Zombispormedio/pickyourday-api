@@ -116,14 +116,7 @@ router.route("/resource")
             else
                 Response.printSuccess(res,  resources);
         });
-    })
-	.delete(AuthController.checkCompany(), function (req, res) {
-		CompanyCtrl.deteleResource(req.user, req.body, function (err) {
-			if (err) Response.printError(res, err);
-			else
-				Response.printSuccess(res, "Resource deleted");
-		});
-	});
+    });	
 router.route("/servicesAsigned")
     .get(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.getServicesAsigned(req.user, req.query, function(err, services){
@@ -165,14 +158,8 @@ router.route("/promotion")
             else
                 Response.printSuccess(res, promotions);
         });
-    })
-    .delete(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.deletePromotion(req.user, req.body, function (err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res,  "Promotion deleted");
-        });
     });
+    
 
 router.route("/timelineResource")
     .get(AuthController.checkCompany(), function(req, res){
@@ -233,7 +220,14 @@ router.route("/resource/:id")
 			else
 				Response.printSuccess(res,  "Resource modified");
 		});
-	});	
+	})
+    .delete(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.deteleResource(req.user, req.params.id, function (err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, "Resource deleted");
+        });
+    });
 
 router.route("/promotion/:id")
     .get(AuthController.checkCompany(), function (req, res) {
@@ -248,6 +242,13 @@ router.route("/promotion/:id")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,"Promotion modified");
+        });
+    })
+    .delete(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.deletePromotion(req.user, req.params.id, function (err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  "Promotion deleted");
         });
     });
 

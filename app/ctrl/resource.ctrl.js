@@ -115,7 +115,7 @@ Controller.getResourcesByService = function(company, idService, cb){
 			if(services != null && services.length > 0){
 				for(var service in services){
 					resourcesByService.push([]);
-					resourcesByService[service].push(services[service]);
+					//resourcesByService[service].push(services[service]);
 				}
 
 				for(var service in services){				

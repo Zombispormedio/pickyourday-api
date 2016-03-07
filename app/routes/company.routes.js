@@ -93,13 +93,6 @@ router.route("/service")
             else
                 Response.printSuccess(res, services);
         });
-    })
-    .delete(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.deleteService(req.user, req.body, function (err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res,  "Service deleted");
-        });
     });
 
 router.route("/resource")
@@ -203,6 +196,13 @@ router.route("/service/:id")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "Service modified");
+        });
+    })
+    .delete(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.deleteService(req.user, req.params.id, function (err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  "Service deleted");
         });
     });
 

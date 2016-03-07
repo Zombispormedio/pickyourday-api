@@ -114,23 +114,18 @@ Controller.getResourcesByService = function(company, idService, cb){
     		var resourcesByService = [];
 			if(services != null && services.length > 0){
 				for(var service in services){
-					resourcesByService.push([]);
-					//resourcesByService[service].push(services[service]);
-				}
-
-				for(var service in services){				
+					resourcesByService.push([]);	
 					for(var resource in resources){
 						var found = false;
-						if(resources[resource].services != null)
-							for(var serviceAux in resources[resource].services){						
+						for(var serviceAux in resources[resource].services){						
 								if(resources[resource].services[serviceAux]._id.equals(services[service]._id)){
-									resourcesByService[service].push({"resource":resources[resource]});
+									resourcesByService[service].push({"resource":resources[resource].name, "asigned":true});
 									serviceAux = resources[resource].services.length;
 									found = true;
 								}								
 							}
-						if(found)
-							resource = resources.length;
+						if(!found)
+							resourcesByService[service].push({"resource":resources[resource].name, "asigned":false});
 					}
 				}
 			}

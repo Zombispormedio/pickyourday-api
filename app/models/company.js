@@ -1,6 +1,7 @@
 var C = require("../../config/config");
 
 var async=require("async");
+var _=require("lodash");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
@@ -317,18 +318,19 @@ CompanySchema.statics={
 					break;
 				case 'category': break;
 				case 'location.country': 
-				case 'location.city': 
+				case 'location.city': {
 					var field = ""+key;
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
 					break;
-				default : 
+                }
+				default : {
 					var field = "services."+key;
 					var match={};
 					match[field] = Utils.like(params[key]);
 					query.match(match);	
-
+                }
 			}
 		}
 
@@ -632,46 +634,42 @@ CompanySchema.statics={
 	},
 
 	toggleService: function(company_id, service_id, resource_id , cb){
-		this.findOne({_id: company_id}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
-
-	    	var resource = company.resources.id(id_resource);
-	    	if(!resource) return cb("Resource not found");
-	    	if(resource.services.indexOf(id_service) == -1)
-	    		resource.services.push(id_service);
-	    	else
-	    		return cb("Service already asigned");
-			company.save(function(err){
-				if(err) return cb(err);				
-				cb();
-			});
-
-		});
-        
-        
+        var self=this;
        async.waterfall([
            function enable(next){
-               this.update({_id: company_id, 
+               self.update({_id: company_id, 
                    "resources._id":resource_id,
                    "resources.services":{$ne:service_id}},
-                    {$addToSet:{"resources.$":service_id}}, function(err, result){
+                    {$addToSet:{"resources.$.services":service_id}}, function(err, result){
                    if(err)return next(err);
+                  
                    next(null, result.nModified);
                });
            },
            
-           function disable(next){
-                   if(modified===1)next();
-                 this.update({_id: company_id, 
-                   "resources._id":resource_id,
-                   "resources.services":service_id},
-                    {$unset:{"resources.$":service_id}}, function(err, result){
-                   if(err)return next(err);
-                   
-                   if(result.nModified!==1)return next("No Toggle Service");
-                   next();
-               });
+           function disable(modified, next){
+                   if(modified===1) return next();
+               
+               self.findOne({_id: company_id, 
+                   "resources._id":resource_id}, function(err, result){
+                      if(err)return next(err);
+                      if(!result)return next("Not Found Toggle Service");
+                       var indexResources=_.findIndex(result.resources, function(o){return o._id.equals(resource_id);});
+                       if(indexResources==-1)return next("Not found Resource Toggle Service");
+                       
+                       var resource=result.resources[indexResources];
+                
+                       var indexService=_.findIndex(resource.services, function(o){return o.equals(service_id);});
+                        if(indexService==-1)return next("Not found Service Toggle Service");
+                       
+                       resource.services.splice(indexService, 1);
+                       
+                       result.save(function(err){
+                           if(err)return next(err);
+                           next();
+                       });
+                       
+                   });
            }
            
        ], function(err){

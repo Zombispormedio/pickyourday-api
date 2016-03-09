@@ -338,7 +338,7 @@ Controller.addOrUpdatePreferences=function(customer_id, pair, cb){
                 next(null, result.nModified);   
                });
        },function(modified,next ){
-           if(modified===1)next();
+           if(modified===1) return next();
                CustomerModel.update(
                    {_id:customer_id, "preferences.question":pair.question},
                    {$set:{"preferences.$":pair}},function(err){

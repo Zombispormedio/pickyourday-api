@@ -1,5 +1,6 @@
 var C = require("../../config/config");
 
+var async=require("async");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
@@ -630,8 +631,8 @@ CompanySchema.statics={
 		});
 	},
 
-	asignService: function(id_company, id_service, id_resource , cb){
-		this.findOne({_id: id_company}, function(err, company){
+	toggleService: function(company_id, service_id, resource_id , cb){
+		this.findOne({_id: company_id}, function(err, company){
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found");
 
@@ -647,6 +648,37 @@ CompanySchema.statics={
 			});
 
 		});
+        
+        
+       async.waterfall([
+           function enable(next){
+               this.update({_id: company_id, 
+                   "resources._id":resource_id,
+                   "resources.services":{$ne:service_id}},
+                    {$addToSet:{"resources.$":service_id}}, function(err, result){
+                   if(err)return next(err);
+                   next(null, result.nModified);
+               });
+           },
+           
+           function disable(next){
+                   if(modified===1)next();
+                 this.update({_id: company_id, 
+                   "resources._id":resource_id,
+                   "resources.services":service_id},
+                    {$unset:{"resources.$":service_id}}, function(err, result){
+                   if(err)return next(err);
+                   
+                   if(result.nModified!==1)return next("No Toggle Service");
+                   next();
+               });
+           }
+           
+       ], function(err){
+           if(err)return cb(err);
+           cb();
+       });
+        
 	},
 
 	getServicesAsigned: function(id_company, id_resource, cb){

@@ -376,28 +376,28 @@ Controller.modifyService = function (company, params, cb) {
 
 Controller.deleteService = function (company, params, cb) {
     ServiceCtrl.delete(company, params, cb);
-}
+};
 
 Controller.getServiceById = function (company, id, cb) {
     ServiceCtrl.findById(company, id, cb);
-}
+};
 
 //***********************PROMOTIONS
 Controller.searchPromotion = function (company, params, cb) {
     PromotionCtrl.search(company, params, cb);
-}
+};
 
 Controller.newPromotion = function (company, params, cb) {
     PromotionCtrl.new(company, params, cb);
-}
+};
 
 Controller.modifyPromotion = function (company, id, params, cb) {
     PromotionCtrl.modify(company, id, params, cb);
-}
+};
 
 Controller.deletePromotion = function (company, params, cb) {
     PromotionCtrl.delete(company, params, cb);
-}
+};
 
 Controller.getPromotionById = function (company, id, cb) {
     PromotionCtrl.findById(company, id, cb);
@@ -440,14 +440,13 @@ Controller.getTimeLineResource = function (company, params, cb) {
 };
 
 Controller.getResourcesByService = function (company, params, cb) {
-    if (params.service == undefined || params.service == "")
+    if (params.service === undefined || params.service == "")
         params.service = 0;
     ResourceCtrl.getResourcesByService(company, params.service, cb);
-}
-
-Controller.asignService = function (company, params, cb) {
-    if (!company || !params.service || !params.resource) return cb("Fields not Filled");
-    CompanyModel.asignService(company, params.service, params.resource, cb);
+};
+Controller.toggleService = function (company, params, cb) {
+    if (!company || !params.service || !params.resource) return cb("Fields not Filled ToggleService");
+    CompanyModel.toggleService(company, params.service, params.resource, cb);
 };
 
 

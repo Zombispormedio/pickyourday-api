@@ -128,12 +128,12 @@ router.route("/resourcesbyservice")
         });
     });
 
-router.route("/asignService")
+router.route("/toogleService")
     .post(AuthController.checkCompany(), function(req, res){
-        CompanyCtrl.asignService(req.user, req.body, function(err){
+        CompanyCtrl.toggleService(req.user, req.body, function(err){
             if(err) Response.printError(res, err);
             else
-                Response.printSuccess(res,  "Service asigned");
+                Response.printSuccess(res,  "Service Toggled");
         });
     });
 

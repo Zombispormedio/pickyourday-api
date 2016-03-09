@@ -38,7 +38,7 @@ router.route("")
 
 router.route("/profile")
     .get(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.findById(req.user, function (err, company) {
+        CompanyCtrl.getProfile(req.user, function (err, company) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, company);

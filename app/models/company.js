@@ -239,7 +239,7 @@ CompanySchema.statics={
 
 		
 			var service = company.services.id(params.service_id);
-			if(!service) return cb("Service not found");
+			if(!service) return cb("Service not found in NewRateService");
 			service.rating.push( {id_customer: user, rating: params.rating, date: new Date()});
 			company.save(function(err){
 				if(err) return cb(err);				
@@ -376,7 +376,7 @@ CompanySchema.statics={
 
 			var service = company.services.id(id);
 			if(!service)
-				return cb("Service not found");
+				return cb("Service not found FindServiceById");
 			
 			cb(null, service);
 
@@ -391,7 +391,7 @@ CompanySchema.statics={
 				return cb("Company not found");
 			var service = company.services.id(id);
 			if(!service)
-				return cb("Service not found");
+				return cb("Service not found in ModifyService");
 			for(var key in params){
 				service[key] = params[key];
 			}
@@ -412,7 +412,7 @@ CompanySchema.statics={
 				return cb("Company not found");
 
 			if(!company.services.id(id))
-				return cb("Service not found");
+				return cb("Service not found in DeleteService");
 
 			company.services.id(id).remove();
 			company.save(function(err){

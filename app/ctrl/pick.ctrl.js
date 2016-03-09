@@ -18,7 +18,7 @@ Controller.new = function (body, cb) {
 
     ServiceCtrl.findById(body.company.id_company, body.company.id_service, function(err, service){
         if(err) return cb(err);
-        if(!service) return cb(null, "Service not found");
+        if(!service) return cb(null, "Service not found in new Pick");
         pick.duration = service.duration;
         pick.save(function (err) {
             if (err) return cb(err);

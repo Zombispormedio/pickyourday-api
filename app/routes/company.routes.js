@@ -128,7 +128,7 @@ router.route("/resourcesbyservice")
         });
     });
 
-router.route("/toogleService")
+router.route("/toggleService")
     .post(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.toggleService(req.user, req.body, function(err){
             if(err) Response.printError(res, err);

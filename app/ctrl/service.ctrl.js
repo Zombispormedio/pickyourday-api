@@ -87,7 +87,7 @@ Controller.search = function(user, query, cb){
 					if(!service.services)
 						id_name = service.id_name;
 					else
-						id_name=service.services.id_name
+						id_name=service.services.id_name;
 
 					ServiceNameModel.findById(id_name)
 					.select('name duration keywords description')
@@ -95,9 +95,9 @@ Controller.search = function(user, query, cb){
 						if(err) return callback(err);
 
 						if(!service.services)
-							service["id_name"]=service_name;
+							service.id_name=service_name;
 						else
-							service.services["id_name"]=service_name;
+							service.services.id_name=service_name;
 
 						callback(null, service);
 					});

@@ -142,7 +142,7 @@ Controller.getProfile = function (id, cb) {
         if (err) return cb(err);
 
         if (!company)
-            return cb("No company found");
+            return cb("No company found GetProfile");
 
         async.waterfall([
             function (callback) {
@@ -157,7 +157,7 @@ Controller.getProfile = function (id, cb) {
                                 subNext(null, service);
                             });
                     }, function (service, subNext) {
-                     
+
                         CompanyModel.formatServideRating(company._id, service._id, function (err, avg) {
                             if (err) return subNext(err);
                             service.avgRating = avg;
@@ -187,7 +187,7 @@ Controller.getProfile = function (id, cb) {
             },
             function (comp, callback) {
                 async.map(company.review, function (rev, next) {
-                    CustomerModel.findById(rev["id_customer"])
+                    CustomerModel.findById(rev.id_customer)
                         .select('name')
                         .exec(function (err, rev_customer) {
                             if (err) return next(err);

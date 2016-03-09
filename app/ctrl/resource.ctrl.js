@@ -119,14 +119,15 @@ Controller.getResourcesByService = function(company, idService, cb){
 						var found = false;
 						for(var serviceAux in resources[resource].services){						
 								if(resources[resource].services[serviceAux]._id.equals(services[service]._id)){
-									resourcesByService[service].push({"resource":resources[resource].name, "asigned":true});
+                                       var a=resources[resource];
+									resourcesByService[service].push({resource:a.name+" "+a.surname ,resource_id:a._id, asigned:true});
 									serviceAux = resources[resource].services.length;
 									found = true;
 								}								
 							}
 						if(!found){
                             var a=resources[resource];
-                            resourcesByService[service].push({"resource":a.name+" "+a.surname ,resource_id:a._id,  "asigned":false});
+                            resourcesByService[service].push({resource :a.name+" "+a.surname ,resource_id:a._id,  asigned:false});
                         }
 							
                             

@@ -119,8 +119,8 @@ Controller.getResourcesByService = function(company, idService, cb){
 						var found = false;
 						for(var serviceAux in resources[resource].services){						
 								if(resources[resource].services[serviceAux]._id.equals(services[service]._id)){
-                                       var a=resources[resource];
-									resourcesByService[service].push({resource:a.name+" "+a.surname ,resource_id:a._id, asigned:true});
+                                       var temp=resources[resource];
+									resourcesByService[service].push({resource:temp.name+" "+temp.surname ,resource_id:temp._id, asigned:true});
 									serviceAux = resources[resource].services.length;
 									found = true;
 								}								

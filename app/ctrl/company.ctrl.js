@@ -30,7 +30,7 @@ Controller.search = function (query, cb) {
     CompanyModel.search(query, function (err, companies) {
         if (err) return cb(err);
 
-        if (!companies || companies.length == 0)
+        if (!companies || companies.length === 0)
             return cb(null, "No companies");
 
         async.map(companies, function (companie, next) {
@@ -40,7 +40,7 @@ Controller.search = function (query, cb) {
                     var c = companie.toObject();
                     async.map(c.services, function (service, next) {
                         async.waterfall([function (subNext) {
-                            ServiceNameModel.findById(service["id_name"])
+                            ServiceNameModel.findById(service.id_name)
                                 .select('name duration keywords description')
                                 .exec(function (err, service_name) {
                                     if (err) return subNext(err);
@@ -213,7 +213,7 @@ Controller.getProfile = function (id, cb) {
                 CompanyModel.formatReviews(comp._id, function (err, reviews) {
                     comp.review_ratings = reviews;
                     callback(null, comp);
-                })
+                });
             },
             function (comp, callback) {
                 async.map(comp.resources, function (resource, next) {
@@ -263,7 +263,7 @@ Controller.modify = function (id, body, cb) {
         if (err) return cb(err);
         cb();
     });
-}
+};
 
 Controller.delete = function (id, cb) {
 
@@ -445,6 +445,7 @@ Controller.getResourcesByService = function (company, params, cb) {
     ResourceCtrl.getResourcesByService(company, params.service, cb);
 };
 Controller.toggleService = function (company, params, cb) {
+    console.log(params);
     if (!company || !params.service || !params.resource) return cb("Fields not Filled ToggleService");
     CompanyModel.toggleService(company, params.service, params.resource, cb);
 };

@@ -639,7 +639,7 @@ CompanySchema.statics={
            function enable(next){
                self.update({_id: company_id, 
                    "resources._id":resource_id,
-                   "resources.services":{$ne:service_id}},
+                            },
                     {$addToSet:{"resources.$.services":service_id}}, function(err, result){
                    if(err)return next(err);
                   

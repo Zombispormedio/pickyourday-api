@@ -80,7 +80,7 @@ Utils.mergeMongoObjects=function(dst, src){
 	}
 	
 	return dst;
-}
+};
 
 Utils.round = function(value, step) {
     step || (step = 1.0);

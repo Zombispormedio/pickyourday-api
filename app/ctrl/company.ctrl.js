@@ -447,7 +447,7 @@ Controller.getResourcesByService = function (company, params, cb) {
 
 Controller.asignService = function (company, params, cb) {
     if (!company || !params.service || !params.resource) return cb("Fields not Filled");
-    CompanyModel.asignService(company, params.idService, params.idResource, cb);
+    CompanyModel.asignService(company, params.service, params.resource, cb);
 };
 
 

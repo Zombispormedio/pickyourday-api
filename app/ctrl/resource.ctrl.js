@@ -112,7 +112,7 @@ Controller.getResourcesByService = function(company, idService, cb){
     		}
     	}, function(resources, services, callback){
     		var resourcesByService = [];
-			if(services != null && services.length > 0){
+			if(services !== null && services.length > 0){
 				for(var service in services){
 					resourcesByService.push([]);	
 					for(var resource in resources){
@@ -124,8 +124,12 @@ Controller.getResourcesByService = function(company, idService, cb){
 									found = true;
 								}								
 							}
-						if(!found)
-							resourcesByService[service].push({"resource":resources[resource].name, "asigned":false});
+						if(!found){
+                            var a=resources[resource];
+                            resourcesByService[service].push({"resource":a.name+" "+a.surname ,resource_id:a._id,  "asigned":false});
+                        }
+							
+                            
 					}
 				}
 			}

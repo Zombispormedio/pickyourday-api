@@ -411,7 +411,14 @@ Controller.searchCategory = function (params, cb) {
 
 //*******************RESOURCE
 Controller.newResource = function (company, params, cb) {
-    ResourceCtrl.new(company, params, cb);
+    ResourceCtrl.new(company, params, function(err){
+    	if(err)return cb(err);
+
+    	Controller.searchResource(company, {},function(err, resources){
+    		if(err)return cb(err);
+    		cb(null, resources);
+    	} )
+    });
 };
 
 Controller.searchResource = function (company, params, cb) {

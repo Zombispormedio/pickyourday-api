@@ -552,9 +552,9 @@ CompanySchema.statics={
 			company.resources.push(params);
 			var resource = company.resources[company.resources.length-1];
 			resource.initDate = new Date();
-			company.save(function(err, result){
+			company.save(function(err){
 				if(err) return cb(err);				
-				cb(null, result.resources);
+				cb();
 			});
 		});
     },

@@ -564,7 +564,7 @@ CompanySchema.statics={
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found DeleteResource");
 
-            var index=_.findIndex(company.resources, function(o){return o._id.equals(esource_id); });
+            var index=_.findIndex(company.resources, function(o){return o._id.equals(resource_id); });
 			if(index==-1)
 				return cb("Resource not found Delete Resource");
 

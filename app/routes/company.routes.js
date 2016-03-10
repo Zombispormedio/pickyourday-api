@@ -215,17 +215,17 @@ router.route("/resource/:id")
 		});
 	})
 	.put(AuthController.checkCompany(), function (req, res) {
-		CompanyCtrl.modifyResource(req.user, req.params.id, req.body, function (err) {
+		CompanyCtrl.modifyResource(req.user, req.params.id, req.body, function (err, resources) {
 			if (err) Response.printError(res, err);
 			else
-				Response.printSuccess(res,  "Resource modified");
+				Response.printSuccess(res,  resources);
 		});
 	})
     .delete(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.deteleResource(req.user, req.params.id, function (err) {
+        CompanyCtrl.deteleResource(req.user, req.params.id, function (err, resources) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Resource deleted");
+                Response.printSuccess(res, resources);
         });
     });
 

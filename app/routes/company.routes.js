@@ -97,10 +97,10 @@ router.route("/service")
 
 router.route("/resource")
 	.post(AuthController.checkCompany(), function(req, res){
-		CompanyCtrl.newResource(req.user, req.body, function(err){
+		CompanyCtrl.newResource(req.user, req.body, function(err, resources){
 			if(err) Response.printError(res, err);
 			else
-				Response.printSuccess(res,  "Resource created");
+				Response.printSuccess(res,  resources);
 		});
 	})
 	.get(AuthController.checkCompany(), function(req, res){

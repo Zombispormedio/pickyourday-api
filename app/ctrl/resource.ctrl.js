@@ -10,9 +10,9 @@ Controller.new= function(user, body, cb){
 	if (!body || !body.name)		
 	 	return cb("Fields not Filled");
 
-	CompanyModel.newResource(user, body, function(err){
+	CompanyModel.newResource(user, body, function(err, resources){
 		if(err) return (err);
-		cb();
+		cb(null, resources);
 	});
 }
 

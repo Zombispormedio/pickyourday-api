@@ -564,10 +564,10 @@ CompanySchema.statics={
 			if(err) return cb(err);
 		    if(!company)return cb("Company not found");
 
-			if(!company.resource.id(id))
+			if(!company.resources.id(id))
 				return cb("Promotion not found");
 
-			company.resource.id(id).remove();
+			company.resources.id(id).remove();
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();

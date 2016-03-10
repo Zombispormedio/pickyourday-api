@@ -19,7 +19,7 @@ Controller.new= function(user, body, cb){
 
 
 Controller.delete = function(user, id, cb){
-	if (!body || !id) return cb("Fields not Filled");
+	if (!id) return cb("Fields not Filled Delete Resource");
 
 	CompanyModel.deleteResource(user, id, function(err){
 		if(err) return cb(err);		
@@ -214,7 +214,7 @@ Controller.getTimeLine = function(company, idResource, date, cb){
     	cb(null, result);
     });
 
-}
+};
 
 
 

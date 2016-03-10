@@ -559,15 +559,16 @@ CompanySchema.statics={
 		});
     },
 
-    deleteResource: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
+    deleteResource: function(company_id, resource_id, cb){
+		this.findOne({_id: company_id}, function(err, company){
 			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+		    if(!company)return cb("Company not found DeleteResource");
 
-			if(!company.resources.id(id))
-				return cb("Promotion not found");
+            var index=_.findIndex(company.resources, function(o){return o._id.equals(esource_id); });
+			if(index==-1)
+				return cb("Resource not found Delete Resource");
 
-			company.resources.id(id).remove();
+			company.resources.splice(index, 1);
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();

@@ -34,6 +34,9 @@ Service_NameSchema.statics = {
                 case 'lessDuration':
                     query.where('duration').lte(params[key]);
                     break;
+                case 'category':
+                    query.where("category").equals(new mongoose.Types.ObjectId(params.category));
+                    break;
                 default:
                     query.where(key).equals(Utils.like(params[key]));
             }

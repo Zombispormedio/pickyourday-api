@@ -42,14 +42,7 @@ Controller.search = function (query, cb) {
     });
 };
 
-Controller.findById = function (id, cb) {
-    /*PickCtrl.formatDatePick("56bb6ba820120d102693281d", new Date(), 30, function(err, datePick){
-         return cb(null, datePick);
-    });*/
-
-    
-
-
+Controller.findById = function (id, cb) { 
     CustomerModel.findById(id, function (err, customer) {
         if (err) return cb(err);
         if (!customer)
@@ -309,7 +302,7 @@ Controller.searchCompany = function (params, cb) {
 };
 
 Controller.getCompanyById = function (id, cb) {
-    CompanyCtrl.findById(id, cb);
+    CompanyCtrl.getProfile(id, cb);
 };
 
 

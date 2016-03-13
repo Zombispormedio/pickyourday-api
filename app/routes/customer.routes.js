@@ -187,7 +187,7 @@ router.route("/search")
 
 router.route("/service/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.getServiceById(req.query, req.params.id, function (err, event) {
+        CustomerCtrl.getServiceById(req.params.company, req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  event);

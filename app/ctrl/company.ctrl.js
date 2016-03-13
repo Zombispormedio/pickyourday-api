@@ -380,7 +380,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 timeLine.push([]);
             }
             async.eachSeries(count, function(i, next){ 
-                PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[].picks, function(err, datePick){
+                PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, function(err, datePick){
                     if(err) return callback(err);
                     callback(null, datePick);
                 });

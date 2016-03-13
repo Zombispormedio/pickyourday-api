@@ -341,6 +341,68 @@ Controller.newRateService = function(user, body, cb) {
 };
 
 
+Controller.getTimeLine = function(id_company, params, cb){
+    if(!id_company) return cb("Fields not Filled");
+    if(!params) params={};
+
+    if(!params.rangeDays)
+        params.rangeDays =30;
+    if(!params.date)
+        params.date= new Date();
+    if(!params.resource)
+        params.resource = 0;
+
+    var timeLine = [];
+    var self=this;
+
+    async.waterfall([
+        function getResources(callback){
+            var paramsTemp ={};
+            paramsTemp.format = false;
+            if(params.resource == 0){
+                ResourceCtrl.search(id_company, paramsTemp, function(err, resources){
+                    if(err) return callback(err);
+                    timeLine.push(resources);
+                    callback(null, resources);
+                });
+            }else{
+                ResourceCtrl.findById(id_company, params.resource, paramsTemp, function(err, resource){
+                    if(err) return callback(err);
+                    timeLine.push(resource);
+                    callback(null, resource);
+                });
+            }
+        },
+        function getFormatPick(resources, callback){
+            var count = [];
+            for (var i=0; i<params.rangeDays; i++){
+                count.push(i);
+                timeLine.push([]);
+            }
+            async.eachSeries(count, function(i, next){ 
+                PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[].picks, function(err, datePick){
+                    if(err) return callback(err);
+                    callback(null, datePick);
+                });
+            }, function(err, result){
+                if(err) return cb(err);           
+                cb(null, formatDate);
+            }); 
+
+        },
+        function scheduleCompany(datePick, callback){
+            self.getProfile(id_company, function(err, company){
+                if(err) return callback(err);
+                timeLine = datePick;
+                timeLine.push(company);
+                callback(null, timeLine);
+            });
+        }
+    ],function(err, result){
+        if(err) return cb(err);  
+        cb(null, result);
+    });    
+};
 
 
 //*********************PICKS
@@ -370,8 +432,8 @@ Controller.newService = function(company, params, cb) {
     ServiceCtrl.new(company, params, cb);
 };
 
-Controller.modifyService = function(company, params, cb) {
-    ServiceCtrl.modify(company, params, cb);
+Controller.modifyService = function(company, id, body, cb) {
+    ServiceCtrl.modify(company, id, body, cb);
 };
 
 Controller.deleteService = function(company, params, cb) {
@@ -391,8 +453,8 @@ Controller.newPromotion = function(company, params, cb) {
     PromotionCtrl.new(company, params, cb);
 };
 
-Controller.modifyPromotion = function(company, id, params, cb) {
-    PromotionCtrl.modify(company, id, params, cb);
+Controller.modifyPromotion = function(company, id, body, cb) {
+    PromotionCtrl.modify(company, id, body, cb);
 };
 
 Controller.deletePromotion = function(company, params, cb) {
@@ -425,8 +487,8 @@ Controller.searchResource = function(company, params, cb) {
     ResourceCtrl.search(company, params, cb);
 };
 
-Controller.modifyResource = function(company, params, cb) {
-    ResourceCtrl.modify(company, params, function(err) {
+Controller.modifyResource = function(company, id, body, cb) {
+    ResourceCtrl.modify(company, id, body, function(err) {
         if (err) return cb(err);
 
         Controller.searchResource(company, {}, function(err, resources) {
@@ -448,7 +510,7 @@ Controller.deleteResource = function(company, params, cb) {
 };
 
 Controller.getResourceById = function(company, id, cb) {
-    ResourceCtrl.findById(company, id, cb);
+    ResourceCtrl.findById(company, id, undefined, cb);
 };
 
 Controller.getTimeLineResource = function(company, params, cb) {

@@ -38,7 +38,7 @@ Controller.modify = function(user, id, body,cb){
 }
 
 
-Controller.findById = function(user, id, cb){    
+Controller.findById = function(user, id, params, cb){    
 	if (!id) return cb("Fields not Filled");
 
 	CompanyModel.findResourceById(user, id, function (err, resource){
@@ -46,19 +46,9 @@ Controller.findById = function(user, id, cb){
 
 		if(!resource)
 			return cb("Resource not found");	
-		cb(null, resource);
-	})
-};
-
-Controller.search = function(user, query, cb){
-	CompanyModel.searchResources(user, query, function(err, resources){
-		if(err) return cb(err);
-
-		if(!resources || resources.length==0 )
-			return cb(null, "Resources not found");
-		
-		async.map(resources, function(resource, next){	
-            if(!resource) return next();
+		if(params.format == false)
+			return cb(null, resource);
+		else{
 			async.waterfall([
 				function(callback){				
 					async.map(resource.services, function(service, next){						
@@ -73,16 +63,81 @@ Controller.search = function(user, query, cb){
 						resource.services = result;
 						callback(null, resource);
 					});
+				}, function(resource, callback){
+						async.map(resource.picks, function(idPick, next){						
+						PickCtrl.findById(idPick, function(err, pick){
+							if(err) return next(err);	
+							idPick=pick;
+							
+							next(null, idPick);
+						});
+					},function(err, result){
+						if(err) return callback(err);							
+						resource.picks = result;
+						callback(null, resource);
+					});
+
 				}
 			],function(err, result){
-				if(err) return next(err);
-				next(null, result);
+				if(err) return cb(err);
+				cb(null, result);
 			});
+		}	
+	})
+};
 
-		}, function(err, result){
-			if(err) return cb(err);
-			cb(null, result);
-		});	
+Controller.search = function(user, query, cb){
+	CompanyModel.searchResources(user, query, function(err, resources){
+		if(err) return cb(err);
+
+		if(!resources || resources.length==0 )
+			return cb(null, "Resources not found");
+
+		if( query.format == false){
+
+			return cb(null, resources);
+		}else{
+			async.map(resources, function(resource, next){	
+	            if(!resource) return next();
+				async.waterfall([
+					function(callback){				
+						async.map(resource.services, function(service, next){						
+							ServiceCtrl.findById(user, service, function(err, serv){
+								if(err) return next(err);	
+								service=serv;
+								
+								next(null, service);
+							});
+						},function(err, result){
+							if(err) return callback(err);							
+							resource.services = result;
+							callback(null, resource);
+						});
+					}, function(resource, callback){
+							async.map(resource.picks, function(idPick, next){						
+							PickCtrl.findById(idPick, function(err, pick){
+								if(err) return next(err);	
+								idPick=pick;
+								
+								next(null, idPick);
+							});
+						},function(err, result){
+							if(err) return callback(err);							
+							resource.picks = result;
+							callback(null, resource);
+						});
+
+					}
+				],function(err, result){
+					if(err) return next(err);
+					next(null, result);
+				});
+
+			}, function(err, result){
+				if(err) return cb(err);
+				cb(null, result);
+			});	
+		}
 	});
 };
 

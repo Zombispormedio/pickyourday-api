@@ -147,17 +147,23 @@ Controller.delete = function (id, cb) {
 
 };
 
-Controller.formatDatePick = function(id_company, date, rangeDays, cb){
+Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks, cb){
         if(!rangeDays) rangeDays=30;
-
-        var datePick = [];
-        for (var i=0; i<rangeDays; i++)
-            datePick.push(i);
-
         var formatDate = [];
+        var count = [];
+        for (var i=0; i<rangeDays; i++){
+            count.push(i);
+            formatDate.push([]);
+        }
 
         var firstDate = new Date();
-        firstDate.setDate(date.getDate());
+        if(date)
+            firstDate.setDate(date.getDate());
+        if(allDay){
+            firstDate.setHours(0);
+            firstDate.setMinutes(0);
+        }
+       
         if(!date)
             date = new Date();
 
@@ -173,36 +179,32 @@ Controller.formatDatePick = function(id_company, date, rangeDays, cb){
 
         var self = this;
         var paramsTemp = {"company.id_company":id_company};
+        console.log(picks);
+        if(picks)
+            paramsTemp.picks = picks;
+        else
+            paramsTemp.picks = [];
+        paramsTemp=Utils.filterParams(paramsTemp);
 
-        async.eachSeries(datePick, function(day, next){ 
-            async.waterfall([
-                function(callback){
-                    if(day > 0)
-                        beforeInitDate.setDate(beforeInitDate.getDate()+1);
-                    paramsTemp.beforeInitDate = beforeInitDate;
-                    if(day == 0)
-                        paramsTemp.afterInitDate = firstDate;
-                    else{
-                        afterInitDate.setDate(afterInitDate.getDate()+1);
-                        paramsTemp.afterInitDate = afterInitDate;
-                    }
+        async.eachSeries(count, function(day, next){ 
+            if(day > 0)
+                beforeInitDate.setDate(beforeInitDate.getDate()+1);
+            paramsTemp.beforeInitDate = beforeInitDate;
+            if(day == 0)
+                paramsTemp.afterInitDate = firstDate;
+            else{
+                afterInitDate.setDate(afterInitDate.getDate()+1);
+                paramsTemp.afterInitDate = afterInitDate;
+            }
 
-                    self.search(paramsTemp,function(err, picks){    
-                        if(err) return callback(err);
-                        if(picks != null && picks.length > 0)
-                            for(var pick in picks)
-                                formatDate.push({"pick":picks[pick], "init":picks[pick].initDate, "duration":picks[pick].duration});  
-                        else
-                            formatDate.push(picks);
-                        
-                        callback(null, null);
-                    });
-                }
-            ],function(err, result){
-                if(err) return next(err);  
+            self.search(paramsTemp,function(err, picks){    
+                if(err) return next(err);
+                if(picks != null && picks.length > 0)
+                    for(var pick in picks)
+                        formatDate[day].push({"pick":picks[pick]._id, "init":picks[pick].initDate, "duration":picks[pick].duration});  
+                
                 next(null, null);
             });
-
         }, function(err, result){
             if(err) return cb(err);           
             cb(null, formatDate);

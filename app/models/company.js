@@ -617,7 +617,8 @@ CompanySchema.statics={
 					break;
 				case 'afterInitDate':
 					query.match({'resources.initDate': {'$gte': new Date(params[key])}});
-					break;				
+					break;	
+				case 'format': break;			
 				default : 
 					var field = "resources."+key;
 					var match={};

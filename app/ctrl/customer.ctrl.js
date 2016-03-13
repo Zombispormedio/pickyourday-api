@@ -64,7 +64,6 @@ Controller.modify = function (id, body, cb) {
 }
 
 Controller.delete = function (id, cb) {
-
     if (!id) return cb("Fields not Filled");
 
     async.waterfall([
@@ -196,13 +195,10 @@ Controller.searchThings = function(params, cb){
                 callback(null, things);
             });
         }
-    
-
      ], function (err, data) {
         if (err) return cb(err);
         cb(null, data);
     });
-
     
 };
 

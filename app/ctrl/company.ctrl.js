@@ -361,40 +361,42 @@ Controller.getTimeLine = function(id_company, params, cb){
             paramsTemp.format = false;
             if(params.resource == 0){
                 ResourceCtrl.search(id_company, paramsTemp, function(err, resources){
-                    if(err) return callback(err);
-                    timeLine.push(resources);
+                    if(err) return callback(err);                   
                     callback(null, resources);
                 });
             }else{
                 ResourceCtrl.findById(id_company, params.resource, paramsTemp, function(err, resource){
                     if(err) return callback(err);
-                    timeLine.push(resource);
-                    callback(null, resource);
+                    var resources = [];
+                    resources.push(resource);
+                    callback(null, resources);
                 });
             }
         },
         function getFormatPick(resources, callback){
             var count = [];
-            for (var i=0; i<params.rangeDays; i++){
+            for (var i=0; i<resources.length; i++){
                 count.push(i);
                 timeLine.push([]);
             }
             async.eachSeries(count, function(i, next){ 
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, function(err, datePick){
-                    if(err) return callback(err);
-                    callback(null, datePick);
+                    if(err) return next(err);
+                    timeLine[i].push({"resource":resources[i]._id, "name":resources[i].name});
+                    timeLine[i].push(datePick);
+                    next(null, null);
                 });
             }, function(err, result){
                 if(err) return cb(err);           
-                cb(null, formatDate);
+                cb(null, timeLine);
             }); 
 
         },
-        function scheduleCompany(datePick, callback){
+        function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
-                timeLine = datePick;
-                timeLine.push(company);
+                //timeLine = datePick;
+                //timeLine.push(company);
                 callback(null, timeLine);
             });
         }

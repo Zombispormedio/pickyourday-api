@@ -110,6 +110,14 @@ router.route("/resource")
                 Response.printSuccess(res,  resources);
         });
     });	
+router.route("/timeLine")
+    .get(AuthController.checkCompany(), function(req, res){
+        CompanyCtrl.getTimeLine(req.user, req.query, function(err, timeLine){
+            if(err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  timeLine);
+        });
+    });
 router.route("/servicesAsigned")
     .get(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.getServicesAsigned(req.user, req.query, function(err, services){
@@ -254,7 +262,7 @@ router.route("/promotion/:id")
 
 router.route("/:id")
     .get(AuthController.checkAdmin(), function(req, res){
-        CompanyCtrl.findById(req.params.id, function(err, company){
+        CompanyCtrl.getProfile(req.params.id, function(err, company){
             if(err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  company);

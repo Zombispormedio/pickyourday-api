@@ -62,7 +62,7 @@ Controller.search = function (query, cb) {
                 },
                 function (p, callback) {
 
-                    CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
+                    CompanyModel.findServiceById(p.service, function (err, service) {
                       
                         if (service) {
                           
@@ -121,7 +121,7 @@ Controller.findById = function (id, cb) {
             CompanyModel.findById(pick.company.id_company, 'cif email name category promotions locations phone photos ', function (err, company) {
                 if (err) return cb(err);
                 pick.company.id_company = company;
-                CompanyModel.findServiceById(pick.company.id_company, pick.company.id_service, function (err, service) {
+                CompanyModel.findServiceById(pick.company.id_service, function (err, service) {
                     if (err) return cb(err);
                     var pickData = [];
                     pickData.push(pick);

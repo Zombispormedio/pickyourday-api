@@ -369,15 +369,12 @@ CompanySchema.statics={
 
 	},
 
-	findServiceById: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
+	findServiceById: function(id, cb){
+		this.findOne({"services._id": id}, function(err, service){
 
 			if(err) return cb(err);
 
-		    if(!company)
-				return cb("Company not found");
 
-			var service = company.services.id(id);
 			if(!service)
 				return cb("Service not found FindServiceById");
 			

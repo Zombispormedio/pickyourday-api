@@ -63,7 +63,6 @@ Controller.search = function (query, cb) {
                 function (p, callback) {
 
                     CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
-                        //if(err) return callback(err);
                       
                         if (service) {
                           

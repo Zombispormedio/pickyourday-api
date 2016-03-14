@@ -271,6 +271,10 @@ Controller.searchCategory = function (params, cb) {
     CategoryCtrl.search(params, cb);
 };
 
+Controller.getCategoryById = function (id, cb) {
+    CategoryCtrl.findById(id, cb);
+};
+
 
 Controller.rollback = function (id) {
     CustomerModel.findById(id, function (err, customer) {

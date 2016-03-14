@@ -202,6 +202,15 @@ router.route("/company/:id")
         });
     });
 
+router.route("/category/:id")
+    .get(AuthController.checkCustomer(), function (req, res) {
+        CustomerCtrl.getCategoryById(req.params.id, function (err, event) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  event);
+        });
+    });
+
 router.route("/event/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.getEventById(req.user, req.params.id, function (err, event) {

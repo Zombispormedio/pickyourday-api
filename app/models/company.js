@@ -369,12 +369,15 @@ CompanySchema.statics={
 
 	},
 
-	findServiceById: function(id, cb){
-		this.findOne({"services._id": id}, function(err, service){
+	findServiceById: function(id_company, id, cb){
+		this.findOne({_id: id_company}, function(err, company){
 
 			if(err) return cb(err);
 
+		    if(!company)
+				return cb("Company not found");
 
+			var service = company.services.id(id);
 			if(!service)
 				return cb("Service not found FindServiceById");
 			
@@ -732,8 +735,9 @@ CompanySchema.statics={
 	},
 
 	formatServideRating: function(id_company, id_service, cb){
-		this.findServiceById(id_service, function(err, service){
-			if(service.rating && service.rating.length !== 0){
+		this.findServiceById(id_company, id_service, function(err, service){
+
+			if(service.rating.length !== 0){
 				var rate=0;
 
 				for(var rating in service.rating)

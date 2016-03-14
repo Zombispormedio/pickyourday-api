@@ -185,9 +185,9 @@ router.route("/search")
     
     
 
-router.route("/service/:id")
+router.route("/service/:id/:company")
     .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.getServiceById(req.params.id, function (err, event) {
+        CustomerCtrl.getServiceById(req.params.company, req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  event);
@@ -196,15 +196,6 @@ router.route("/service/:id")
 router.route("/company/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.getCompanyById(req.params.id, function (err, event) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res,  event);
-        });
-    });
-
-router.route("/category/:id")
-    .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.getCategoryById(req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,  event);

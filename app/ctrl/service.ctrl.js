@@ -125,9 +125,9 @@ Controller.search = function(user, query, cb){
 	})
 };
 
-Controller.findById = function(id, cb){
+Controller.findById = function(user, id, cb){
 
-	CompanyModel.findServiceById(id, function(err, service){
+	CompanyModel.findServiceById(user, id, function(err, service){
 		if(err) return cb(err);	
 		
 		ServiceNameModel.findById(service.id_name)

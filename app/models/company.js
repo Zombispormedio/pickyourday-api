@@ -732,7 +732,7 @@ CompanySchema.statics={
 	},
 
 	formatServideRating: function(id_company, id_service, cb){
-		this.findServiceById(id_company, id_service, function(err, service){
+		this.findServiceById(id_service, function(err, service){
 
 			if(service.rating.length !== 0){
 				var rate=0;

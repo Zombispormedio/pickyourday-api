@@ -111,4 +111,11 @@ Utils.parseDate = function(date){
 }
 
 
+Utils.countDays = function(initDate, endDate){
+    var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    var utc1 = Date.UTC(initDate.getFullYear(), initDate.getMonth(), initDate.getDate());
+    var utc2 = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
+
 module.exports = Utils;

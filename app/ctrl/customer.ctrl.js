@@ -202,6 +202,38 @@ Controller.searchThings = function(params, cb){
     
 };
 
+Controller.getTimeLine = function(customer, params, cb){
+    if(!params) params={};
+
+    
+    if(!params.initDate)
+        params.initDate= new Date();
+    if(!params.endDate){
+        var dateTemp = new Date();
+        params.endDate = new Date();
+        params.endDate.setDate(dateTemp.getDate()+30);
+    }
+
+    var timeLine = [];
+    var self=this;
+
+    async.waterfall([
+        function getFormatPick(callback){
+            PickCtrl.formatDatePickCustomer(customer, params.initDate, params.endDate, function(err, datePick){
+                if(err) return callback(err);
+                callback(null, datePick);
+            })
+            
+        }
+
+    ],function(err, result){
+        if(err) return cb(err);  
+        cb(null, result);
+    });  
+
+
+}
+
 //****************PICKS
 Controller.searchPick = function (customer, params, cb) {
     params.id_customer = customer;

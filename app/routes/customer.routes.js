@@ -41,7 +41,7 @@ router.route("")
 
 router.route("/profile")
     .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrlId(req.user, function (err, customer) {
+        CustomerCtrl.findById(req.user, function (err, customer) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res,customer);
@@ -159,7 +159,15 @@ router.route("/search")
             Response.printSuccess(res, things);
         });
     });
-    
+
+router.route("/timeLine")
+    .get(AuthController.checkCustomer(),function(req,res){
+        CustomerCtrl.getTimeLine(req.user, req.query, function(err, things){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, things);
+        });
+    });        
     
     router.route("/preferences")
     .get(AuthController.checkCustomer(),function(req,res){

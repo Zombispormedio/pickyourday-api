@@ -221,18 +221,23 @@ Controller.getTimeLine = function(customer, params, cb){
         function getFormatPick(callback){
             PickCtrl.formatDatePickCustomer(customer, params.initDate, params.endDate, function(err, datePick){
                 if(err) return callback(err);
-                callback(null, datePick);
-            })
-            
+                timeLine.push({"picks": datePick});
+                callback(null);
+            });          
+        },
+        function getFormatEvent(callback){
+            EventCtrl.formatEvent(customer,params.initDate, params.endDate, function(err, dateEvent){
+                if(err) return callback(err);
+                timeLine.push({"events": dateEvent});
+                callback(null, null);
+            })       
         }
 
     ],function(err, result){
         if(err) return cb(err);  
-        cb(null, result);
+        cb(null, timeLine);
     });  
-
-
-}
+};
 
 //****************PICKS
 Controller.searchPick = function (customer, params, cb) {

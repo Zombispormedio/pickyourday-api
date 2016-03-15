@@ -30,6 +30,16 @@ Controller.new = function (body, cb) {
 
 };
 
+Controller.searchQuick = function (query, cb) {
+    PickModel.search(query, function (err, picks) {
+        if (err) return cb(err);
+        if (!picks || picks.length == 0)
+            return cb(null, []);
+        else
+            cb(null, picks);
+    });
+};
+
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
 
@@ -216,6 +226,7 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
         var formatDate = [];
         var count = [];
         var rangeDays = Utils.countDays(initDate, endDate);
+
         for (var i=0; i<rangeDays; i++){
             count.push(i);
             formatDate.push([]);

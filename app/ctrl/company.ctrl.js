@@ -382,22 +382,79 @@ Controller.getTimeLine = function(id_company, params, cb){
             async.eachSeries(count, function(i, next){ 
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, function(err, datePick){
                     if(err) return next(err);
-                    timeLine[i].push({"resource":resources[i]._id, "name":resources[i].name});
+                    timeLine[i].push({"id":resources[i]._id, "name":resources[i].name});
                     timeLine[i].push(datePick);
                     next(null, null);
                 });
             }, function(err, result){
-                if(err) return cb(err);           
-                cb(null, timeLine);
+                if(err) return callback(err);           
+                callback(null, timeLine);
             }); 
 
         },
         function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
+                    date = new Date();
+
+                    var init = new Date();
+                    init.setHours(9);
+                    init.setMinutes(0);
+                    init.setSeconds(0);
+                    var end = new Date();
+                    end.setHours(15);
+                    end.setMinutes(0);
+                    end.setSeconds(0);
+                    var step = 5;
+
+                    var minInit = init.getHours()*60 + init.getMinutes();
+                    var minEnd = end.getHours()*60 + end.getMinutes();
+                    var count = Math.floor((minEnd - minInit)/5);
+                    var timeLineArray = new Array();
+                    timeLineArray.push({"metadata":{
+                        "open":init, "close":end, "step":step, "legend":{
+                            "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
+                            }
+                        }
+                    });
+
+                    var temp = new Array();
+
+                    for(var r=0; r<timeLine.length; r++){
+                        temp.push(new Array());
+                        temp[r].push({"resource":timeLine[r][0]});
+                        for(var i=0; i<count; i++){
+                            temp[r].push(0);
+                                                
+                        };                      
+                    };
+
+                    for(var r=0; r<timeLine.length; r++){
+                        var days = timeLine[r][1];
+
+                        for(var day=0; day<days.length; day++){
+                            var picks = days[day];
+                            for(var pick=0; pick<picks.length; pick++){
+                                var date = picks[pick].init;
+                                var fill = Math.floor(picks[pick].duration/step);
+                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
+                                if(pos >= 0 && pos < count){
+                                    for(var f=0; f<fill; f++)
+                                        temp[r][pos+1+f] =1;
+                                }
+                            }
+
+                        }
+                    }
+
+                    timeLineArray.push({"timeLine":temp});
+                    
+
+
+
                 //timeLine = datePick;
                 //timeLine.push(company);
-                callback(null, timeLine);
+                callback(null, timeLineArray);
             });
         }
     ],function(err, result){

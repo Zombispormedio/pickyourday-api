@@ -422,7 +422,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
                     for(var r=0; r<timeLine.length; r++){
                         temp.push(new Array());
-                        temp[r].push({"resource":timeLine[r][0]});
+                        temp[r]["resource"] =timeLine[r][0];
                         for(var i=0; i<count; i++){
                             temp[r].push(0);
                                                 

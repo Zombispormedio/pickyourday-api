@@ -39,7 +39,7 @@ var WeekTable = new Schema({
 var IntervalTable=new Schema({
 	initial:Date,
 	end:Date,
-	week:WeekTable
+	week:[WeekTable]
 });
 
 
@@ -131,7 +131,7 @@ var CompanySchema = new Schema({
 	services: [ServiceSchema],
 	review: [ReviewSchema],
 	resources: [Resource],
-	intervalTable: [IntervalTable],
+	scheduleActivity: [IntervalTable],
 
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,

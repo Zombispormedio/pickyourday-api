@@ -22,14 +22,11 @@ var RatingSchema = new Schema({
 	date: Date
 });
 
-var HourTime = new Schema({
-	initial: Date,
-	end: Date
-});
+
 
 
 var WeekTable = new Schema({
-	times: [HourTime],
+	times: [String],
 	day: {
 		type: String, 
 		enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']

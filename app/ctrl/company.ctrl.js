@@ -411,22 +411,23 @@ Controller.getTimeLine = function(id_company, params, cb){
                     var minEnd = end.getHours()*60 + end.getMinutes();
                     var count = Math.floor((minEnd - minInit)/5);
                     var timeLineArray = new Array();
-                    timeLineArray.push({"metadata":{
+                    var metadata = {
                         "open":init, "close":end, "step":step, "legend":{
                             "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
                             }
-                        }
-                    });
+                        };
+                    
 
                     var temp = new Array();
 
-                    for(var r=0; r<timeLine.length; r++){
-                        temp.push(new Array());
-                        temp[r].push({"resource":timeLine[r][0]});
+                    for(var r=0; r<timeLine.length; r++){                      
+                        var steps = new Array();
                         for(var i=0; i<count; i++){
-                            temp[r].push(0);
-                                                
-                        };                      
+                            steps.push(0);                                              
+                        }; 
+
+                         temp.push({"resource":timeLine[r][0], "steps":steps});
+                   
                     };
 
                     for(var r=0; r<timeLine.length; r++){
@@ -440,15 +441,14 @@ Controller.getTimeLine = function(id_company, params, cb){
                                 var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
                                 if(pos >= 0 && pos < count){
                                     for(var f=0; f<fill; f++)
-                                        temp[r][pos+1+f] =1;
+                                        temp[r]["steps"][pos+1+f] =1;
                                 }
                             }
 
                         }
-                    }
-
-                    timeLineArray.push({"timeLine":temp});
-                    
+                    };
+                    timeLineArray.push({"metadata":metadata, "timeLine":temp});
+                  
 
 
 

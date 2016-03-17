@@ -382,7 +382,7 @@ Controller.getTimeLine = function(id_company, params, cb){
             async.eachSeries(count, function(i, next){ 
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, function(err, datePick){
                     if(err) return next(err);
-                    timeLine[i].push({"id":resources[i]._id, "name":resources[i].name});
+                    timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});
                     timeLine[i].push(datePick);
                     next(null, null);
                 });
@@ -448,12 +448,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         }
                     };
                     timeLineArray.push({"metadata":metadata, "timeLine":temp});
-                  
 
-
-
-                //timeLine = datePick;
-                //timeLine.push(company);
                 callback(null, timeLineArray);
             });
         }

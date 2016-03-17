@@ -441,7 +441,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                 var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
                                 if(pos >= 0 && pos < count){
                                     for(var f=0; f<fill; f++)
-                                        temp[r]["steps"][pos+1+f] =1;
+                                        temp[r]["steps"][pos+f] =1;
                                 }
                             }
 

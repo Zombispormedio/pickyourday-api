@@ -223,54 +223,26 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
     };
 
 Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb){
-        var formatDate = [];
-        var count = [];
-        var rangeDays = Utils.countDays(initDate, endDate);
-
-        for (var i=0; i<rangeDays; i++){
-            count.push(i);
-            formatDate.push([]);
-        }
-       
-
-        var beforeInitDate = new Date();
-        beforeInitDate.setDate(initDate.getDate());
-        beforeInitDate.setHours(23);
-        beforeInitDate.setMinutes(59);
-
-        var afterInitDate = new Date();
-        afterInitDate.setDate(initDate.getDate());
-        afterInitDate.setHours(0);
-        afterInitDate.setMinutes(0);
-
-        var self = this;
-        var paramsTemp = {"id_customer":id_customer};
-
-        async.eachSeries(count, function(day, next){ 
-            if(day > 0)
-                beforeInitDate.setDate(beforeInitDate.getDate()+1);
-            paramsTemp.beforeInitDate = beforeInitDate;
-            if(day == 0)
-                afterInitDate.setDate(afterInitDate.getDate());              
-            else
-                afterInitDate.setDate(afterInitDate.getDate()+1);
-            paramsTemp.afterInitDate = afterInitDate;
-
-            self.search(paramsTemp,function(err, picks){    
-                if(err) return next(err);
-                if(picks != null && picks.length > 0)
-                    for(var pick in picks)
-                        formatDate[day].push({"pick":picks[pick]._id, "init":picks[pick].initDate, "duration":picks[pick].duration});  
-                
-                next(null, null);
-            });
-        }, function(err, result){
-            if(err) return cb(err);           
-            cb(null, formatDate);
-        }); 
+    var formatDate = [];
 
 
-    };
+    var self = this;
+    var paramsTemp = {"id_customer":id_customer};
+    paramsTemp.beforeInitDate = endDate;
+    paramsTemp.afterInitDate  = initDate;
+
+    self.search(paramsTemp,function(err, picks){    
+        if(err) return cb(err);
+        if(picks != null && picks.length > 0)
+            for(var pick in picks){
+                var endDate = new Date(picks[pick].initDate);
+                endDate.setMinutes(endDate.getMinutes()+picks[pick].duration);
+                formatDate.push({"pick":picks[pick], "init":picks[pick].initDate, "end":endDate});  
+            }
+        
+        cb(null, formatDate);
+    });
+};
 
 
 module.exports = Controller;

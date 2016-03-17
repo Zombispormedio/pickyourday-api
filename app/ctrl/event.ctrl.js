@@ -59,50 +59,23 @@ Controller.modify = function(user, id, body,cb){
 
 
 Controller.formatEvent = function(user, initDate, endDate, cb){
-    var formatDate = [];
-    var count = [];
-    var rangeDays = Utils.countDays(initDate, endDate);
-
-    for (var i=0; i<rangeDays; i++){
-        count.push(i);
-        formatDate.push([]);
-    };
-
-    var beforeInitDate = new Date();
-    beforeInitDate.setDate(initDate.getDate());
-    beforeInitDate.setHours(23);
-    beforeInitDate.setMinutes(59);
-
-    var afterInitDate = new Date();
-    afterInitDate.setDate(initDate.getDate());
-    afterInitDate.setHours(0);
-    afterInitDate.setMinutes(0);
 
     var self = this;
     var paramsTemp = {};
+    var formatDate = [];
 
-       async.eachSeries(count, function(day, next){ 
-        if(day > 0)
-            beforeInitDate.setDate(beforeInitDate.getDate()+1);
-        paramsTemp.beforeInitDate = beforeInitDate;
-        if(day == 0)
-            afterInitDate.setDate(afterInitDate.getDate());              
-        else
-            afterInitDate.setDate(afterInitDate.getDate()+1);
-        paramsTemp.afterInitDate = afterInitDate;
+
+    paramsTemp.beforeInitDate = endDate;
+    paramsTemp.afterInitDate  = initDate;
 
         self.search(user, paramsTemp,function(err, events){    
-            if(err) return next(err);
+            if(err) return cb(err);
             if(events != null && events.length > 0)
                 for(var event in events)
-                    formatDate[day].push({"event":events[event], "init":events[event].initDate, "duration":Utils.countMinutes(events[event].initDate,events[event].endDate)});  
+                    formatDate.push(events[event]);  
             
-            next(null, null);
+            cb(null, formatDate);
         });
-    }, function(err, result){
-        if(err) return cb(err);           
-        cb(null, formatDate);
-    }); 
 
 
 }

@@ -467,7 +467,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         if(inSchedule)
                             steps.push(0);  
                         else
-                            steps.push(2);                                            
+                            steps.push(1);                                            
                     }; 
 
                     for(var r=0; r<timeLine.length; r++){                      

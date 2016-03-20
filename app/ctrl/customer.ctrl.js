@@ -146,7 +146,7 @@ Controller.searchThings = function(params, cb){
             var paramsTemp = {};
             paramsTemp.idDefaultNames = idDefaultNames;  
             paramsTemp["location.city"] = params["location.city"]; 
-            paramsTemp["location.country"] = params["location.country"]; 
+            //paramsTemp["location.country"] = params["location.country"]; 
             if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;   
             ServiceCtrl.search(0,paramsTemp, function(err, services){                           
@@ -223,7 +223,7 @@ Controller.getTimeLine = function(customer, params, cb){
                 if(err) return callback(err);
                 timeLine.push({"picks": datePick});
                 callback(null);
-            });          
+            });         
         },
         function getFormatEvent(callback){
             EventCtrl.formatEvent(customer,params.initDate, params.endDate, function(err, dateEvent){
@@ -238,6 +238,94 @@ Controller.getTimeLine = function(customer, params, cb){
         cb(null, timeLine);
     });  
 };
+
+Controller.pickAvailable = function(customer, params, cb){
+    var initDate = new Date(params.initDate);
+    var endDate  = params.endDate;
+    var service  = params.service;
+    var company  = params.company;
+    var resource = params.resource;
+
+    if (!service || !company) return cb("Fields not Filled");
+
+    if(!initDate)
+        initDate = new Date();
+    if(!endDate)
+        endDate = new Date(initDate);
+
+    var self = this;
+
+    async.waterfall([
+        function getService(callback){
+            self.getServiceById(company, service, function(err, service){
+                if(err) return callback(err);
+                callback(null, service);
+            });
+        }, function getTimeLine(service, callback){
+            var paramsTemp ={};
+            paramsTemp.rangeDays = Utils.countDays(initDate,endDate);
+            paramsTemp.date = initDate;
+
+            CompanyCtrl.getTimeLine(company, paramsTemp, function(err, timeLine){
+                if(err) return callback(err);
+                var resources = timeLine[0].timeLine;
+                var count = 0;
+                var available = true;
+                var open = timeLine[0].metadata.open;
+                var close = timeLine[0].metadata.close;
+                var minOpen = open.getHours()*60 + open.getMinutes();
+                var step = 5;
+                if(service.duration)
+                    duration = service.duration
+                else 
+                    duration= service.id_name.duration;
+
+                var fill = Math.floor(duration/step);
+                var posPick =  ((initDate.getHours()*60 + initDate.getMinutes())-minOpen)/step;
+                if(posPick < 0 || posPick > timeLine[0].metadata.steps-1)
+                    available=false;
+                else{
+                    for(var f in fill){
+                        if(posPick+f > timeLine[0].metadata.steps-1)
+                            available=false;
+                    }
+                }              
+
+                var resourcesAux =resources; 
+                var resourceAvailable=undefined;
+                if(available == true){                       
+                    while(resourcesAux.length > 0 && !resourceAvailable){                   
+                        var r = Math.floor(Math.random() * resourcesAux.length);
+                        count++;
+                        var steps = resourcesAux[r].steps;
+                        var f=0;
+
+                        var rAvailable = true;     
+                        console.log(posPick);              
+                        while(rAvailable && f<fill){
+                            if(steps[posPick+f] == 1)
+                                rAvailable =false;
+                            f++;
+                        }  
+                        if(rAvailable) 
+                            resourceAvailable =resourcesAux[r];
+                        resourcesAux.splice(r, 1);
+                        
+                    }
+
+                    
+                }
+                
+                callback(null, resourceAvailable);
+            })
+        }
+
+
+    ],function(err, result){
+        if(err) return cb(err);  
+        cb(null, result);
+    }); 
+}
 
 //****************PICKS
 Controller.searchPick = function (customer, params, cb) {
@@ -257,6 +345,10 @@ Controller.deletePick = function (id, cb) {
 Controller.getPickById = function (id, cb) {
     PickCtrl.findById(id, cb);
 };
+
+Controller.cancelPick = function(pick, cb){
+    PickCtrl.changeState(pick, "cancelled", cb);
+}
 
 //***************EVENTS
 Controller.searchEvent = function (customer, params, cb) {
@@ -318,7 +410,6 @@ Controller.rollback = function (id) {
         customer.remove();
     });
 };
-
 
 //******************SEARCH
 Controller.searchService = function (params, cb) {

@@ -46,6 +46,15 @@ router.route("/pick")
         });
     });
 
+router.route("/clearPicks")
+    .get(function(req, res){
+        SystemCtrl.clearPicks(function(err,picks){
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        })
+    })
+
 
 router.route("/service")
     .get(AuthController.checkAdmin(),function(req, res){
@@ -88,6 +97,8 @@ router.route("/default_service")
             Response.printSuccess(res, result);
         });
     });
+
+
 
 
 router.route("/default_service/:id")
@@ -186,6 +197,10 @@ router.route("/category/:id")
                 Response.printSuccess(res, image);
         });
     });
+
+
+
+
 
 
 module.exports = router;

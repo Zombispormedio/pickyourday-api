@@ -342,14 +342,15 @@ Controller.newRateService = function(user, body, cb) {
 
 
 Controller.getTimeLine = function(id_company, params, cb){
-    if(!id_company) return cb("Fields not Filled");
+
+    if(!id_company) return cb("Fields not Filled getTimeLine");
     if(!params) params={};
 
-    if(!params.rangeDays)
+    if(params.rangeDays == undefined)
         params.rangeDays =30;
     if(!params.date)
         params.date= new Date();
-    if(!params.resource)
+    if(params.resource == undefined)
         params.resource = 0;
 
     var timeLine = [];
@@ -361,7 +362,8 @@ Controller.getTimeLine = function(id_company, params, cb){
             paramsTemp.format = false;
             if(params.resource == 0){
                 ResourceCtrl.search(id_company, paramsTemp, function(err, resources){
-                    if(err) return callback(err);                   
+                    if(err) return callback(err); 
+
                     callback(null, resources);
                 });
             }else{
@@ -375,6 +377,7 @@ Controller.getTimeLine = function(id_company, params, cb){
         },
         function getFormatPick(resources, callback){
             var count = [];
+
             for (var i=0; i<resources.length; i++){
                 count.push(i);
                 timeLine.push([]);
@@ -412,7 +415,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                     var count = Math.floor((minEnd - minInit)/5);
                     var timeLineArray = new Array();
                     var metadata = {
-                        "open":init, "close":end, "step":step, "legend":{
+                        "open":init, "close":end, "step":step, "steps": count, "legend":{
                             "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
                             }
                         };

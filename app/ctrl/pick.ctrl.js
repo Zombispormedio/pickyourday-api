@@ -40,6 +40,13 @@ Controller.searchQuick = function (query, cb) {
     });
 };
 
+Controller.changeState = function(pick, state, cb){
+    PickModel.changeState(pick, state, function(err){
+        if (err) return cb(err);
+        cb();
+    })
+}
+
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
 
@@ -243,6 +250,30 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
         cb(null, formatDate);
     });
 };
+
+Controller.clearPicks = function(cb){
+    var date = new Date();
+
+    var paramsTemp = {};
+    paramsTemp.beforeInitDate = date;
+
+    var self = this;
+    self.searchQuick(paramsTemp,function(err, picks){    
+        if(err) return cb(err);
+        if(picks != null && picks.length > 0)
+        async.map(picks, function(pick, next){
+             self.changeState(pick._id, "finished", function(err){
+                if(err) next(err);
+                next();
+             });
+        }, function(err){
+            if(err) return cb(err);
+            cb()
+        });
+    });
+
+
+}
 
 
 module.exports = Controller;

@@ -71,6 +71,16 @@ PickSchema.statics={
 		
 	},
 
+	changeState:function(id, state, cb){
+		this.findById(id, function (err, pick) {
+			pick.state = state;
+			pick.save(function (err) {
+                if (err) return cb(err);
+                cb();
+            });
+		});
+	}
+
 };
 
 module.exports = mongoose.model("Pick", PickSchema);

@@ -91,10 +91,9 @@ Controller.search = function(user, query, cb){
 		if(err) return cb(err);
 
 		if(!resources || resources.length==0 )
-			return cb(null, "Resources not found");
+			return cb(null, resources);
 
-		if( query.format == false){
-
+		if(query.format != undefined && query.format == false){
 			return cb(null, resources);
 		}else{
 			async.map(resources, function(resource, next){	
@@ -114,7 +113,7 @@ Controller.search = function(user, query, cb){
 							callback(null, resource);
 						});
 					}, function(resource, callback){
-							async.map(resource.picks, function(idPick, next){						
+						async.map(resource.picks, function(idPick, next){						
 							PickCtrl.findById(idPick, function(err, pick){
 								if(err) return next(err);	
 								idPick=pick;

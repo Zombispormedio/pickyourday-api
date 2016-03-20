@@ -606,7 +606,7 @@ CompanySchema.statics={
 	},
 
     searchResources: function(id_company, params, cb){
-		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: id_company}}]);
+		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: new mongoose.Types.ObjectId(id_company)}}]);
 		for(var key in params){
 			switch(key){
 				case 'beforeInitDate':
@@ -624,7 +624,7 @@ CompanySchema.statics={
 			}
 		}
 
-		query.exec(function(err, companyResource){			
+		query.exec(function(err, companyResource){		
 			var resources = companyResource.map(function(a){
 				return a.resources;
 			});

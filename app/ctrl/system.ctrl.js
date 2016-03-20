@@ -80,6 +80,10 @@ Controller.getServiceNameById = function (id, cb) {
     ServiceCtrl.findServiceNameById(id, cb);
 };
 
+//******************MAINTENANCE
+Controller.clearPicks = function(cb){
+    PickCtrl.clearPicks(cb);
+}
 
 
 //****************Preferences

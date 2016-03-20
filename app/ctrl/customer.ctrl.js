@@ -160,7 +160,7 @@ Controller.searchThings = function(params, cb){
             if(params.category !=undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.name = params.name;  
-            paramsTemp["location.city"] = params["location.city"];
+            //paramsTemp["location.city"] = params["location.city"];
             paramsTemp["location.country"] = params["location.country"];   
             things.params = paramsTemp;
             CompanyCtrl.search(paramsTemp, function(err, companies){
@@ -177,7 +177,7 @@ Controller.searchThings = function(params, cb){
             if(params.category != undefined && params.category  != '')
                 paramsTemp.category = params.category;
             paramsTemp.keywords = params.name;   
-            paramsTemp["location.city"] = params["location.city"]; 
+           // paramsTemp["location.city"] = params["location.city"]; 
             paramsTemp["location.country"] = params["location.country"];
             if(things.companies != undefined && things.companies.length > 0){
                 var idCompanies = things.companies.map(function(a){  

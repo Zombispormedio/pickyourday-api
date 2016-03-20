@@ -13,6 +13,7 @@ var AuthCtrl = require(C.ctrl + "auth.ctrl");
 var ResourceCtrl = require(C.ctrl + "resource.ctrl");
 var CustomerModel = require(C.models + "customer");
 var async = require("async");
+var Utils = require(C.lib + "utils");
 var Controller = {};
 
 Controller.newCompany = function(body, cb) {
@@ -440,6 +441,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                             var picks = days[day];
                             for(var pick=0; pick<picks.length; pick++){
                                 var date = picks[pick].init;
+                                date = Utils.newUTC(date);
                                 var fill = Math.floor(picks[pick].duration/step);
                                 var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
                                 if(pos >= 0 && pos < count){
@@ -447,7 +449,6 @@ Controller.getTimeLine = function(id_company, params, cb){
                                         temp[r]["steps"][pos+f] =1;
                                 }
                             }
-
                         }
                     };
                     timeLineArray.push({"metadata":metadata, "timeLine":temp});

@@ -124,6 +124,11 @@ Utils.countMinutes = function(initDate, endDate){
     seconds = Math.abs(seconds);
 
     return Math.floor(seconds);
+};
+
+Utils.newUTC = function(date){
+    return  new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                                
 }
 
 module.exports = Utils;

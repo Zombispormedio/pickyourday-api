@@ -401,14 +401,41 @@ Controller.getTimeLine = function(id_company, params, cb){
                 if(err) return callback(err);
                     date = new Date();
 
-                    var init = new Date();
-                    init.setHours(9);
-                    init.setMinutes(0);
-                    init.setSeconds(0);
-                    var end = new Date();
-                    end.setHours(15);
-                    end.setMinutes(0);
-                    end.setSeconds(0);
+                    var schedule = company.scheduleActivity;
+                    var now = new Date();
+                    var scheduleNow = now.getDay()-1;
+                    if(scheduleNow == -1)
+                        scheduleNow = 6;
+                    scheduleNow = schedule[0].week[scheduleNow];
+                    var times = [];
+                    for(var key in scheduleNow.times){
+                        var split = scheduleNow.times[key].split("-");
+                        for(var time in split){
+                            var date = new Date();
+                            var hm = split[time].split(":");
+                            date.setHours(hm[0]);
+                            date.setMinutes(hm[1]);
+                            times.push(date);
+                        } 
+                    }
+                    times.sort();
+
+                    var init;
+                    var end;
+
+                    if(!times){
+                        init = new Date();
+                        init.setHours(9);
+                        init.setMinutes(0);
+                        init.setSeconds(0);
+                        end = new Date();
+                        end.setHours(18);
+                        end.setMinutes(0);
+                        end.setSeconds(0);
+                    }else{
+                        init = times[0];
+                        end = times[times.length-1];
+                    }
                     var step = 5;
 
                     var minInit = init.getHours()*60 + init.getMinutes();
@@ -420,18 +447,34 @@ Controller.getTimeLine = function(id_company, params, cb){
                             "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
                             }
                         };
-                    
-
+                    var ranges = [];
+                    for(var t=0; t<times.length; t++){
+                        var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                        t++;
+                        var pos2 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                        
+                        ranges.push({0:pos1, 1:pos2});
+                    }
                     var temp = new Array();
 
-                    for(var r=0; r<timeLine.length; r++){                      
-                        var steps = new Array();
-                        for(var i=0; i<count; i++){
-                            steps.push(0);                                              
-                        }; 
+                    var steps = new Array();
+                    for(var i=0; i<count; i++){
+                        var inSchedule = false;
+                        for(var r=0; r<ranges.length; r++){
+                            if(i>=ranges[r][0]  && i<ranges[r][1]){
+                                inSchedule = true;
+                                r=ranges.length;
+                            }
+                        };
 
-                         temp.push({"resource":timeLine[r][0], "steps":steps});
-                   
+                        if(inSchedule)
+                            steps.push(0);  
+                        else
+                            steps.push(2);                                            
+                    }; 
+
+                    for(var r=0; r<timeLine.length; r++){                      
+                        temp.push({"resource":timeLine[r][0], "steps":steps});                   
                     };
 
                     for(var r=0; r<timeLine.length; r++){

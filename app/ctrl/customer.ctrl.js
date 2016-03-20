@@ -253,6 +253,13 @@ Controller.pickAvailable = function(customer, params, cb) {
     if (!endDate)
         endDate = new Date(initDate);
 
+    var now =new Date();
+    if(initDate < now)
+        initDate = now;
+
+    if(endDate < initDate)
+        endDate = initDate;
+
     var self = this;
 
     async.waterfall([
@@ -291,31 +298,45 @@ Controller.pickAvailable = function(customer, params, cb) {
                     }
                 }
 
-                var resourcesAux = resources;
-                var resourceAvailable;
-                if (available == true) {
-                    while (resourcesAux.length > 0 && !resourceAvailable) {
-                        var r = Math.floor(Math.random() * resourcesAux.length);
-                        count++;
-                        var steps = resourcesAux[r].steps;
-                        var f = 0;
+                var resourcesAux =resources; 
+                var resourceAvailable=undefined;
+                if(available == true){ 
+                    if(resource){
+                        for(var key in resourcesAux){                           
+                            if(resourcesAux[key].resource.id.equals(resource)){
+                                var steps = resourcesAux[key].steps;
+                                var f=0;
+                                var rAvailable = true;              
+                                while(rAvailable && f<fill){
+                                    if(steps[posPick+f] == 1)
+                                        rAvailable =false;
+                                    f++;
+                                };
 
-                        var rAvailable = true;
-                        console.log(posPick);
-                        while (rAvailable && f < fill) {
-                            if (steps[posPick + f] == 1)
-                                rAvailable = false;
-                            f++;
+                                if(rAvailable) 
+                                    resourceAvailable =resourcesAux[key];
+                                resourcesAux.splice(r, 1);     
+                            }
                         }
-                        if (rAvailable)
-                            resourceAvailable = resourcesAux[r];
-                        resourcesAux.splice(r, 1);
-
                     }
 
-
-                }
-
+                    if(!resourceAvailable)
+                        while(resourcesAux.length > 0 && !resourceAvailable){                   
+                            var r = Math.floor(Math.random() * resourcesAux.length);
+                            var steps = resourcesAux[r].steps;
+                            var f=0;
+                            var rAvailable = true;              
+                            while(rAvailable && f<fill){
+                                if(steps[posPick+f] == 1)
+                                    rAvailable =false;
+                                f++;
+                            }  
+                            if(rAvailable) 
+                                resourceAvailable =resourcesAux[r];
+                            resourcesAux.splice(r, 1);                       
+                        }  
+                    
+                }               
                 callback(null, resourceAvailable);
             });
         }

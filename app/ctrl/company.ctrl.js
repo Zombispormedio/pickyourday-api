@@ -422,31 +422,27 @@ Controller.getTimeLine = function(id_company, params, cb){
 
                     var init;
                     var end;
+                    var step = 5;
+                    var minInit;
+                    var minEnd;
+                    var count;
+                    var timeLineArray = new Array();
 
-                    if(!times){
-                        init = new Date();
-                        init.setHours(9);
-                        init.setMinutes(0);
-                        init.setSeconds(0);
-                        end = new Date();
-                        end.setHours(18);
-                        end.setMinutes(0);
-                        end.setSeconds(0);
-                    }else{
+                    if(times.length > 1){
                         init = times[0];
                         end = times[times.length-1];
+   
+                        minInit = init.getHours()*60 + init.getMinutes();
+                        minEnd = end.getHours()*60 + end.getMinutes();
+                        count = Math.floor((minEnd - minInit)/5);
+                        timeLineArray = new Array();
                     }
-                    var step = 5;
-
-                    var minInit = init.getHours()*60 + init.getMinutes();
-                    var minEnd = end.getHours()*60 + end.getMinutes();
-                    var count = Math.floor((minEnd - minInit)/5);
-                    var timeLineArray = new Array();
                     var metadata = {
                         "open":init, "close":end, "step":step, "steps": count, "legend":{
                             "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
                             }
                         };
+
                     var ranges = [];
                     for(var t=0; t<times.length; t++){
                         var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
@@ -455,6 +451,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         
                         ranges.push({0:pos1, 1:pos2});
                     }
+
                     var temp = new Array();
 
                     var steps = new Array();
@@ -477,23 +474,25 @@ Controller.getTimeLine = function(id_company, params, cb){
                         temp.push({"resource":timeLine[r][0], "steps":steps});                   
                     };
 
-                    for(var r=0; r<timeLine.length; r++){
-                        var days = timeLine[r][1];
+                    if(count >  0){
+                        for(var r=0; r<timeLine.length; r++){
+                            var days = timeLine[r][1];
 
-                        for(var day=0; day<days.length; day++){
-                            var picks = days[day];
-                            for(var pick=0; pick<picks.length; pick++){
-                                var date = picks[pick].init;
-                                date = Utils.newUTC(date);
-                                var fill = Math.floor(picks[pick].duration/step);
-                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
-                                if(pos >= 0 && pos < count){
-                                    for(var f=0; f<fill; f++)
-                                        temp[r]["steps"][pos+f] =1;
+                            for(var day=0; day<days.length; day++){
+                                var picks = days[day];
+                                for(var pick=0; pick<picks.length; pick++){
+                                    var date = picks[pick].init;
+                                    date = Utils.newUTC(date);
+                                    var fill = Math.floor(picks[pick].duration/step);
+                                    var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
+                                    if(pos >= 0 && pos < count){
+                                        for(var f=0; f<fill; f++)
+                                            temp[r]["steps"][pos+f] =1;
+                                    }
                                 }
                             }
-                        }
-                    };
+                        };
+                    }
                     timeLineArray.push({"metadata":metadata, "timeLine":temp});
 
                 callback(null, timeLineArray);

@@ -182,6 +182,16 @@ router.route("/category")
 
 
 
+router.route("/developer")
+    .get(AuthController.checkCompany(), function(req, res) {
+       AuthController.CreateOrUpdateDeveloper(req.oauth, function(err, pair_token) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pair_token);
+        });
+    });
+
+
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function (req, res) {
         CompanyCtrl.getPickById(req.params.id, function (err, service) {

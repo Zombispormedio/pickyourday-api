@@ -71,6 +71,8 @@ var CustomerSchema = new Schema({
     registerDate: Date,
     lastAccess: Date,
     lastUpdate: Date
+    
+
 });
 
 

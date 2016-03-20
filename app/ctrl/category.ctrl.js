@@ -55,8 +55,8 @@ Controller.delete = function(id, cb){
 		if(!category)
 			return cb("Category not deleted");	
 		cb();
-	})
-}
+	});
+};
 
 
 	

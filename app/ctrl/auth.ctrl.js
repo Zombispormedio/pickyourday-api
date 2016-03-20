@@ -1,37 +1,38 @@
-var C=require("../../config/config");
+var C = require("../../config/config");
 var Response = require(C.lib + "response");
 var AuthModel = require(C.models + "auth").Auth;
 var SystemCtrl = require(C.ctrl + "system.ctrl");
+var Utils = require(C.lib + "utils");
 var async = require("async");
 var AuthController = {};
 
 
-AuthController.register = function (role, user, id, cb) {
+AuthController.register = function(role, user, id, cb) {
 
-        if (!user || !user.email || !user.password) return cb("Fields not Filled");
+    if (!user || !user.email || !user.password) return cb("Fields not Filled");
 
-        var auth = new AuthModel({
-            email: user.email,
-            password: user.password,
-            role: role,
-            user:id
-        });
+    var auth = new AuthModel({
+        email: user.email,
+        password: user.password,
+        role: role,
+        user: id
+    });
 
-        auth.save(function (err) {
-            if (err) return cb(err);
-            cb();
-        });
+    auth.save(function(err) {
+        if (err) return cb(err);
+        cb();
+    });
 };
 
 
 
 
 
-AuthController.login = function (u, cb) {
+AuthController.login = function(u, cb) {
 
     async.waterfall([
-        function (next) {
-            AuthModel.findOne({ email: u.email }, function (err, user) {
+        function(next) {
+            AuthModel.findOne({ email: u.email }, function(err, user) {
                 if (err) { return next(err); }
 
                 if (!user) { return next("No users", false); }
@@ -41,123 +42,124 @@ AuthController.login = function (u, cb) {
                 next(null, user);
             });
         },
-        function (user, next) {
-            user.authenticate(u, function(err, token){
+        function(user, next) {
+            user.authenticate(u, function(err, token) {
                 user.token.push(token);
                 next(err, user, token);
             });
         },
-        function(user, token, next){
-            user.save(function(err){
+        function(user, token, next) {
+            user.save(function(err) {
                 next(err, token, user.role);
             });
         },
-		
-		
-        function getRoleCode(token, role, next){
-            SystemCtrl.generateRoleCode(role, function(err, code){
-                if(err) return next(err);
+
+
+        function getRoleCode(token, role, next) {
+            SystemCtrl.generateRoleCode(role, function(err, code) {
+                if (err) return next(err);
                 next(null, token, code);
             });
         }
     ], function(err, token, role) {
-        if(err) return cb(err);
-        cb(false, {token:token, role:role});
+        if (err) return cb(err);
+        cb(false, { token: token, role: role });
     });
 
 };
 
-AuthController.checkAccess=function(fn){
-    return function (req, res, next) {
+AuthController.checkAccess = function(fn) {
+    return function(req, res, next) {
         var token = req.headers.authorization;
 
-        if(!token)return Response.printError(res,"No Authorization");
-        AuthModel.findByToken(token, function(err,auth){
-            if(err)return Response.printError(res, err);
-            if(!auth)return Response.printError(res,"No Authorization");
+        if (!token) return Response.printError(res, "No Authorization");
+        AuthModel.findByToken(token, function(err, auth) {
+            if (err) return Response.printError(res, err);
+            if (!auth) return Response.printError(res, "No Authorization");
 
-            if(!fn(auth.role)) return Response.printError(res,"No Authorization");
+            if (!fn(auth.role)) return Response.printError(res, "No Authorization");
 
-            req.user=auth.user;
+            req.user = auth.user;
+            req.oauth = auth._id;
             next();
         });
     };
 };
 
-AuthController.checkAdmin=function(){
-    var self=this;
+AuthController.checkAdmin = function() {
+    var self = this;
 
-    return self.checkAccess(function(role){
-        return role===0;
+    return self.checkAccess(function(role) {
+        return role === 0;
     });
 
 };
 
-AuthController.checkCustomer=function(){
-    var self=this;
+AuthController.checkCustomer = function() {
+    var self = this;
 
-    return self.checkAccess(function(role){
-        return role===1||role===0;
+    return self.checkAccess(function(role) {
+        return role === 1 || role === 0;
     });
 };
 
-AuthController.checkCompany=function(){
-    var self=this;
+AuthController.checkCompany = function() {
+    var self = this;
 
-    return self.checkAccess(function(role){
-        return role===2 || role===3;
-    });
-
-};
-
-AuthController.checkCompanyBoss=function(){
-    var self=this;
-
-    return self.checkAccess(function(role){
-        return role===2;
+    return self.checkAccess(function(role) {
+        return role === 2 || role === 3;
     });
 
 };
 
-AuthController.checkCompanyWorker=function(){
-    var self=this;
+AuthController.checkCompanyBoss = function() {
+    var self = this;
 
-    return self.checkAccess(function(role){
-        return role===3;
-    });
-
-};
-AuthController.checkRegistered=function(){
-    var self=this;
-
-    return self.checkAccess(function(role){
-        return role<4;
+    return self.checkAccess(function(role) {
+        return role === 2;
     });
 
 };
 
-AuthController.logout=function(token, cb){
-    if(!token)return cb("No Token");
+AuthController.checkCompanyWorker = function() {
+    var self = this;
+
+    return self.checkAccess(function(role) {
+        return role === 3;
+    });
+
+};
+AuthController.checkRegistered = function() {
+    var self = this;
+
+    return self.checkAccess(function(role) {
+        return role < 4;
+    });
+
+};
+
+AuthController.logout = function(token, cb) {
+    if (!token) return cb("No Token");
     AuthModel.removeToken(token, cb);
 };
 
-AuthController.check=function(query, cb){
-    if(!query || !query.email) return cb("Fields not filled");
-    AuthModel.findOne({email: query.email},function(err, user){
-        if(err)return cb(err);
+AuthController.check = function(query, cb) {
+    if (!query || !query.email) return cb("Fields not filled");
+    AuthModel.findOne({ email: query.email }, function(err, user) {
+        if (err) return cb(err);
 
-        if(!user)
+        if (!user)
             return cb(null, false);
 
         cb(null, true);
     });
 };
 
-AuthController.UnableAccess=function(email, cb){
-    AuthModel.findOne({email:email}, function(err, auth){
-        if(err)return cb(err);
-        auth.remove(function(err){
-            if(err)return cb(err);
+AuthController.UnableAccess = function(email, cb) {
+    AuthModel.findOne({ email: email }, function(err, auth) {
+        if (err) return cb(err);
+        auth.remove(function(err) {
+            if (err) return cb(err);
             cb();
         });
 
@@ -165,8 +167,42 @@ AuthController.UnableAccess=function(email, cb){
 
 };
 
-AuthController.getRole=function(code, cb){
+AuthController.getRole = function(code, cb) {
     SystemCtrl.verifyRoleCode(code, cb);
+};
+
+
+
+
+AuthController.CreateOrUpdateDeveloper = function(user_id, cb) {
+    async.waterfall([
+        function generate(next) {
+            var worker = { access_token: Utils.generateDeveloperID(), secret_token: Utils.generateDeveloperToken(50) };
+            next(null, worker);
+        },
+
+        function add(worker, next) {
+            AuthModel.findOne({ _id: user_id }, function(err, result) {
+                if (err) return next(err);
+
+                result.developer = worker;
+                result.save(function(err, result) {
+                    if (err) return next(err);
+
+                    next(null, worker);
+
+                });
+
+            });
+
+        }
+    ], function(err, worker) {
+        if (err) return cb(err);
+        cb(null, worker);
+    });
+
+
+
 };
 
 module.exports = AuthController;

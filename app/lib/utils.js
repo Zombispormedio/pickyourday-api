@@ -2,6 +2,8 @@ var Utils = {};
 var jwt = require('jsonwebtoken');
 var fs = require("fs");
 var request = require("request");
+var crypto=require("crypto");
+var uuid= require("node-uuid");
 var _=require("lodash");
 var C = require("../../config/config");
 Utils.validatePresenceOf = function (value) {
@@ -10,24 +12,24 @@ Utils.validatePresenceOf = function (value) {
 
 Utils.like = function (value) {
    return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig")
-}
+};
 
 Utils.likeLowerCase = function (value) {
     return new RegExp('^' + value + '$', "i")
-}
+};
 
 Utils.sign = function (data) {
     data.created = new Date().getTime();
     return jwt.sign(data, C.secret);
-}
+};
 
 Utils.verify = function (data) {
     return jwt.verify(data, C.secret);
-}
+};
 
 Utils.generateID = function () {
     return Math.random().toString(36).substring(10);
-}
+};
 
 Utils.download = function (uri, filename, callback) {
     request.head(uri, function (err, res, body) {
@@ -91,7 +93,7 @@ Utils.round = function(value, step) {
 Utils.filterParams= function(params){
     var newParams = {};
     for(var key in params){
-        if(params[key] != undefined)
+        if(params[key] !== void 0)
             newParams[key] = params[key];
     }
       
@@ -129,6 +131,37 @@ Utils.countMinutes = function(initDate, endDate){
 Utils.newUTC = function(date){
     return  new Date(date.getTime() + date.getTimezoneOffset() * 60000);
                                 
-}
+};
+
+Utils.randomString=function (length, chars) {
+  if(!chars) {
+    throw new Error('Argument \'chars\' is undefined');
+  }
+
+  var charsLength = chars.length;
+  if (charsLength > 256) {
+    throw new Error('Argument \'chars\' should not have more than 256 characters'+ ', otherwise unpredictability will be broken');
+  }
+
+  var randomBytes = crypto.randomBytes(length);
+  var result = new Array(length);
+
+  var cursor = 0;
+  for (var i = 0; i < length; i++) {
+    cursor += randomBytes[i];
+    result[i] = chars[cursor % charsLength];
+  }
+
+  return result.join('');
+};
+
+Utils.generateDeveloperToken=function(size){
+  return Utils.randomString(size, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+
+};
+
+Utils.generateDeveloperID=function(){
+    return uuid.v4();
+};
 
 module.exports = Utils;

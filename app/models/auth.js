@@ -22,18 +22,19 @@ var AuthSchema = new Schema({
     salt: String,
     role: Number,
     token: [String],
-    user:Schema.ObjectId
+    user: Schema.ObjectId,
+    developer: { access_token: String, secret_token: String }
 
 });
-AuthSchema.virtual('password').set(function (password) {
+AuthSchema.virtual('password').set(function(password) {
     this._password = password;
     this.salt = this.makeSalt();
     this.hashed_password = this.encryptPassword(password);
-}).get(function () {
+}).get(function() {
     return this._password;
 });
 
-AuthSchema.pre("save", function (next) {
+AuthSchema.pre("save", function(next) {
     if (!this.isNew) return next();
 
     if (!Utils.validatePresenceOf(this.password)) {
@@ -44,29 +45,29 @@ AuthSchema.pre("save", function (next) {
 });
 
 AuthSchema.methods = {
-    checkPassword: function (pass) {
+    checkPassword: function(pass) {
         return this.encryptPassword(pass) === this.hashed_password;
     },
-    authenticate: function (u, cb) {
+    authenticate: function(u, cb) {
 
-        if (!this.checkPassword(u.password)){
+        if (!this.checkPassword(u.password)) {
             return cb("Password not Valid");
         }
 
-        var token =Utils.sign({
+        var token = Utils.sign({
             email: u.email,
-            role:u.role
+            role: u.role
         });
         cb(null, token);
 
     },
 
 
-    makeSalt: function () {
+    makeSalt: function() {
         return Math.round((new Date().valueOf() * Math.random())) + "";
     },
 
-    encryptPassword: function (password) {
+    encryptPassword: function(password) {
         if (!password) return "";
         return crypto.createHmac("sha1", this.salt).update(password).digest("hex");
     }
@@ -74,24 +75,24 @@ AuthSchema.methods = {
 };
 
 
-AuthSchema.statics={
+AuthSchema.statics = {
 
-    findByToken:function(token, cb){
-        this.findOne({ email:Utils.verify(token).email, token: { "$in" : [token]} }, function(err, result){
-            if(err)return cb(err);
-            if(!result)return cb("No Authorization");
+    findByToken: function(token, cb) {
+        this.findOne({ email: Utils.verify(token).email, token: { "$in": [token] } }, function(err, result) {
+            if (err) return cb(err);
+            if (!result) return cb("No Authorization");
             cb(null, result);
         });
     },
-    removeToken:function(token, cb){
-    this.findOne({ email:Utils.verify(token).email, token: { "$in" : [token]} }, function(err, result){
-            if(err)return cb(err);
-            if(!result)return cb("No Authorization");
+    removeToken: function(token, cb) {
+        this.findOne({ email: Utils.verify(token).email, token: { "$in": [token] } }, function(err, result) {
+            if (err) return cb(err);
+            if (!result) return cb("No Authorization");
 
-            var index=result.token.indexOf(token);
-            result.token.splice(index,1);
-            result.save(function(err){
-                if(err)return cb(err);
+            var index = result.token.indexOf(token);
+            result.token.splice(index, 1);
+            result.save(function(err) {
+                if (err) return cb(err);
                 cb();
             });
 

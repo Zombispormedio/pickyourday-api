@@ -14,6 +14,7 @@ var ResourceCtrl = require(C.ctrl + "resource.ctrl");
 var CustomerModel = require(C.models + "customer");
 var async = require("async");
 var Utils = require(C.lib + "utils");
+var _=require("lodash");
 var Controller = {};
 
 Controller.newCompany = function(body, cb) {
@@ -470,16 +471,19 @@ Controller.getTimeLine = function(id_company, params, cb){
                             steps.push(1);                                            
                     }; 
 
-                    for(var r=0; r<timeLine.length; r++){                      
-                        temp.push({"resource":timeLine[r][0], "steps":steps});                   
+                    for(var r=0; r<timeLine.length; r++){  
+
+                        temp.push({"resource":timeLine[r][0], "steps":_.clone(steps)});                   
                     };
 
                     if(count >  0){
                         for(var r=0; r<timeLine.length; r++){
-                            var days = timeLine[r][1];
 
+                            var days = timeLine[r][1];
+                             
                             for(var day=0; day<days.length; day++){
                                 var picks = days[day];
+
                                 for(var pick=0; pick<picks.length; pick++){
                                     var date = picks[pick].init;
                                     date = Utils.newUTC(date);
@@ -489,6 +493,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                         for(var f=0; f<fill; f++)
                                             temp[r]["steps"][pos+f] =1;
                                     }
+                                    
                                 }
                             }
                         };

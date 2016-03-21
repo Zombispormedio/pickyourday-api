@@ -624,7 +624,9 @@ CompanySchema.statics={
 			}
 		}
 
-		query.exec(function(err, companyResource){		
+		query.exec(function(err, companyResource){
+           companyResource=companyResource || [];
+            
 			var resources = companyResource.map(function(a){
 				return a.resources;
 			});

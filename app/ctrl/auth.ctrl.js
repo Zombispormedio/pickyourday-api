@@ -95,46 +95,56 @@ AuthController.checkAdmin = function() {
 
 };
 
+AuthController.Roles={
+    Customer:function(role) {
+        return role === 1 || role === 0;
+    },
+    Company:function(role) {
+        return role === 2 || role === 3;
+    },
+    
+    CompanyBoss:function(role) {
+        return role === 2;
+    },
+    CompanyWorker:function(role) {
+        return role === 3;
+    },
+    
+    Registered:function(role) {
+        return role < 4;
+    }
+};
+
 AuthController.checkCustomer = function() {
     var self = this;
 
-    return self.checkAccess(function(role) {
-        return role === 1 || role === 0;
-    });
+    return self.checkAccess(AuthController.Roles.Customer);
 };
 
 AuthController.checkCompany = function() {
     var self = this;
 
-    return self.checkAccess(function(role) {
-        return role === 2 || role === 3;
-    });
+    return self.checkAccess(AuthController.Roles.Company);
 
 };
 
 AuthController.checkCompanyBoss = function() {
     var self = this;
 
-    return self.checkAccess(function(role) {
-        return role === 2;
-    });
+    return self.checkAccess(AuthController.Roles.CompanyBoss);
 
 };
 
 AuthController.checkCompanyWorker = function() {
     var self = this;
 
-    return self.checkAccess(function(role) {
-        return role === 3;
-    });
+    return self.checkAccess(AuthController.Roles.CompanyWorker);
 
 };
 AuthController.checkRegistered = function() {
     var self = this;
 
-    return self.checkAccess(function(role) {
-        return role < 4;
-    });
+    return self.checkAccess(AuthController.Roles.Registered);
 
 };
 

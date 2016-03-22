@@ -76,7 +76,7 @@ Controller.exportPickArrayToiCal = function(picks) {
     var cal = ical({ domain: C.domain });
     cal.prodId({ company: C.company, product: C.product, language: C.lang });
     cal.name("PickYourDayCalendar");
-    
+    cal.timezone('Europe/Berlin');
 
     picks.forEach(function(item) {
         var event = cal.createEvent();
@@ -92,8 +92,7 @@ Controller.exportPickArrayToiCal = function(picks) {
         var end = new Date(start.getTime());
         end.setMinutes(end.getMinutes() + duration);
         event.end(end);
-        console.log(start);
-        console.log(end);
+
         event.summary(service.name || service.default.name || service.metadata.name);
 
         event.description(service.description || service.default.description || service.metadata.description);

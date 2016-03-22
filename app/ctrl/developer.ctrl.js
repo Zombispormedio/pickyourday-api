@@ -132,20 +132,21 @@ Controller.exportPickArrayToiCal = function(picks) {
         var service = item.service;
 
         var duration = service.duration ||
-            service.default ? service.default.duration : void 0 ||
-                service.metadata ? service.metadata.duration : void 0 || 0;
-
+            (service.default ? service.default.duration : void 0) ||
+                (service.metadata ? service.metadata.duration : void 0) || 0;
+                    
         var end = new Date(start.getTime());
         end.setMinutes(end.getMinutes() + duration);
+      
         event.end(end);
 
         event.summary(service.name ||
-            service.default ? service.default.name : void 0 ||
-                service.metadata ? service.metadata.name : void 0);
+            (service.default ? service.default.name : void 0) ||
+                (service.metadata ? service.metadata.name : void 0));
 
         event.description(service.description ||
-            service.default ? service.default.description : void 0 ||
-                service.metadata ? service.metadata.description : void 0);
+            (service.default ? service.default.description : void 0) ||
+                (service.metadata ? service.metadata.description : void 0));
 
         var company = item.company;
         var company_location = company.location;

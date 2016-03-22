@@ -55,7 +55,7 @@ Controller.search = function(query, cb) {
                                 if (err) return subNext(err);
                                 service.avgRating = avg;
                                 subNext(null, service);
-                            })
+                            });
                         }
 
                         ], function(err, result) {
@@ -400,7 +400,7 @@ Controller.getTimeLine = function(id_company, params, cb){
         function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
-                    date = new Date();
+                   var date = new Date();
 
                     var schedule = company.scheduleActivity;
                     var now = new Date();

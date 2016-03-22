@@ -34,7 +34,11 @@ var config = Object.create(Config.prototype, {
     temp:secure_special_path("temp/"),
     test:secure_path("test/"),
     ctrl:secure_path("app/ctrl/"),
-    secret:secure(process.env.secret)
+    secret:secure(process.env.secret),
+    domain:secure("pickyourday.herokuapp.com"),
+    company:secure("KenoviApps"),
+    product:secure("PickYourDay"),
+    lang:secure("ES")
 });
 
 

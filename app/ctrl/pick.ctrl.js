@@ -67,7 +67,7 @@ Controller.search = function (query, cb) {
                     });
                 },
                 function (p, callback) {
-                    CompanyModel.findById(p.company.id_company, 'cif email name category promotions locations phone photos ', function (err, company) {
+                    CompanyModel.findById(p.company.id_company, 'cif email name category promotions location phone photos ', function (err, company) {
                         if (err) return callback(err);
                         var c = company.toObject();
                         delete p.company.id_company;

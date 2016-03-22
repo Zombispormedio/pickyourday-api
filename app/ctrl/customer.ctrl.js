@@ -61,7 +61,7 @@ Controller.modify = function(id, body, cb) {
         if (err) return cb(err);
         cb();
     });
-}
+};
 
 Controller.delete = function(id, cb) {
     if (!id) return cb("Fields not Filled");
@@ -230,7 +230,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                 if (err) return callback(err);
                 timeLine.push({ "events": dateEvent });
                 callback(null, null);
-            })
+            });
         }
 
     ], function(err, result) {
@@ -299,7 +299,7 @@ Controller.pickAvailable = function(customer, params, cb) {
                 }
 
                 var resourcesAux =resources; 
-                var resourceAvailable=undefined;
+                var resourceAvailable;
                 if(available == true){ 
                     if(resource){
                         for(var key in resourcesAux){                           
@@ -311,7 +311,7 @@ Controller.pickAvailable = function(customer, params, cb) {
                                     if(steps[posPick+f] == 1)
                                         rAvailable =false;
                                     f++;
-                                };
+                                }
 
                                 if(rAvailable) 
                                     resourceAvailable =resourcesAux[key];
@@ -369,7 +369,7 @@ Controller.getPickById = function(id, cb) {
 
 Controller.cancelPick = function(pick, cb) {
     PickCtrl.changeState(pick, "cancelled", cb);
-}
+};
 
 //***************EVENTS
 Controller.searchEvent = function(customer, params, cb) {

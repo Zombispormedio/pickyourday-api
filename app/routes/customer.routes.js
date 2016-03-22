@@ -104,7 +104,7 @@ router.route("/prePick")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "PrePick deleted");
-        })
+        });
     });
 
 router.route("/reviewCompany")
@@ -113,8 +113,8 @@ router.route("/reviewCompany")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "data", "Review created");
-        })
-    })
+        });
+    });
 
 router.route("/rateService")
     .post(AuthController.checkCustomer(), function(req, res) {
@@ -122,8 +122,8 @@ router.route("/rateService")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "Service rated");
-        })
-    })
+        });
+    });
 
 router.route("/category")
     .get(AuthController.checkCustomer(), function(req, res) {
@@ -132,7 +132,7 @@ router.route("/category")
             else
                 Response.printSuccess(res, categories);
         });
-    })
+    });
 
 router.route("/service")
     .get(AuthController.checkCustomer(), function(req, res) {

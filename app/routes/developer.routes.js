@@ -10,16 +10,13 @@ var DeveloperCtrl = require(C.ctrl + "developer.ctrl");
 var router = Router();
 
 
-router.route("/whoiam")
+router.route("/calendar")
     .get(DeveloperCtrl.check(), function(req, res) {
-
-        DeveloperCtrl.whoiam(req.user, req.role, function(err) {
+        DeveloperCtrl.exportCalendar(req.user, req.role, function(err, ical_picks) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Successful");
+               ical_picks.serve(res);
         });
-
-
 
     });
 

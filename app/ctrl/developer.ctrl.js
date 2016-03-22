@@ -1,5 +1,5 @@
 var ical = require('ical-generator');
-var async=require("async");
+var async = require("async");
 
 var C = require("../../config/config");
 
@@ -44,8 +44,8 @@ Controller.getDeveloper = function(user_id, cb) {
     AuthModel.findOne({ _id: user_id }, function(err, result) {
         if (err) return next(err);
 
-       var pair_token=result.developer||{};
-       cb(null, pair_token);
+        var pair_token = result.developer || {};
+        cb(null, pair_token);
 
     });
 };
@@ -131,14 +131,21 @@ Controller.exportPickArrayToiCal = function(picks) {
 
         var service = item.service;
 
-        var duration = service.duration || service.default.duration || service.metadata.duration;
+        var duration = service.duration ||
+            service.default ? service.default.duration : void 0 ||
+                service.metadata ? service.metadata.duration : void 0 || 0;
+
         var end = new Date(start.getTime());
         end.setMinutes(end.getMinutes() + duration);
         event.end(end);
 
-        event.summary(service.name || service.default.name || service.metadata.name);
+        event.summary(service.name ||
+            service.default ? service.default.name : void 0 ||
+                service.metadata ? service.metadata.name : void 0);
 
-        event.description(service.description || service.default.description || service.metadata.description);
+        event.description(service.description ||
+            service.default ? service.default.description : void 0 ||
+                service.metadata ? service.metadata.description : void 0);
 
         var company = item.company;
         var company_location = company.location;

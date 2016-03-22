@@ -184,35 +184,6 @@ AuthController.getRole = function(code, cb) {
 
 
 
-AuthController.CreateOrUpdateDeveloper = function(user_id, cb) {
-    async.waterfall([
-        function generate(next) {
-            var worker = { access_token: Utils.generateDeveloperID(), secret_token: Utils.generateDeveloperToken(50) };
-            next(null, worker);
-        },
 
-        function add(worker, next) {
-            AuthModel.findOne({ _id: user_id }, function(err, result) {
-                if (err) return next(err);
-
-                result.developer = worker;
-                result.save(function(err, result) {
-                    if (err) return next(err);
-
-                    next(null, worker);
-
-                });
-
-            });
-
-        }
-    ], function(err, worker) {
-        if (err) return cb(err);
-        cb(null, worker);
-    });
-
-
-
-};
 
 module.exports = AuthController;

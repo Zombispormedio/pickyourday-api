@@ -1,6 +1,7 @@
 var Router = require("express").Router;
 var C = require("../../config/config");
 var CompanyCtrl = require(C.ctrl+"company.ctrl");
+var DeveloperCtrl = require(C.ctrl + "developer.ctrl");
 var AuthController = require(C.ctrl+"auth.ctrl");
 var Response = require("../lib/response");
 var router = Router();
@@ -184,7 +185,14 @@ router.route("/category")
 
 router.route("/developer")
     .get(AuthController.checkCompany(), function(req, res) {
-       AuthController.CreateOrUpdateDeveloper(req.oauth, function(err, pair_token) {
+       DeveloperCtrl.getDeveloper(req.oauth, function(err, pair_token) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pair_token);
+        });
+    })
+    .post(AuthController.checkCompany(), function(req, res) {
+        DeveloperCtrl.CreateOrUpdateDeveloper(req.oauth, function(err, pair_token) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, pair_token);

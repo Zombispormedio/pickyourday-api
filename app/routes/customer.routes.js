@@ -3,6 +3,7 @@ var C = require("../../config/config");
 
 var CustomerCtrl = require(C.ctrl + "customer.ctrl");
 var AuthController = require(C.ctrl + "auth.ctrl");
+var DeveloperCtrl = require(C.ctrl + "developer.ctrl");
 var Response = require(C.lib + "response");
 var router = Router();
 
@@ -81,14 +82,14 @@ router.route("/event")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, events);
-        })
+        });
     })
     .delete(AuthController.checkCustomer(), function(req, res) {
         CustomerCtrl.deleteEvent(req.user, req.body, function(err) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, "Event deleted");
-        })
+        });
     });
 
 router.route("/prePick")
@@ -97,7 +98,7 @@ router.route("/prePick")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, events);
-        })
+        });
     })
     .delete(AuthController.checkCustomer(), function(req, res) {
         CustomerCtrl.deletePrePick(req.user, req.body, function(err) {
@@ -198,7 +199,14 @@ router.route("/preferences")
 
 router.route("/developer")
     .get(AuthController.checkCustomer(), function(req, res) {
-       AuthController.CreateOrUpdateDeveloper(req.oauth, function(err, pair_token) {
+       DeveloperCtrl.getDeveloper(req.oauth, function(err, pair_token) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pair_token);
+        });
+    })
+    .post(AuthController.checkCustomer(), function(req, res) {
+        DeveloperCtrl.CreateOrUpdateDeveloper(req.oauth, function(err, pair_token) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, pair_token);

@@ -1,4 +1,5 @@
 var ical = require('ical-generator');
+var async=require("async");
 
 var C = require("../../config/config");
 
@@ -7,7 +8,49 @@ var AuthModel = require(C.models + "auth").Auth;
 var CustomerCtrl = require(C.ctrl + "customer.ctrl");
 var CompanyCtrl = require(C.ctrl + "company.ctrl");
 var AuthController = require(C.ctrl + "auth.ctrl");
+var Utils = require(C.lib + "utils");
 var Controller = {};
+
+
+Controller.CreateOrUpdateDeveloper = function(user_id, cb) {
+    async.waterfall([
+        function generate(next) {
+            var worker = { access_token: Utils.generateDeveloperID(), secret_token: Utils.generateDeveloperToken(50) };
+            next(null, worker);
+        },
+
+        function add(worker, next) {
+            AuthModel.findOne({ _id: user_id }, function(err, result) {
+                if (err) return next(err);
+
+                result.developer = worker;
+                result.save(function(err, result) {
+                    if (err) return next(err);
+
+                    next(null, worker);
+
+                });
+
+            });
+
+        }
+    ], function(err, worker) {
+        if (err) return cb(err);
+        cb(null, worker);
+    });
+};
+
+Controller.getDeveloper = function(user_id, cb) {
+    AuthModel.findOne({ _id: user_id }, function(err, result) {
+        if (err) return next(err);
+
+       var pair_token=result.developer||{};
+       cb(null, pair_token);
+
+    });
+};
+
+
 
 Controller.check = function() {
     return function(req, res, next) {
@@ -62,8 +105,8 @@ Controller.exportCalendar = function(user, role, cb) {
         if (err) return cb(err);
 
         var ical_picks = Controller.exportPickArrayToiCal(picks);
-        
-      
+
+
 
         cb(null, ical_picks);
     }
@@ -117,9 +160,6 @@ Controller.exportPickArrayToiCal = function(picks) {
 
                 return prev;
             }, []).join(" ");
-
-
-
 
             if (location && location !== "")
                 event.location(location);

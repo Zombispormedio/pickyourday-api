@@ -39,7 +39,7 @@ AuthController.login = function(u, cb) {
 
                 u.role = user.role;
 
-                next(null, user);
+                next(null);
             });
         },
         function(user, next) {

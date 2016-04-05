@@ -400,7 +400,7 @@ Controller.getTimeLine = function(id_company, params, cb){
         function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
-                   var date = new Date();
+                    var date = new Date();
 
                     var schedule = company.scheduleActivity;
                     var now = new Date();
@@ -414,7 +414,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         for(var time in split){
                             var date = new Date();
                             var hm = split[time].split(":");
-                            date.setHours(hm[0]);
+                            date.setHours(hm[0]-1);
                             date.setMinutes(hm[1]);
                             times.push(date);
                         } 

@@ -413,9 +413,8 @@ Controller.getTimeLine = function(id_company, params, cb){
                         var split = scheduleNow.times[key].split("-");
                         for(var time in split){
                             var date = new Date();
-                            var hm = split[time].split(":");
-                            
-                            date.setHours(parseInt(hm[0])+1);
+                            var hm = split[time].split(":");                         
+                            date.setHours(hm[0]);
                             date.setMinutes(hm[1]);
                             date.setSeconds(0);
                             times.push(date);

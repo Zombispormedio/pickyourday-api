@@ -24,6 +24,7 @@ var server= function (_run) {
     return function(){
         app.listen(port, function () {
             console.log("Conectado: " + app.get("port"));
+			console.log("Iniciado: "+new Date());
             _run();
         });
     };

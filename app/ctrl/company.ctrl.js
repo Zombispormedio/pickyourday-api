@@ -414,13 +414,15 @@ Controller.getTimeLine = function(id_company, params, cb){
                         for(var time in split){
                             var date = new Date();
                             var hm = split[time].split(":");
-                            date.setHours(hm[0]-1);
+
+                            date.setHours(hm[0]);
                             date.setMinutes(hm[1]);
+                            date.setSeconds(0);
                             times.push(date);
                         } 
                     }
                     times.sort();
-
+                    console.log(times);
                     var init;
                     var end;
                     var step = 5;

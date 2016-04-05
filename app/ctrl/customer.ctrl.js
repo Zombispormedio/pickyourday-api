@@ -356,7 +356,6 @@ Controller.searchPick = function(customer, params, cb) {
 
 Controller.newPick = function(customer, params, cb) {
     params.id_customer = customer;
-    console.log(params);
     PickCtrl.new(params, cb);
 };
 

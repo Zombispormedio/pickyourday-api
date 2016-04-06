@@ -487,7 +487,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
                                 for(var pick=0; pick<picks.length; pick++){
                                     var date = picks[pick].init;
-                                    date = Utils.newUTC(date);
+                                    date = new Date(date);
                                     var fill = Math.floor(picks[pick].duration/step);
                                     var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
                                     if(pos >= 0 && pos < count){

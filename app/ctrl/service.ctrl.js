@@ -60,14 +60,19 @@ Controller.deleteServiceName = function(id, cb){
 };
 
 Controller.new= function(user, body, cb){
-
 	if (!body || !body.id_name || (body.price==null))		
 	 	return cb("Fields not Filled");
 
-	CompanyModel.newService(user, body, function(err){
+	var self = this;
+	self.findServiceNameById(body.id_name, function(err, serviceName){
 		if(err) return (err);
-		cb();
+		CompanyModel.newService(user, body, serviceName, function(err){
+			if(err) return (err);
+			cb();
+		});
 	});
+
+
 };
 
 Controller.search = function(user, query, cb){

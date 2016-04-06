@@ -229,8 +229,22 @@ Controller.getTimeLine = function(customer, params, cb) {
             EventCtrl.formatEvent(customer, params.initDate, params.endDate, function(err, dateEvent) {
                 if (err) return callback(err);
                 timeLine.push({ "events": dateEvent });
-                callback(null, null);
+                callback(null);
             });
+        },
+        function getAvailables(callback){
+            if(params.service != null && params.company != null){
+                self.getServiceById(params.company, params.service, function(err, service){
+                    if(err)return callback(err);
+
+                    var duration = service.duration;
+                    timeLine.push({ "availables": service });
+                    callback(null, null);
+
+                })
+
+
+            }else callback(null, null);
         }
 
     ], function(err, result) {
@@ -285,7 +299,7 @@ Controller.pickAvailable = function(customer, params, cb) {
                 if (service.duration)
                     duration = service.duration;
                 else
-                    duration = service.id_name.duration;
+                    duration = service.duration;
 
                 var fill = Math.floor(duration / step);
                 var posPick = ((initDate.getHours() * 60 + initDate.getMinutes()) - minOpen) / step;

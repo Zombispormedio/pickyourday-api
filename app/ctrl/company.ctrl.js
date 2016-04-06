@@ -355,6 +355,10 @@ Controller.getTimeLine = function(id_company, params, cb){
     if(params.resource == undefined)
         params.resource = 0;
 
+    var step = 5;
+
+
+
     var timeLine = [];
     var self=this;
 
@@ -392,7 +396,8 @@ Controller.getTimeLine = function(id_company, params, cb){
                     next(null, null);
                 });
             }, function(err, result){
-                if(err) return callback(err);           
+                if(err) return callback(err);   
+
                 callback(null, timeLine);
             }); 
 
@@ -400,109 +405,149 @@ Controller.getTimeLine = function(id_company, params, cb){
         function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
-                    var date = new Date();
+                var date = new Date();
 
-                    var schedule = company.scheduleActivity;
-                    var now = new Date();
-                    var scheduleNow = now.getDay()-1;
-                    if(scheduleNow == -1)
-                        scheduleNow = 6;
-                    scheduleNow = schedule[0].week[scheduleNow];
-                    var times = [];
-                    for(var key in scheduleNow.times){
-                        var split = scheduleNow.times[key].split("-");
-                        for(var time in split){
-                            var date = new Date();
-                            var hm = split[time].split(":");                         
-                            date.setHours(parseInt(hm[0])+2);
-                            date.setMinutes(hm[1]);
-                            date.setSeconds(0);
-                            times.push(date);
-                        } 
-                    }
-                    times.sort();
+                var schedule = company.scheduleActivity;
+                var now = new Date();
+                var scheduleNow = now.getDay()-1;
+                if(scheduleNow == -1)
+                    scheduleNow = 6;
+                scheduleNow = schedule[0].week[scheduleNow];
+                var times = [];
+                for(var key in scheduleNow.times){
+                    var split = scheduleNow.times[key].split("-");
+                    for(var time in split){
+                        var date = new Date();
+                        var hm = split[time].split(":");                         
+                        date.setHours(parseInt(hm[0]));
+                        date.setMinutes(hm[1]);
+                        date.setSeconds(0);
+                        times.push(date);
+                    } 
+                }
+                times.sort();
 
-                    var init;
-                    var end;
-                    var step = 5;
-                    var minInit;
-                    var minEnd;
-                    var count;
-                    var timeLineArray = new Array();
+                var init;
+                var end;              
+                var minInit;
+                var minEnd;
+                var count;
+                var timeLineArray = new Array();
 
-                    if(times.length > 1){
-                        init = times[0];
-                        end = times[times.length-1];
-   
-                        minInit = init.getHours()*60 + init.getMinutes();
-                        minEnd = end.getHours()*60 + end.getMinutes();
-                        count = Math.floor((minEnd - minInit)/5);
-                        timeLineArray = new Array();
-                    }
-                    var metadata = {
-                        "open":init, "close":end, "step":step, "steps": count, "legend":{
-                            "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event"
-                            }
-                        };
+                if(times.length > 1){
+                    init = times[0];
+                    end = times[times.length-1];
 
-                    var ranges = [];
-                    for(var t=0; t<times.length; t++){
-                        var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
-                        t++;
-                        var pos2 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
-                        
-                        ranges.push({0:pos1, 1:pos2});
-                    }
-
-                    var temp = new Array();
-
-                    var steps = new Array();
-                    for(var i=0; i<count; i++){
-                        var inSchedule = false;
-                        for(var r=0; r<ranges.length; r++){
-                            if(i>=ranges[r][0]  && i<ranges[r][1]){
-                                inSchedule = true;
-                                r=ranges.length;
-                            }
-                        };
-
-                        if(inSchedule)
-                            steps.push(0);  
-                        else
-                            steps.push(2);                                            
-                    }; 
-
-                    for(var r=0; r<timeLine.length; r++){  
-
-                        temp.push({"resource":timeLine[r][0], "steps":_.clone(steps)});                   
+                    minInit = init.getHours()*60 + init.getMinutes();
+                    minEnd = end.getHours()*60 + end.getMinutes();
+                    count = Math.floor((minEnd - minInit)/5);
+                    timeLineArray = new Array();
+                }
+                var metadata = {
+                    "open":init, "close":end, "step":step, "steps": count, "legend":{
+                        "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event", "date":"available"
+                        }
                     };
 
-                    if(count >  0){
-                        for(var r=0; r<timeLine.length; r++){
+                var ranges = [];
+                for(var t=0; t<times.length; t++){
+                    var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                    t++;
+                    var pos2 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                    
+                    ranges.push({0:pos1, 1:pos2});
+                }
 
-                            var days = timeLine[r][1];
-                             
-                            for(var day=0; day<days.length; day++){
-                                var picks = days[day];
+                var temp = new Array();
 
-                                for(var pick=0; pick<picks.length; pick++){
-                                    var date = picks[pick].init;
-                                    date = new Date(date);
-                                    var fill = Math.floor(picks[pick].duration/step);
-                                    var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
-                                    if(pos >= 0 && pos < count){
-                                        for(var f=0; f<fill; f++)
-                                            temp[r]["steps"][pos+f] =1;
-                                    }
-                                    
+                var steps = new Array();
+                for(var i=0; i<count; i++){
+                    var inSchedule = false;
+                    for(var r=0; r<ranges.length; r++){
+                        if(i>=ranges[r][0]  && i<ranges[r][1]){
+                            inSchedule = true;
+                            r=ranges.length;
+                        }
+                    };
+
+                    if(inSchedule)
+                        steps.push(0);  
+                    else
+                        steps.push(2);                                            
+                }
+
+                for(var r=0; r<timeLine.length; r++){  
+                    temp.push({"resource":timeLine[r][0], "steps":_.clone(steps)});                   
+                }
+
+                if(count >  0){
+                    for(var r=0; r<timeLine.length; r++){
+
+                        var days = timeLine[r][1];
+                         
+                        for(var day=0; day<days.length; day++){
+                            var picks = days[day];
+                                
+                            for(var pick=0; pick<picks.length; pick++){
+                                var date = picks[pick].init;
+                                date = new Date(date);
+
+                                var fill = Math.floor(picks[pick].duration/step);
+                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
+                                if(pos >= 0 && pos < count){
+                                    for(var f=0; f<fill; f++)
+                                        temp[r]["steps"][pos+f] =1;
                                 }
+
+                                
                             }
-                        };
+                        }
                     }
-                    timeLineArray.push({"metadata":metadata, "timeLine":temp});
+                }
+                timeLineArray.push({"metadata":metadata, "timeLine":temp});
 
                 callback(null, timeLineArray);
             });
+        }, function getAvailables(timeLineArray, callback){
+            if(params.service != null ){
+                self.getServiceById(id_company, params.service, function(err, service){
+                    if(err) return callback(err);
+                    if(service != null){
+                        var duration = service.duration;
+                        var need = duration/step;
+                        need--;
+                        var initDate = timeLineArray[0].metadata.open;
+                        for(var resource in timeLineArray[0].timeLine){
+                            var steps = timeLineArray[0].timeLine[resource].steps;
+                            var size = steps.length;
+                            for(var key in steps){
+                                key =parseInt(key);                     
+                                if(key+need < size){
+                                    if(steps[key+need] == 0 && steps[key] == 0){
+                                        var avaiable = true;
+                                        var c = key+need-1;
+                                        while(avaiable && key < c){
+                                            if(steps[c] != 0)
+                                                avaiable=false;
+                                            c--;
+                                        }
+
+                                        if(avaiable){
+                                            var auxDate = new Date(initDate);
+                                            auxDate.setMinutes(key*step);
+                                            steps[key] = auxDate;
+                                        }
+                                    }
+                                }else break;
+                            }
+
+                        }
+                                             
+                        callback(null, timeLineArray);
+                    }
+                })
+            }else
+                callback(null, timeLineArray);
         }
     ],function(err, result){
         if(err) return cb(err);  

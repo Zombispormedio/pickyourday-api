@@ -248,7 +248,7 @@ CompanySchema.statics={
 		});
 	},
 
-	newService: function(id_company, params, cb){
+	newService: function(id_company, params, serviceName, cb){
 		this.findOne({_id: id_company}, function(err, company){
 			if(err)return cb(err);
 			if(!company)return cb("Company not found");
@@ -256,6 +256,8 @@ CompanySchema.statics={
 			company.services.push(params);
 			var service = company.services[company.services.length-1];
 			service.dateCreated = new Date();
+			if(service.duration == "" || !service.duration || service.duration < 5)
+				service.duration = serviceName.duration;
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();

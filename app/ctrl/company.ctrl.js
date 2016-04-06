@@ -414,7 +414,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         for(var time in split){
                             var date = new Date();
                             var hm = split[time].split(":");                         
-                            date.setHours(hm[0]);
+                            date.setHours(parseInt(hm[0])+2);
                             date.setMinutes(hm[1]);
                             date.setSeconds(0);
                             times.push(date);

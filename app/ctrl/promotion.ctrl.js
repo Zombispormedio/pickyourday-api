@@ -1,6 +1,7 @@
 var C=require("../../config/config");
 
 var CompanyModel = require(C.models+"company");
+var async = require("async");
 var Controller = {};
 
 Controller.new = function(user, body, cb){
@@ -49,6 +50,56 @@ Controller.delete = function(user, id, cb){
         if(err) return cb(err);
         cb();
     });
+};
+
+Controller.refreshPromotions = function(cb){
+    var date = new Date();
+    var self = this;
+    var query = CompanyModel.search({}, function(err, companies){
+        if(err) return cb(err);
+        async.map(companies, function(companie, callback) {
+            async.waterfall([
+                function changeStart(next) {
+                    var paramsTemp = {};
+                    paramsTemp.beforeInitDate = date;
+                    paramsTemp.state = "waiting";
+                    self.search(companie._id, paramsTemp, function(err, promotions){
+                        var params = {"state": "started"};
+                        async.map(promotions, function(promotion, subNext){
+                            CompanyModel.modifyPromotion(companie._id, promotion._id, params, subNext);
+                        }, function(err, result) {
+                            if (err) return cb(err);
+                            next();
+                        });
+
+                    })
+                },  function changeFinished(next) {
+                    var paramsTemp = {};
+                    paramsTemp.beforeEndDate = date;
+                    self.search(companie._id, paramsTemp, function(err, promotions){
+                        var params = {"state": "finished"};
+                        async.map(promotions, function(promotion, subNext){
+                            CompanyModel.modifyPromotion(companie._id, promotion._id, params, subNext);
+                        }, function(err, result) {
+                            if (err) return cb(err);
+                            next();
+                        });
+
+                    })
+                }], function(err, result) {
+                        if (err) return callback(err);
+                        callback(null, result);
+                    });
+        }, function(err, result) {
+            if (err) return cb(err);
+            cb(null, result);
+        });
+
+
+    });
+
+
+
 };
 
 

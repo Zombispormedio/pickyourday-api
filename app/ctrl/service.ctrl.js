@@ -79,12 +79,10 @@ Controller.search = function(user, query, cb){
 	CompanyModel.searchService(user, query, function(err, services){
 		if(err) return cb(err);
 		
-
 		if(!services || services.length==0 )
 			return cb(null, "Services not found");
 
 		async.map(services, function(service, next){
-
 			async.waterfall([
 				function(callback){
 					var id_name;
@@ -106,18 +104,21 @@ Controller.search = function(user, query, cb){
 
 						callback(null, service);
 					});
-				},
-				function(s, callback){
-					CategoryModel.findById(s.category)
-						.select('name description')
-						.exec(function(err, category){
-							if(err) return callback(err);
+				}, function(service,callback){
+					CompanyModel.servicePromoted(user, service._id, function(err, promotion){													
+						if(promotion && promotion.length > 0){
+							service.promotion = promotion[0];
+							var discount = promotion[0].discount;
+							if(discount > 0 && service.price > 0){
+								service.priceOff = service.price*(discount/100);
+								service.priceDiscounted = service.price - (service.price*(discount/100));
+							}
+						} else service.promotion = [];
 
-							s.category = category;
-							callback(null, s);
-						});
+						callback(null, service);
+					})		
+
 				}
-
 				],function(err, result){
 				if(err) return next(err);
 				next(null, result);
@@ -131,7 +132,6 @@ Controller.search = function(user, query, cb){
 };
 
 Controller.findById = function(user, id, cb){
-
 	CompanyModel.findServiceById(user, id, function(err, service){
 		if(err) return cb(err);	
 		
@@ -140,7 +140,19 @@ Controller.findById = function(user, id, cb){
 		.exec(function(err, service_name){
 			service =service.toObject();
 			service.id_name = service_name;
-			cb(null, service);			
+
+			CompanyModel.servicePromoted(user, service._id, function(err, promotion){		
+				if(promotion && promotion.length > 0){
+					service.promotion = promotion[0];
+					var discount = promotion[0].discount;
+					if(discount > 0 && service.price > 0){
+						service.priceOff = service.price*(discount/100);
+						service.priceDiscounted = service.price - (service.price*(discount/100));
+					}
+				} else service.promotion = [];
+				
+				cb(null, service);
+			})			
 		});		
 	});
 };

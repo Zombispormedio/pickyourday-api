@@ -53,7 +53,16 @@ router.route("/clearPicks")
             else
                 Response.printSuccess(res, picks);
         })
-    })
+    });
+
+router.route("/refreshpromotion")
+    .get(function(req, res){
+        SystemCtrl.refreshPromotions(function(err,promotions){
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, promotions);
+        })
+    });
 
 
 router.route("/service")

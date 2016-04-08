@@ -85,6 +85,10 @@ Controller.clearPicks = function(cb){
     PickCtrl.clearPicks(cb);
 }
 
+Controller.refreshPromotions = function(cb){
+    PromotionCtrl.refreshPromotions(cb);
+}
+
 
 //****************Preferences
 

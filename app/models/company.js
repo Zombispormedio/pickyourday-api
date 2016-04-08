@@ -64,7 +64,12 @@ var PromotionSchema = new Schema({
 	timesUsed: Number,
 	ownCustomers: Boolean,
 	services:[Schema.ObjectId],
-	dateCreated: Date
+	discount: Number,
+	dateCreated: Date,
+	state: {
+		type: String, 
+		enum: ['waiting', 'started', 'spent', 'finished']
+	}
 });
 
 var ServiceSchema = new Schema({
@@ -133,19 +138,24 @@ var CompanySchema = new Schema({
 	customers: [{type: Schema.ObjectId, ref: "Customer"}],
 	registerDate: Date,
 	lastAccess: Date,
-	lastUpdate: Date
+	lastUpdate: Date,
+	state: {
+		type: String, 
+		enum: ['active', 'demo', 'pending', 'refused']
+	}
 	
 
 });
 
 CompanySchema.statics={
 	search:function(params, cb){ 
+		params.state = "active";
 		params = Utils.filterParams(params);
 		var query;
 
 
 
-			query = this.find({});
+		query = this.find({});
 		for(var key in params){
 			switch(key){
 				case 'cif':
@@ -431,7 +441,14 @@ CompanySchema.statics={
 
 			company.promotions.push(params);
 			var promotion = company.promotions[company.promotions.length-1];
-			promotion.dateCreated = new Date();
+			var now = new Date();
+			promotion.dateCreated = now;
+			console.log(promotion.initDate);
+			console.log(now);
+			if(promotion.initDate < now){
+				promotion.state = "started";
+			}else promotion.state = "waiting";
+			
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -475,7 +492,9 @@ CompanySchema.statics={
 				case 'afterDateCreated':
 					query.match({'promotions.dateCreated': {'$gte': new Date(params[key])}});
 					break;
-
+				case 'service': 
+					query.match({'promotions.services': new mongoose.Types.ObjectId(params.service)});
+					break;
 				default : 
 					var field = "promotions."+key;
 					var match={};
@@ -758,6 +777,16 @@ CompanySchema.statics={
 		});
 	},
 
+	servicePromoted: function(id_company, id_service, cb){
+		var params = {'service':id_service};
+
+		this.searchPromotion(id_company, params, function(err, promotion){
+			if(err) cb(err);
+
+			cb(null, promotion);
+		})
+	}
+
 };
 
 
@@ -776,6 +805,8 @@ function getServiceRating(services){
 	}
 	return rates;			
 }
+
+	
 
 
 module.exports = mongoose.model("Company", CompanySchema);

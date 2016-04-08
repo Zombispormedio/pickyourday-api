@@ -159,14 +159,25 @@ Controller.getProfile = function(id, cb) {
                                 subNext(null, service);
                             });
                     }, function(service, subNext) {
-
                         CompanyModel.formatServideRating(company._id, service._id, function(err, avg) {
                             if (err) return subNext(err);
                             service.avgRating = avg;
                             subNext(null, service);
                         });
+                    }, function(service,subNext){
+                        CompanyModel.servicePromoted(id, service._id, function(err, promotion){                               
+                            if(promotion && promotion.length > 0){
+                                service.promotion = promotion[0];
+                                var discount = promotion[0].discount;
+                                if(discount > 0){
+                                    service.priceOff = service.price*(discount/100);
+                                    service.priceDiscounted = service.price - (service.price*(discount/100));
+                                }
+                            } else service.promotion = [];
+                            
+                            subNext(null, service);
+                        })  
                     }
-
                     ], function(err, result) {
                         if (err) return next(err);
                         next(null, result);

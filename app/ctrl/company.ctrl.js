@@ -588,7 +588,7 @@ Controller.searchServiceName = function(params, cb) {
 };
 
 Controller.searchService = function(company, params, cb) {
-    this.findById(company, function(err, c){
+    CompanyModel.findById(company, function(err, c){
         if(err) return cb(err); 
         params.state = company.state;
         ServiceCtrl.search(company, params, cb);
@@ -661,7 +661,7 @@ Controller.newResource = function(company, params, cb) {
 };
 
 Controller.searchResource = function(company, params, cb) {
-    this.findById(company, function(err, c){
+    CompanyModel.findById(company, function(err, c){
         if(err) return cb(err); 
         params.state = company.state;
         ResourceCtrl.search(company, params, cb);

@@ -204,7 +204,6 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
-
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
@@ -239,11 +238,54 @@ Controller.getTimeLine = function(customer, params, cb) {
             if(params.service != null && params.company != null){
                 self.getServiceById(params.company, params.service, function(err, service){
                     if(err)return callback(err);
+                    var paramsTemp = {};
+                    paramsTemp.service = params.service;
+                    var date = new Date();
+                    if(params.initDate > date)
+                        paramsTemp.date = params.initDate;
+                    else
+                        paramsTemp.date = date;
+                    paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
+                    CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
+                        if(err) return callback(err);
+                        if(timeLineCompany){
+                            var duration = service.duration;
+                            var step = 5;
+                            var need = duration/step;
+                            need--;
+                            var initDate = timeLineCompany[0].metadata.open;
+                            var availables =[];
+                            for(var resource in timeLineCompany[0].timeLine){
+                                var steps = timeLineCompany[0].timeLine[resource].steps;
+                                var size = steps.length;
+                                for(var key in steps){
+                                    key =parseInt(key);                     
+                                    if(key+need < size){
+                                        if(typeof (steps[key+need]) == "object"){
+                                            var avaiable = true;
+                                            var c = key+need-1;
+                                            while(avaiable && key < c){
+                                                if(typeof (steps[key+need]) != "object")
+                                                    avaiable=false;
+                                                c--;
+                                            }
 
-                    var duration = service.duration;
-                    timeLine.push({ "availables": service });
-                    callback(null, null);
+                                            if(avaiable){
+                                                var auxDate = new Date(initDate);
+                                                auxDate.setMinutes(key*step);
+                                                availables.push({"date":auxDate, "resource": timeLineCompany[0].timeLine[resource].resource.id});
+                                            }
+                                        }
+                                    }else break;
+                                }
 
+                            }
+                        
+                            timeLine.push({ "availables": availables});
+                            callback(null, null);
+                        }
+
+                    })
                 })
 
 
@@ -368,6 +410,7 @@ Controller.pickAvailable = function(customer, params, cb) {
 //****************PICKS
 Controller.searchPick = function(customer, params, cb) {
     params.id_customer = customer;
+    params.state = "active";
     PickCtrl.search(params, cb);
 };
 

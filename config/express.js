@@ -3,7 +3,7 @@ var morgan = require("morgan");
 var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 var cors=require("cors");
-
+var compression = require('compression');
 module.exports = function (app) {
 
 
@@ -30,7 +30,7 @@ module.exports = function (app) {
     //Simula delete y put
     app.use(methodOverride());
     app.use(cors());
-
+	app.use(compression());
 
 
 

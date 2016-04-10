@@ -149,11 +149,10 @@ var CompanySchema = new Schema({
 
 CompanySchema.statics={
 	search:function(params, cb){ 
-		params.state = "active";
+		if(!params.state || params.state == "")
+			params.state = "active";
 		params = Utils.filterParams(params);
 		var query;
-
-
 
 		query = this.find({});
 		for(var key in params){
@@ -276,25 +275,27 @@ CompanySchema.statics={
 
 	searchService: function(id_company, params, cb){
 		var query;
+		if(!params.state || params.state == "")
+			params.state = "active";
 		if(id_company !== 0){
-			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company}}]);
+			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company, state:params.state}}]);
 		}else if(params.category === undefined || params.category=== '')
-			query = this.aggregate([{$unwind:"$services"}]);
+			query = this.aggregate([{$unwind:"$services"}, {$match: {state:params.state}}]);
 		else
-			query = this.aggregate([{$unwind:"$services"},{$match: {category :new mongoose.Types.ObjectId(params.category)}}]);
+			query = this.aggregate([{$unwind:"$services"},{$match: {category :new mongoose.Types.ObjectId(params.category), state: params.state}}]);
 		
 		var greaterRating=false;
 		var lessRating=false;
 
 		for(var key in params){
 			switch(key){
-
 				case 'id_name':
 					var field = "services."+key;
 					var match={};
 					match[field] = params[key];
 					query.match(match);	
 					break;
+				case 'state':break;
 				case 'beforeDateCreated':
 					query.match({'services.dateCreated': {'$lte': new Date(params[key])}});
 					break;
@@ -455,10 +456,13 @@ CompanySchema.statics={
 	},
 
 	searchPromotion: function(id_company, params, cb){
-		var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company)}}]);
+		if(!params.state || params.state == "")
+			params.state = "active";
+		var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state:params.state}}]);
 
 		for(var key in params){
 			switch(key){
+				case 'state': break;
 				case 'beforeInitDate':
 					query.match({'promotions.initDate': {'$lte': new Date(params[key])}});
 					break;
@@ -624,7 +628,9 @@ CompanySchema.statics={
 	},
 
     searchResources: function(id_company, params, cb){
-		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: new mongoose.Types.ObjectId(id_company)}}]);
+    	if(!params.state || params.state == "")
+			params.state = "active";
+		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state: params.state}}]);
 		for(var key in params){
 			switch(key){
 				case 'beforeInitDate':

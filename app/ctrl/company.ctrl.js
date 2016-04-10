@@ -21,7 +21,7 @@ Controller.newCompany = function(body, cb) {
     if (!body || !body.cif || !body.email || !body.password) return cb("Fields not Filled");
     var company = new CompanyModel(body);
     company.registerDate = new Date();
-
+    company.state = "demo";
     company.save(function(err, result) {
         if (err) return cb(err);
         cb(null, result);
@@ -753,7 +753,9 @@ Controller.updateProfile = function(company_id, params, cb) {
 
 
 Controller.getAll = function(params, cb) {
-    var query = CompanyModel.find({});
+    if(!params.state || params.state == "" )
+        params.state = "active";
+    var query = CompanyModel.find({"state":params.state});
     //Pending pagination
     query.exec(function(err, result) {
         if (err) return cb(err);

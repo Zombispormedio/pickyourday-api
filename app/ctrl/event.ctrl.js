@@ -6,14 +6,13 @@ var async = require("async");
 var Controller = {};
 
 Controller.new = function(user, body, cb){
-	if(!body || !body.initDate || !body.endDate || !body.name )
+	if(!body || !body.initDate || !body.endDate )
 		return cb("Fields not filled");
 
 	CustomerModel.newEvent(user, body, function(err){
 		if(err) return cb(err);
 		cb();
 	});
-
 };
 
 Controller.search = function(user, body, cb){
@@ -23,7 +22,6 @@ Controller.search = function(user, body, cb){
 
 		if(!events)
 			return cb(null, "Events not found");
-
 
 		cb(null, events);
 	})

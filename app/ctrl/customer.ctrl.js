@@ -206,8 +206,12 @@ Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
 
-    if (!params.initDate)
+    if (!params.initDate){
         params.initDate = new Date();
+        initDate.setHours(0);
+        initDate.setMinutes(0);
+        initDate.setSeconds(0);
+    }
     if (!params.endDate) {
         var dateTemp = new Date();
         params.endDate = new Date();

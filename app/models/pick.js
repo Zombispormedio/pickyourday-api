@@ -34,6 +34,11 @@ var PickSchema = new Schema({
 		type: String, 
 		enum: ['pending', 'active', 'cancelled', 'finished'],
 		required: true
+	},
+	origin: {
+		type: String, 
+		enum: ['prepick', 'pick', 'manual', 'promotion'],
+		required: true
 	}
 });
 

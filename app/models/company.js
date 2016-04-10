@@ -640,6 +640,9 @@ CompanySchema.statics={
 				case 'afterInitDate':
 					query.match({'resources.initDate': {'$gte': new Date(params[key])}});
 					break;	
+				case 'service': 
+					query.match({'resources.services': new mongoose.Types.ObjectId(params.service)});
+					break;
 				case 'format': break;			
 				default : 
 					var field = "resources."+key;

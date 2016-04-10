@@ -633,6 +633,7 @@ CompanySchema.statics={
 		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state: params.state}}]);
 		for(var key in params){
 			switch(key){
+				case 'state' : break;
 				case 'beforeInitDate':
 					query.match({'resources.initDate': {'$lte': new Date(params[key])}});
 					break;

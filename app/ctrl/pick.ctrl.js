@@ -222,6 +222,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
         else
             paramsTemp.picks = [];
         paramsTemp=Utils.filterParams(paramsTemp);
+        paramsTemp.state ="active";
 
         async.eachSeries(count, function(day, next){ 
             if(day > 0)

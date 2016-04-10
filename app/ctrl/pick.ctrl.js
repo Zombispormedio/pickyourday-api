@@ -259,6 +259,7 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
     var paramsTemp = {"id_customer":id_customer};
     paramsTemp.beforeInitDate = endDate;
     paramsTemp.afterInitDate  = initDate;
+    paramsTemp.state ="active";
 
     self.search(paramsTemp,function(err, picks){    
         if(err) return cb(err);

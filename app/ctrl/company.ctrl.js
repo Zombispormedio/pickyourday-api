@@ -588,7 +588,11 @@ Controller.searchServiceName = function(params, cb) {
 };
 
 Controller.searchService = function(company, params, cb) {
-    ServiceCtrl.search(company, params, cb);
+    this.findById(company, function(err, c){
+        if(err) return cb(err); 
+        params.state = company.state;
+        ServiceCtrl.search(company, params, cb);
+    })
 };
 
 Controller.newService = function(company, params, cb) {
@@ -609,7 +613,13 @@ Controller.getServiceById = function(company, id, cb) {
 
 //***********************PROMOTIONS
 Controller.searchPromotion = function(company, params, cb) {
-    PromotionCtrl.search(company, params, cb);
+    this.findById(company, function(err, c){
+        if(err) return cb(err); 
+        params.state = company.state;
+        PromotionCtrl.search(company, params, cb);
+    })
+    
+    
 };
 
 Controller.newPromotion = function(company, params, cb) {
@@ -651,7 +661,11 @@ Controller.newResource = function(company, params, cb) {
 };
 
 Controller.searchResource = function(company, params, cb) {
-    ResourceCtrl.search(company, params, cb);
+    this.findById(company, function(err, c){
+        if(err) return cb(err); 
+        params.state = company.state;
+        ResourceCtrl.search(company, params, cb);
+    })
 };
 
 Controller.modifyResource = function(company, id, body, cb) {
@@ -754,8 +768,9 @@ Controller.updateProfile = function(company_id, params, cb) {
 
 Controller.getAll = function(params, cb) {
     if(!params.state || params.state == "" )
-        params.state = "active";
-    var query = CompanyModel.find({"state":params.state});
+        var query = CompanyModel.find({});
+    else var query = CompanyModel.find({"state":params.state});
+    
     //Pending pagination
     query.exec(function(err, result) {
         if (err) return cb(err);

@@ -166,14 +166,14 @@ Controller.getProfile = function(id, cb) {
                         });
                     }, function(service,subNext){
                         CompanyModel.servicePromoted(id, service._id, function(err, promotion){                               
-                            if(promotion && promotion.length > 0){
-                                service.promotion = promotion[0];
-                                var discount = promotion[0].discount;
+                            if(promotion){
+                                service.promotion = promotion;
+                                var discount = promotion.discount;
                                 if(discount > 0){
                                     service.priceOff = service.price*(discount/100);
                                     service.priceDiscounted = service.price - (service.price*(discount/100));
                                 }
-                            } else service.promotion = [];
+                            } else service.promotion = null;
                             
                             subNext(null, service);
                         })  
@@ -626,6 +626,10 @@ Controller.deletePromotion = function(company, params, cb) {
 
 Controller.getPromotionById = function(company, id, cb) {
     PromotionCtrl.findById(company, id, cb);
+};
+
+Controller.usePromotion = function(company, id, cb){
+    CompanyModel.usePromotion(company, id, cb);
 };
 
 //*******************CATEGORY

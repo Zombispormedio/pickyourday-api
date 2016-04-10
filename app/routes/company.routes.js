@@ -61,14 +61,8 @@ router.route("/pick")
             else
                 Response.printSuccess(res, picks);
         });
-    })
-    .delete(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.deletePick(req.body, function (err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res,  "Pick deleted");
-        });
     });
+
 
 router.route("/serviceName")
     .get(AuthController.checkCompany(),function(req, res){
@@ -207,7 +201,14 @@ router.route("/pick/:id")
             else
                 Response.printSuccess(res, service);
         });
-    });
+    })
+    .delete(AuthController.checkCustomer(), function (req, res) {
+        CompanyCtrl.deletePick(req.params.id, function (err, pick) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  pick);
+        });
+ });
 
 router.route("/service/:id")
     .get(AuthController.checkCompany(), function (req, res) {

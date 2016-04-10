@@ -381,8 +381,28 @@ Controller.getPickById = function(id, cb) {
     PickCtrl.findById(id, cb);
 };
 
+Controller.getPickByIdQuick = function(id, cb){
+    PickCtrl.findByIdQuick(id, cb);
+};
+
 Controller.cancelPick = function(pick, cb) {
     PickCtrl.changeState(pick, "cancelled", cb);
+};
+
+Controller.activePick = function(id_pick, cb) {
+    var self= this;
+
+    self.getPickByIdQuick(id_pick, function(err, pick){
+        if(err) return cb(err);
+        
+        if(pick && pick.state != "active"){
+            if(pick.promotion != null){
+            CompanyCtrl.usePromotion(pick.company.id_company, pick.promotion, function(err){
+                PickCtrl.changeState(id_pick, "active", cb);
+            });         
+            }else PickCtrl.changeState(id_pick, "active", cb);
+        }else cb(-1);
+    })
 };
 
 //***************EVENTS

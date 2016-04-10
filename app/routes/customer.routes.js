@@ -52,10 +52,10 @@ router.route("/profile")
 
 router.route("/pick")
     .post(AuthController.checkCustomer(), function(req, res) {
-        CustomerCtrl.newPick(req.user, req.body, function(err) {
+        CustomerCtrl.newPick(req.user, req.body, function(err, pick) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Pick created");
+                Response.printSuccess(res, pick);
         });
     })
     .get(AuthController.checkCustomer(), function(req, res) {
@@ -272,14 +272,14 @@ router.route("/pick/:id")
             else
                 Response.printSuccess(res, pick);
         });
-    });
-/* .delete(AuthController.checkCustomer(), function (req, res) {
+    })
+ .delete(AuthController.checkCustomer(), function (req, res) {
      CustomerCtrl.deletePick(req.params.id, function (err, pick) {
          if (err) Response.printError(res, err);
          else
              Response.printSuccess(res,  pick);
      });
- });*/
+ });
 
 router.route("/cancelPick/:id")
     .put(AuthController.checkCustomer(), function(req, res) {
@@ -288,7 +288,15 @@ router.route("/cancelPick/:id")
             else
                 Response.printSuccess(res, "");
         });
-    })
+    });
+ router.route("/activePick/:id")
+    .put(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.activePick(req.params.id, function(err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, "");
+        });
+    });   
 
 router.route("/:id")
     .get(AuthController.checkAdmin(), function(req, res) {

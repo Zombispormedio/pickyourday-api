@@ -209,10 +209,7 @@ CompanySchema.statics={
 				return cb("Company not found");
 
 			company=Utils.mergeMongoObjects(company, params);
-		
-		
-			
-			
+
 			company.lastUpdate=new Date();
 		
 			company.save(function(err){
@@ -234,10 +231,10 @@ CompanySchema.statics={
 	   		{_id: params.company_id, 'review.id_customer': {$ne: user}},
 	    	{$addToSet: {review: review}}, function(err, result){
 
-					if(err) return cb(err);	
-					if(result.nModified === 0){return cb("El usuario ya ha hecho un review");}
-						
-					cb();
+				if(err) return cb(err);	
+				if(result.nModified === 0){return cb("El usuario ya ha hecho un review");}
+					
+				cb();
 	    });
 	},
 
@@ -443,12 +440,11 @@ CompanySchema.statics={
 			var promotion = company.promotions[company.promotions.length-1];
 			var now = new Date();
 			promotion.dateCreated = now;
-			console.log(promotion.initDate);
-			console.log(now);
 			if(promotion.initDate < now){
 				promotion.state = "started";
 			}else promotion.state = "waiting";
 			
+			promotion.timesUsed = 0;
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -459,7 +455,8 @@ CompanySchema.statics={
 	},
 
 	searchPromotion: function(id_company, params, cb){
-		var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: id_company}}]);
+		var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company)}}]);
+
 		for(var key in params){
 			switch(key){
 				case 'beforeInitDate':
@@ -670,7 +667,7 @@ CompanySchema.statics={
            },
            
            function disable(modified, next){
-                   if(modified===1) return next();
+                if(modified===1) return next();
                
                self.findOne({_id: company_id, 
                    "resources._id":resource_id}, function(err, result){
@@ -689,16 +686,14 @@ CompanySchema.statics={
                        result.save(function(err){
                            if(err)return next(err);
                            next();
-                       });
-                       
+                       });                   
                    });
            }
            
        ], function(err){
            if(err)return cb(err);
            cb();
-       });
-        
+       });      
 	},
 
 	getServicesAsigned: function(id_company, id_resource, cb){
@@ -783,10 +778,32 @@ CompanySchema.statics={
 		this.searchPromotion(id_company, params, function(err, promotion){
 			if(err) cb(err);
 
-			cb(null, promotion);
+			if(promotion && promotion.length > 0)
+				cb(null, promotion[0]);
+			else
+				cb(null, null);
 		})
-	}
+	},
 
+	usePromotion: function(id_company, id_promotion, cb){
+		this.findOne({_id: id_company}, function(err, company){
+			if(err) return cb(err);
+			if(company){
+				var promotion = company.promotions.id(id_promotion);
+				if(promotion && promotion.useLimit > 0){
+					promotion.timesUsed = promotion.timesUsed +1;
+					if(promotion.timesUsed >= promotion.useLimit){
+						promotion.state = "spent";
+					}
+
+					company.save(function(err){
+						if(err) return cb(err);				
+						cb();
+					});
+				} else cb(-1);
+			} else cb(-1);
+		});
+	}
 };
 
 

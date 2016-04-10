@@ -11,8 +11,12 @@ var Utils=require(C.lib+"utils");
 var Controller = {};
 
 Controller.new = function (body, cb) {
-    if (!body || !body.id_customer || !body.company || !body.initDate || !body.state)
+    if (!body || !body.id_customer || !body.company || !body.initDate)
         return cb("Fields not filled");
+    var date = new Date(body.initDate);
+
+    if(date < new Date())
+        return cb("Date not valid");
     var pick = new PickModel(body);
     pick.dateCreated = new Date();
 
@@ -20,14 +24,19 @@ Controller.new = function (body, cb) {
         if(err) return cb(err);
         if(!service) return cb(null, "Service not found in new Pick");
         pick.duration = service.duration;
+        pick.state = "pending";
+        if(service.promotion != null){
+            
+            if(service.promotion.initDate <= date && service.promotion.endDate > date)
+                pick.promotion = service.promotion._id;
+            else pick.promotion = null;
+        }
+        else pick.promotion = null;
         pick.save(function (err) {
             if (err) return cb(err);
-            cb();
-
+            cb(null, pick);
         });
     })
-
-
 };
 
 Controller.searchQuick = function (query, cb) {
@@ -37,6 +46,18 @@ Controller.searchQuick = function (query, cb) {
             return cb(null, []);
         else
             cb(null, picks);
+    });
+};
+
+Controller.findByIdQuick = function (id, cb) {
+    PickModel.findById(id, function (err, pick) {
+        if (err) return cb(err);
+
+        if (!pick)
+            return cb("No pick found");
+
+        cb(null, pick);
+
     });
 };
 

@@ -106,14 +106,14 @@ Controller.search = function(user, query, cb){
 					});
 				}, function(service,callback){
 					CompanyModel.servicePromoted(user, service._id, function(err, promotion){													
-						if(promotion && promotion.length > 0){
-							service.promotion = promotion[0];
-							var discount = promotion[0].discount;
+						if(promotion){
+							service.promotion = promotion;
+							var discount = promotion.discount;
 							if(discount > 0 && service.price > 0){
 								service.priceOff = service.price*(discount/100);
 								service.priceDiscounted = service.price - (service.price*(discount/100));
 							}
-						} else service.promotion = [];
+						} else service.promotion = null;
 
 						callback(null, service);
 					})		
@@ -141,15 +141,16 @@ Controller.findById = function(user, id, cb){
 			service =service.toObject();
 			service.id_name = service_name;
 
-			CompanyModel.servicePromoted(user, service._id, function(err, promotion){		
-				if(promotion && promotion.length > 0){
-					service.promotion = promotion[0];
-					var discount = promotion[0].discount;
+			CompanyModel.servicePromoted(user, service._id, function(err, promotion){	
+				
+				if(promotion){
+					service.promotion = promotion;
+					var discount = promotion.discount;
 					if(discount > 0 && service.price > 0){
 						service.priceOff = service.price*(discount/100);
 						service.priceDiscounted = service.price - (service.price*(discount/100));
 					}
-				} else service.promotion = [];
+				} else service.promotion = null;
 				
 				cb(null, service);
 			})			

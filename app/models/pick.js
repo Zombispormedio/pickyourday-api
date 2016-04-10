@@ -29,6 +29,7 @@ var PickSchema = new Schema({
 	duration: Number,
 	dateCreated: Date,
 	observation: String,
+	promotion: Schema.ObjectId,
 	state: {
 		type: String, 
 		enum: ['pending', 'active', 'cancelled', 'finished'],

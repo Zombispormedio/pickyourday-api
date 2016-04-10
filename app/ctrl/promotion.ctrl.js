@@ -14,13 +14,15 @@ Controller.new = function(user, body, cb){
 };
 
 Controller.search = function(user, query, cb){
-    CompanyModel.searchPromotion(user, query, function(err, promotions){
-        if(err) return cb(err);
+    CompanyModel.findById(user, function(err, c){
+        if(err) return cb(err); 
+        query.state = c.state;
 
-        if(!promotions)
-            return cb(null, "Promotions not found");
+        CompanyModel.searchPromotion(user, query, function(err, promotions){
+            if(err) return cb(err);
 
-        cb(null, promotions);
+            cb(null, promotions);
+        })
     })
 };
 

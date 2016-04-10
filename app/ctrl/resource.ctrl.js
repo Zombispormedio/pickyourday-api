@@ -87,57 +87,62 @@ Controller.findById = function(user, id, params, cb){
 };
 
 Controller.search = function(user, query, cb){
-	CompanyModel.searchResources(user, query, function(err, resources){
-		if(err) return cb(err);
+    CompanyModel.findById(user, function(err, c){
+        if(err) return cb(err); 
+        query.state = c.state;
 
-		if(!resources || resources.length==0 )
-			return cb(null, resources);
+		CompanyModel.searchResources(user, query, function(err, resources){
+			if(err) return cb(err);
 
-		if(query.format != undefined && query.format == false){
-			return cb(null, resources);
-		}else{
-			async.map(resources, function(resource, next){	
-	            if(!resource) return next();
-				async.waterfall([
-					function(callback){				
-						async.map(resource.services, function(service, next){						
-							ServiceCtrl.findById(user, service, function(err, serv){
-								if(err) return next(err);	
-								service=serv;
-								
-								next(null, service);
+			if(!resources || resources.length==0 )
+				return cb(null, resources);
+
+			if(query.format != undefined && query.format == false){
+				return cb(null, resources);
+			}else{
+				async.map(resources, function(resource, next){	
+		            if(!resource) return next();
+					async.waterfall([
+						function(callback){				
+							async.map(resource.services, function(service, next){						
+								ServiceCtrl.findById(user, service, function(err, serv){
+									if(err) return next(err);	
+									service=serv;
+									
+									next(null, service);
+								});
+							},function(err, result){
+								if(err) return callback(err);							
+								resource.services = result;
+								callback(null, resource);
 							});
-						},function(err, result){
-							if(err) return callback(err);							
-							resource.services = result;
-							callback(null, resource);
-						});
-					}, function(resource, callback){
-						async.map(resource.picks, function(idPick, next){						
-							PickCtrl.findById(idPick, function(err, pick){
-								if(err) return next(err);	
-								idPick=pick;
-								
-								next(null, idPick);
+						}, function(resource, callback){
+							async.map(resource.picks, function(idPick, next){						
+								PickCtrl.findById(idPick, function(err, pick){
+									if(err) return next(err);	
+									idPick=pick;
+									
+									next(null, idPick);
+								});
+							},function(err, result){
+								if(err) return callback(err);							
+								resource.picks = result;
+								callback(null, resource);
 							});
-						},function(err, result){
-							if(err) return callback(err);							
-							resource.picks = result;
-							callback(null, resource);
-						});
 
-					}
-				],function(err, result){
-					if(err) return next(err);
-					next(null, result);
-				});
+						}
+					],function(err, result){
+						if(err) return next(err);
+						next(null, result);
+					});
 
-			}, function(err, result){
-				if(err) return cb(err);
-				cb(null, result);
-			});	
-		}
-	});
+				}, function(err, result){
+					if(err) return cb(err);
+					cb(null, result);
+				});	
+			}
+		});
+	})
 };
 
 Controller.getResourcesByService = function(company, idService, cb){

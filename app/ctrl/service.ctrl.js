@@ -76,6 +76,10 @@ Controller.new= function(user, body, cb){
 };
 
 Controller.search = function(user, query, cb){
+
+    CompanyModel.findById(user, function(err, c){
+        if(err) return cb(err); 
+        query.state = c.state;
 	CompanyModel.searchService(user, query, function(err, services){
 		if(err) return cb(err);
 		
@@ -128,6 +132,7 @@ Controller.search = function(user, query, cb){
 			if(err) return cb(err);
 			cb(null, result);
 		});	
+	})
 	})
 };
 

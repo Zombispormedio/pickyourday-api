@@ -590,7 +590,7 @@ Controller.searchServiceName = function(params, cb) {
 Controller.searchService = function(company, params, cb) {
     CompanyModel.findById(company, function(err, c){
         if(err) return cb(err); 
-        params.state = company.state;
+        params.state = c.state;
         ServiceCtrl.search(company, params, cb);
     })
 };
@@ -613,9 +613,9 @@ Controller.getServiceById = function(company, id, cb) {
 
 //***********************PROMOTIONS
 Controller.searchPromotion = function(company, params, cb) {
-    this.findById(company, function(err, c){
+    CompanyModel.findById(company, function(err, c){
         if(err) return cb(err); 
-        params.state = company.state;
+        params.state = c.state;
         PromotionCtrl.search(company, params, cb);
     })
     
@@ -663,7 +663,7 @@ Controller.newResource = function(company, params, cb) {
 Controller.searchResource = function(company, params, cb) {
     CompanyModel.findById(company, function(err, c){
         if(err) return cb(err); 
-        params.state = company.state;
+        params.state = c.state;
         ResourceCtrl.search(company, params, cb);
     })
 };

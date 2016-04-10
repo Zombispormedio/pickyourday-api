@@ -377,6 +377,8 @@ Controller.getTimeLine = function(id_company, params, cb){
         function getResources(callback){
             var paramsTemp ={};
             paramsTemp.format = false;
+            if(params.service)
+                paramsTemp.service = params.service;
             if(params.resource == 0){
                 ResourceCtrl.search(id_company, paramsTemp, function(err, resources){
                     if(err) return callback(err); 
@@ -588,8 +590,11 @@ Controller.searchServiceName = function(params, cb) {
 };
 
 Controller.searchService = function(company, params, cb) {
-    ServiceCtrl.search(company, params, cb);
-    
+    CompanyModel.findById(company, function(err, c){
+        if(err) return cb(err); 
+        params.state = c.state;
+        ServiceCtrl.search(company, params, cb);
+    });
 };
 
 Controller.newService = function(company, params, cb) {

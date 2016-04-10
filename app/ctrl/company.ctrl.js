@@ -33,7 +33,7 @@ Controller.search = function(query, cb) {
         if (err) return cb(err);
 
         if (!companies || companies.length === 0)
-            return cb(null, "No companies");
+            return cb(null, []);
 
         async.map(companies, function(companie, next) {
             if (!companie) return next();
@@ -144,7 +144,7 @@ Controller.getProfile = function(id, cb) {
         if (err) return cb(err);
 
         if (!company)
-            return cb("No company found GetProfile");
+            return cb([]);
 
         async.waterfall([
             function(callback) {

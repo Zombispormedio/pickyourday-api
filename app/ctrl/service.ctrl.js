@@ -80,59 +80,59 @@ Controller.search = function(user, query, cb){
     CompanyModel.findById(user, function(err, c){
         if(err) return cb(err); 
         query.state = c.state;
-	CompanyModel.searchService(user, query, function(err, services){
-		if(err) return cb(err);
-		
-		if(!services || services.length==0 )
-			return cb(null, "Services not found");
+		CompanyModel.searchService(user, query, function(err, services){
+			if(err) return cb(err);
+			
+			if(!services || services.length==0 )
+				return cb(null, []);
 
-		async.map(services, function(service, next){
-			async.waterfall([
-				function(callback){
-					var id_name;
-
-					if(!service.services)
-						id_name = service.id_name;
-					else
-						id_name=service.services.id_name;
-
-					ServiceNameModel.findById(id_name)
-					.select('name duration keywords description')
-					.exec(function(err, service_name){
-						if(err) return callback(err);
+			async.map(services, function(service, next){
+				async.waterfall([
+					function(callback){
+						var id_name;
 
 						if(!service.services)
-							service.id_name=service_name;
+							id_name = service.id_name;
 						else
-							service.services.id_name=service_name;
+							id_name=service.services.id_name;
 
-						callback(null, service);
-					});
-				}, function(service,callback){
-					CompanyModel.servicePromoted(user, service._id, function(err, promotion){													
-						if(promotion){
-							service.promotion = promotion;
-							var discount = promotion.discount;
-							if(discount > 0 && service.price > 0){
-								service.priceOff = service.price*(discount/100);
-								service.priceDiscounted = service.price - (service.price*(discount/100));
-							}
-						} else service.promotion = null;
+						ServiceNameModel.findById(id_name)
+						.select('name duration keywords description')
+						.exec(function(err, service_name){
+							if(err) return callback(err);
 
-						callback(null, service);
-					})		
+							if(!service.services)
+								service.id_name=service_name;
+							else
+								service.services.id_name=service_name;
 
-				}
-				],function(err, result){
-				if(err) return next(err);
-				next(null, result);
-			});
-			
-		}, function(err, result){
-			if(err) return cb(err);
-			cb(null, result);
-		});	
-	})
+							callback(null, service);
+						});
+					}, function(service,callback){
+						CompanyModel.servicePromoted(user, service._id, function(err, promotion){													
+							if(promotion){
+								service.promotion = promotion;
+								var discount = promotion.discount;
+								if(discount > 0 && service.price > 0){
+									service.priceOff = service.price*(discount/100);
+									service.priceDiscounted = service.price - (service.price*(discount/100));
+								}
+							} else service.promotion = null;
+
+							callback(null, service);
+						})		
+
+					}
+					],function(err, result){
+					if(err) return next(err);
+					next(null, result);
+				});
+				
+			}, function(err, result){
+				if(err) return cb(err);
+				cb(null, result);
+			});	
+		})
 	})
 };
 

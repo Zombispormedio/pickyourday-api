@@ -250,22 +250,30 @@ Controller.getTimeLine = function(customer, params, cb) {
                         if(err) return callback(err);
                         if(timeLineCompany){
                             var duration = service.duration;
-                            var step = 5;
+                            var step = timeLineCompany[0].metadata.step;
                             var need = duration/step;
-                            need--;
+                            need--;                           
+                            var stepsSize = timeLineCompany[0].metadata.steps;
                             var initDate = timeLineCompany[0].metadata.open;
                             var availables =[];
-                            for(var resource in timeLineCompany[0].timeLine){
-                                var steps = timeLineCompany[0].timeLine[resource].steps;
-                                var size = steps.length;
-                                for(var key in steps){
-                                    key =parseInt(key);                     
-                                    if(key+need < size){
-                                        if(typeof (steps[key+need]) == "object"){
+                            var resources =timeLineCompany[0].timeLine;
+                            
+                            for(var key=0; key<stepsSize; key++){
+                                key =parseInt(key);
+                                var resourcesAux = [];
+                                for(var r in resources)
+                                    resourcesAux.push(resources[r]);
+                                while(resourcesAux.length > 0){ 
+                                    var r = Math.floor(Math.random() * resourcesAux.length);
+                                    var steps = resourcesAux[r].steps;
+                                   
+                                    var rAvailable = true;  
+                                    if(key+need < stepsSize){
+                                        if(typeof (steps[key+need]) == "object" && typeof (steps[key]) == "object"){
                                             var avaiable = true;
                                             var c = key+need-1;
                                             while(avaiable && key < c){
-                                                if(typeof (steps[key+need]) != "object")
+                                                if(typeof (steps[key+c]) != "object")
                                                     avaiable=false;
                                                 c--;
                                             }
@@ -273,13 +281,15 @@ Controller.getTimeLine = function(customer, params, cb) {
                                             if(avaiable){
                                                 var auxDate = new Date(initDate);
                                                 auxDate.setMinutes(key*step);
-                                                availables.push({"date":auxDate, "resource": timeLineCompany[0].timeLine[resource].resource.id});
-                                            }
-                                        }
-                                    }else break;
-                                }
-
+                                                availables.push({"date":auxDate, "resource": resourcesAux[r].resource.id});
+                                                break;
+                                            } else resourcesAux.splice(r, 1); 
+                                        }else resourcesAux.splice(r, 1);
+                                    }else break;                      
+                                } 
+                                
                             }
+
                         
                             timeLine.push({ "availables": availables});
                             callback(null, null);
@@ -357,7 +367,7 @@ Controller.pickAvailable = function(customer, params, cb) {
                     }
                 }
 
-                var resourcesAux =resources; 
+                var resourcesAux = resources; 
                 var resourceAvailable;
                 if(available == true){ 
                     if(resource){

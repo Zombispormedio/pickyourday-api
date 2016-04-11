@@ -106,7 +106,7 @@ Controller.search = function (query, cb) {
                           
                             var s = service.toObject();          
                             p.service = s;
-                            p.service.default=service;	
+                            
                         }
                         callback(null, p);
 
@@ -151,8 +151,69 @@ Controller.findById = function (id, cb) {
         if (err) return cb(err);
 
         if (!pick)
-            return cb("No pick found");
+            return cb([]);
+        async.waterfall([
+            function (callback) {
+                CustomerModel.findById(pick.id_customer, 'name surname email location', function (err, customer) {
+                    if (err) return callback(err);
+                    var pObj = pick.toObject();
+                    delete pObj.id_customer
+                    pObj.customer = customer;
+                    callback(null, pObj);
+                });
+            },
+            function (p, callback) {
+                CompanyModel.findById(p.company.id_company, 'cif email name category promotions location phone photos ', function (err, company) {
+                    if (err) return callback(err);
+                    var c = company.toObject();
+                    delete p.company.id_company;
+                    p.service = p.company.id_service;
+                 
+                    p.company = c;
+                    callback(null, p);
+                });
+            },
+            function (p, callback) {
 
+                CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
+                  
+                    if (service) {
+                      
+                        var s = service.toObject();          
+                        p.service = s;
+                        
+                    }
+                    callback(null, p);
+
+                });
+            },
+            function (p, callback) {
+                ServiceNameModel.findById(p.service.id_name)
+                    .select('name duration keywords description')
+                    .exec(function (err, service_name) {
+                        if (err) return callback(err);
+                        delete p.service.id_name;
+                        p.service.metadata = service_name;
+
+                        callback(null, p);
+                    });
+            },
+            function (p, callback) {
+                CategoryModel.findById(p.company.category)
+                    .select('name description icon image color')
+                    .exec(function (err, category) {
+                        if (err) return callback(err);
+
+                        p.company.category = category;
+                        callback(null, p);
+                    });
+            }
+        ], function (err, result) {
+            if (err) return cb(err);
+            cb(null, result);
+        });
+
+/*
         CustomerModel.findById(pick.id_customer, 'name surname email location', function (err, customer) {
             if (err) return cb(err);
             pick.id_customer = customer;
@@ -167,7 +228,7 @@ Controller.findById = function (id, cb) {
                     cb(null, pickData);
                 })
             });
-        });
+        });*/
     });
 };
 

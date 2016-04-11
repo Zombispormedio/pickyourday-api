@@ -37,8 +37,8 @@ var PickSchema = new Schema({
 	},
 	origin: {
 		type: String, 
-		enum: ['prepick', 'pick', 'manual', 'promotion'],
-		required: true
+		enum: ['prepick', 'mobile', 'manual', 'promotion']
+		
 	}
 });
 

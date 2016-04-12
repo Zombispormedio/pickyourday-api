@@ -48,7 +48,6 @@ var PickSchema = new Schema({
 PickSchema.statics={
 	search:function(params, cb){ //en params no meter id, todos los demas datos si
 		var query = this.find({});
-
 		for(var key in params){
 			switch(key){
 				case "id_customer":  
@@ -70,6 +69,9 @@ PickSchema.statics={
 					break;
 				case 'picks': 
 					query.where( {'_id': { '$in': params[key] }});
+					break;
+				case 'state': 
+					query.where( {'state': { '$in': params[key] }});
 					break;
 				default:
 					query.where(key).equals(Utils.like(params[key]));

@@ -24,7 +24,7 @@ Controller.new = function (body, cb) {
         if(err) return cb(err);
         if(!service) return cb(null, "Service not found in new Pick");
         pick.duration = service.duration;
-        pick.state = "pending";
+        pick.state = ["pending"];
         if(service.promotion != null){
             
             if(service.promotion.initDate <= date && service.promotion.endDate > date)
@@ -259,7 +259,7 @@ Controller.delete = function (id, cb) {
 
 };
 
-Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks, cb){
+Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks, state, cb){
         if(!rangeDays) rangeDays=30;
         var formatDate = [];
         var count = [];
@@ -297,7 +297,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
         else
             paramsTemp.picks = [];
         paramsTemp=Utils.filterParams(paramsTemp);
-        paramsTemp.state ="active";
+        paramsTemp.state =state;
 
         async.eachSeries(count, function(day, next){ 
             if(day > 0)
@@ -334,7 +334,7 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
     var paramsTemp = {"id_customer":id_customer};
     paramsTemp.beforeInitDate = endDate;
     paramsTemp.afterInitDate  = initDate;
-    paramsTemp.state ="active";
+    paramsTemp.state =["active"];
 
     self.search(paramsTemp,function(err, picks){    
         if(err) return cb(err);

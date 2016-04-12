@@ -246,6 +246,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                     else
                         paramsTemp.date = date;
                     paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
+                    paramsTemp.statePick = "all";
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
                         if(timeLineCompany){

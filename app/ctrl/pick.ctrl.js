@@ -34,7 +34,11 @@ Controller.new = function (body, cb) {
         else pick.promotion = null;
         pick.save(function (err) {
             if (err) return cb(err);
-            cb(null, pick);
+            CompanyModel.asignPick(pick.company.id_company, body.resource, pick._id, function(err){
+                if(err) return cb(err);
+                cb(null, pick);
+            })
+            
         });
     })
 };
@@ -70,7 +74,6 @@ Controller.changeState = function(pick, state, cb){
 
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
-
         if (err) return cb(err);
 
         if (!picks || picks.length == 0)
@@ -235,13 +238,24 @@ Controller.findById = function (id, cb) {
 Controller.delete = function (id, cb) {
     if (!id) return cb("Fields not Filled");
 
-    PickModel.findByIdAndRemove(id, function (err, pick) {
-        if (err) return cb(err);
+    this.findByIdQuick(id, function(Err, pick){
+        var pickTemp = pick;
+        PickModel.find({ _id:id }).remove().exec(function(err, result){
+            if (err) return cb(err);
 
-        if (!pick)
-            return cb("No pick deleted");
-        cb();
+            if (result.result.n == 0)
+                return cb("No pick deleted");
+
+            CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err){
+                cb();
+            });
+
+            
+        });
     })
+
+    
+
 
 };
 

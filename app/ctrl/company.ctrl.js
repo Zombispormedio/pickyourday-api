@@ -359,11 +359,11 @@ Controller.getTimeLine = function(id_company, params, cb){
     if(!id_company) return cb("Fields not Filled getTimeLine");
     if(!params) params={};
 
-    if(params.rangeDays == undefined)
+    if(params.rangeDays == undefined || params.rangeDays=="")
         params.rangeDays =30;
     if(!params.date)
         params.date= new Date();
-    if(params.resource == undefined)
+    if(params.resource == undefined || params.resource == "")
         params.resource = 0;
 
     var step = 5;
@@ -491,8 +491,13 @@ Controller.getTimeLine = function(id_company, params, cb){
                 }
 
                 for(var r=0; r<timeLine.length; r++){  
-                    temp.push({"resource":timeLine[r][0], "steps":_.clone(steps)});                   
+                    var stepsTemp = [];
+                    for(var t in timeLine[r][1])
+                        stepsTemp.push(_.clone(steps))
+                    temp.push({"resource":timeLine[r][0], "steps":_.clone(stepsTemp)});                   
                 }
+
+
 
                 if(count >  0){
                     for(var r=0; r<timeLine.length; r++){
@@ -507,10 +512,11 @@ Controller.getTimeLine = function(id_company, params, cb){
                                 date = new Date(date);
 
                                 var fill = Math.floor(picks[pick].duration/step);
-                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step;                        
+                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
+
                                 if(pos >= 0 && pos < count){
                                     for(var f=0; f<fill; f++)
-                                        temp[r]["steps"][pos+f] =1;
+                                        temp[r]["steps"][day][pos+f] =1;
                                 }
 
                                 
@@ -524,6 +530,7 @@ Controller.getTimeLine = function(id_company, params, cb){
             });
         }, function getAvailables(timeLineArray, callback){
             if(params.service != null ){
+
                 self.getServiceById(id_company, params.service, function(err, service){
                     if(err) return callback(err);
                     if(service != null){
@@ -532,27 +539,30 @@ Controller.getTimeLine = function(id_company, params, cb){
                         need--;
                         var initDate = timeLineArray[0].metadata.open;
                         for(var resource in timeLineArray[0].timeLine){
-                            var steps = timeLineArray[0].timeLine[resource].steps;
-                            var size = steps.length;
-                            for(var key in steps){
-                                key =parseInt(key);                     
-                                if(key+need < size){
-                                    if(steps[key+need] == 0 && steps[key] == 0){
-                                        var avaiable = true;
-                                        var c = key+need-1;
-                                        while(avaiable && key < c){
-                                            if(steps[c] != 0)
-                                                avaiable=false;
-                                            c--;
-                                        }
+                            var days = timeLineArray[0].timeLine[resource].steps;
+                            var size = days[0].length;
+                            for(var day in days){
+                                var steps = days[day];                            
+                                for(var key in steps){
+                                    key =parseInt(key);                     
+                                    if(key+need < size){
+                                        if(steps[key+need] == 0 && steps[key] == 0){
+                                            var avaiable = true;
+                                            var c = key+need-1;
+                                            while(avaiable && key < c){
+                                                if(steps[c] != 0)
+                                                    avaiable=false;
+                                                c--;
+                                            }
 
-                                        if(avaiable){
-                                            var auxDate = new Date(initDate);
-                                            auxDate.setMinutes(key*step);
-                                            steps[key] = auxDate;
+                                            if(avaiable){
+                                                var auxDate = new Date(initDate);
+                                                auxDate.setMinutes(key*step);
+                                                steps[key] = auxDate;
+                                            }
                                         }
-                                    }
-                                }else break;
+                                    }else break;
+                                }
                             }
 
                         }
@@ -576,6 +586,20 @@ Controller.searchPick = function(company, params, cb) {
     PickCtrl.search(params, cb);
 };
 
+Controller.newPick = function(company, params, cb) {
+    params.company.id_company = company;
+    params.origin = "manual";
+    PickCtrl.new(params, cb);
+};
+
+Controller.getPickById = function(id, cb) {
+    PickCtrl.findById(id, cb);
+};
+
+Controller.getPickByIdQuick = function(id, cb){
+    PickCtrl.findByIdQuick(id, cb);
+};
+
 Controller.deletePick = function(params, cb) {
     PickCtrl.delete(params, cb);
 };
@@ -583,6 +607,28 @@ Controller.deletePick = function(params, cb) {
 Controller.getPickById = function(id, cb) {
     PickCtrl.findById(id, cb);
 };
+
+Controller.cancelPick = function(pick, cb) {
+    PickCtrl.changeState(pick, "cancelled", cb);
+};
+
+Controller.activePick = function(id_pick, cb) {
+    var self= this;
+
+    self.getPickByIdQuick(id_pick, function(err, pick){
+        if(err) return cb(err);
+        
+        if(pick && pick.state != "active"){
+            if(pick.promotion != null){
+            self.usePromotion(pick.company.id_company, pick.promotion, function(err){
+                PickCtrl.changeState(id_pick, "active", cb);
+            });         
+            }else PickCtrl.changeState(id_pick, "active", cb);
+        }else cb(-1);
+    })
+};
+
+
 
 //***********************SERVICES
 Controller.searchServiceName = function(params, cb) {

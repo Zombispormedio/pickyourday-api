@@ -257,37 +257,46 @@ Controller.getTimeLine = function(customer, params, cb) {
                             var initDate = timeLineCompany[0].metadata.open;
                             var availables =[];
                             var resources =timeLineCompany[0].timeLine;
-                            
-                            for(var key=0; key<stepsSize; key++){
-                                key =parseInt(key);
-                                var resourcesAux = [];
-                                for(var r in resources)
-                                    resourcesAux.push(resources[r]);
-                                while(resourcesAux.length > 0){ 
-                                    var r = Math.floor(Math.random() * resourcesAux.length);
-                                    var steps = resourcesAux[r].steps;
-                                   
-                                    var rAvailable = true;  
-                                    if(key+need < stepsSize){
-                                        if(typeof (steps[key+need]) == "object" && typeof (steps[key]) == "object"){
-                                            var avaiable = true;
-                                            var c = key+need-1;
-                                            while(avaiable && key < c){
-                                                if(typeof (steps[key+c]) != "object")
-                                                    avaiable=false;
-                                                c--;
-                                            }
 
-                                            if(avaiable){
-                                                var auxDate = new Date(initDate);
-                                                auxDate.setMinutes(key*step);
-                                                availables.push({"date":auxDate, "resource": resourcesAux[r].resource.id});
-                                                break;
-                                            } else resourcesAux.splice(r, 1); 
-                                        }else resourcesAux.splice(r, 1);
-                                    }else break;                      
-                                } 
-                                
+                            if(resources.length > 0){
+
+                                var days = resources[0].steps.length;
+
+                                for(var day=0; day<days; day++)                         
+                                    for(var key=0; key<stepsSize; key++){
+                                        key =parseInt(key);
+                                        var resourcesAux = [];
+                                        for(var r in resources)
+                                            resourcesAux.push(resources[r]);
+                                        while(resourcesAux.length > 0){ 
+                                            var random = Math.floor(Math.random() * resourcesAux.length);
+                                            var steps = resourcesAux[random].steps[day];
+                                           
+                                            var rAvailable = true;  
+                                            if(key+need < stepsSize){
+                                                if(typeof (steps[key]) == "object"){
+                                                    var auxDate = new Date(initDate);
+                                                    auxDate.setMinutes(key*step);
+                                                    auxDate.setDate(initDate.getDate()+day);
+                                                    var picks = timeLine[0].picks;
+                                                    var available = true; 
+                                                    for(var pick=0; pick<picks.length; pick++){                                            
+                                                        if(picks[pick].init < auxDate && picks[pick].end > auxDate){
+                                                            available = false;
+                                                            break;
+                                                        }
+                                                        
+                                                    }
+
+                                                    if(available){
+                                                        availables.push({"date":auxDate, "resource": resourcesAux[random].resource.id});
+                                                         break;
+                                                    }                            
+                                                }else resourcesAux.splice(random, 1);
+                                            }else break;                      
+                                        } 
+                                        
+                                    }
                             }
 
                         

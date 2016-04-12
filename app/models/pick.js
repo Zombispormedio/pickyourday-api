@@ -5,6 +5,8 @@ var C=require("../../config/config");
 var Utils=require(C.lib+"utils");
 var async = require("async");
 
+var CompanyModel = require(C.models + "company");
+
 var PickSchema = new Schema({
 	id_customer: { 
 		type: Schema.ObjectId, 

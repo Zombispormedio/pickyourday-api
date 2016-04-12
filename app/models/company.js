@@ -775,12 +775,59 @@ CompanySchema.statics={
 	},
 
 	asignPick: function(id_company, id_resource, id_pick, cb){
-		this.findResourceById(id_company, id_resource, function(err, resource){
+		this.findOne({_id: id_company}, function(err, company){
 			if(err) return cb(err);
-		    resource.picks.push(id_pick);
-			cb();
+			if(company){
+				var resource = company.resources.id(id_resource);
+
+				if(resource){
+					if(resource.picks)
+						resource.picks.push(id_pick);
+					else{
+						resource.picks = [];
+						resource.picks.push(id_pick);
+					}
+
+					company.save(function(err){
+							if(err) return cb(err);				
+							cb();
+						});
+				}else cb(-1);
+			}else cb(-1);
+			
 		});
 	},
+
+	removePickAsigned: function(id_company, id_pick, cb){
+		this.findOne({_id: id_company}, function(err, company){
+			if(err) return cb(err);
+			if(company){
+				var resources = company.resources;
+				for(var r in resources){
+					var found = false;
+					if(resources[r].picks){
+						for(var p in resources[r].picks){
+							if(resources[r].picks[p].equals(id_pick)){
+								console.log("borrar");
+								resources[r].picks.splice(p,1);
+								found=true;
+								break;
+							}
+						}
+					}
+					if(found) break;
+				}
+				company.save(function(err){
+						if(err) return cb(err);				
+						cb();
+					});
+			}
+		});
+	},
+
+	 
+
+
 
 	servicePromoted: function(id_company, id_service, cb){
 		var params = {'service':id_service};

@@ -66,6 +66,16 @@ router.route("/pick")
         });
     });
 
+router.route("/promotion")
+    .get(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.searchPromotion(req.user, req.query, function(err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        });
+    });
+
+
 
 
 router.route("/event")
@@ -233,6 +243,15 @@ router.route("/company/:id")
 router.route("/category/:id")
     .get(AuthController.checkCustomer(), function(req, res) {
         CustomerCtrl.getCategoryById(req.params.id, function(err, event) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, event);
+        });
+    });
+
+router.route("/promotion/:id")
+    .get(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.getPromotionById(req.params.id, function(err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, event);

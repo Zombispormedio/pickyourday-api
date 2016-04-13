@@ -204,8 +204,6 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
-    
-
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
@@ -219,7 +217,7 @@ Controller.getTimeLine = function(customer, params, cb) {
         params.endDate.setDate(dateTemp.getDate() + 30);
     }else params.endDate = new Date(params.endDate);
 
-console.log(params); 
+
 
     var timeLine = [];
     var self = this;
@@ -264,7 +262,7 @@ console.log(params);
                             var availables =[];
                             var resources =timeLineCompany[0].timeLine;
 
-                            if(resources.length > 0){
+                            if(resources!= null && resources.length > 0){
 
                                 var days = resources[0].steps.length;
 
@@ -312,12 +310,10 @@ console.log(params);
                         
                             timeLine.push({ "availables": availables});
                             callback(null, null);
-                        }
+                        } else callback(null, null);
 
                     })
                 })
-
-
             }else callback(null, null);
         }
 

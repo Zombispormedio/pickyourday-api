@@ -205,7 +205,7 @@ Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
     console.log(params); 
-    
+
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
@@ -240,7 +240,7 @@ Controller.getTimeLine = function(customer, params, cb) {
             });
         },
         function getAvailables(callback){
-            if(params.service != null && params.company != null){
+            if(false && params.service != null && params.company != null){
                 self.getServiceById(params.company, params.service, function(err, service){
                     if(err)return callback(err);
                     var paramsTemp = {};

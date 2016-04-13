@@ -358,11 +358,13 @@ Controller.getTimeLine = function(id_company, params, cb){
 
     if(!id_company) return cb("Fields not Filled getTimeLine");
     if(!params) params={};
+    if(!params.date)
+        params.date= new Date();
+    else params.date = new Date(params.date);
 
     if(params.rangeDays == undefined || params.rangeDays=="")
         params.rangeDays =30;
-    if(!params.date)
-        params.date= new Date();
+
     if(params.resource == undefined || params.resource == "")
         params.resource = 0;
 

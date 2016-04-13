@@ -250,6 +250,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                         paramsTemp.date = date;
                     paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
                     paramsTemp.statePick = "all";
+                    console.log("crear timeline company");
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
                         if(timeLineCompany){
@@ -263,11 +264,13 @@ Controller.getTimeLine = function(customer, params, cb) {
                             var resources =timeLineCompany[0].timeLine;
 
                             if(resources!= null && resources.length > 0){
-
+                                console.log("resources");
+                                console.log(resources);
                                 var days = resources[0].steps.length;
 
                                 for(var day=0; day<days; day++)                         
                                     for(var key=0; key<stepsSize; key++){
+
                                         key =parseInt(key);
                                         var resourcesAux = [];
                                         for(var r in resources)

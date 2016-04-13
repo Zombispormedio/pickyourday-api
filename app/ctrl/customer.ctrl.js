@@ -204,12 +204,15 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
+    console.log(params); 
+
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
         params.initDate.setMinutes(0);
         params.initDate.setSeconds(0);
     }else params.initDate = new Date(params.initDate);
+
     if (!params.endDate) {
         var dateTemp = new Date();
         params.endDate = new Date();

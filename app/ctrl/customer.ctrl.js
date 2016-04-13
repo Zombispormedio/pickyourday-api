@@ -267,8 +267,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                                 console.log("days");
                                 console.log(days);
                                 for(var day=0; day<days; day++)                         
-                                    for(var key=0; key<stepsSize; key++){
-                                        console.log(key);
+                                    for(var key=0; key<stepsSize; key++){                                       
                                         key =parseInt(key);
                                         var resourcesAux = [];
                                         for(var r in resources)

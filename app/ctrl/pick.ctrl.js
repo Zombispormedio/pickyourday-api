@@ -254,9 +254,6 @@ Controller.delete = function (id, cb) {
         });
     })
 
-    
-
-
 };
 
 Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks, state, cb){

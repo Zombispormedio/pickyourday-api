@@ -204,7 +204,7 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
-    console.log(params); 
+    
 
     if (!params.initDate){
         params.initDate = new Date();
@@ -219,7 +219,7 @@ Controller.getTimeLine = function(customer, params, cb) {
         params.endDate.setDate(dateTemp.getDate() + 30);
     }else params.endDate = new Date(params.endDate);
 
-
+console.log(params); 
 
     var timeLine = [];
     var self = this;
@@ -240,7 +240,7 @@ Controller.getTimeLine = function(customer, params, cb) {
             });
         },
         function getAvailables(callback){
-            if(false && params.service != null && params.company != null){
+            if(params.service != null && params.company != null){
                 self.getServiceById(params.company, params.service, function(err, service){
                     if(err)return callback(err);
                     var paramsTemp = {};

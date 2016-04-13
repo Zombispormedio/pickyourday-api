@@ -404,7 +404,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 timeLine.push([]);
             }
             async.eachSeries(count, function(i, next){ 
-                if(params.statePick != null ||params.statePick != "")
+                if(params.statePick != null || params.statePick != "")
                     state = ["active","pending"];
                 else state =["active"];
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){

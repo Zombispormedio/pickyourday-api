@@ -279,6 +279,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                     var auxDate = new Date(initDate);
                                                     auxDate.setMinutes(key*step);
                                                     auxDate.setDate(initDate.getDate()+day);
+                                                    auxDate.setMilliseconds(0);
                                                     var picks = timeLine[0].picks;
                                                     var available = true; 
                                                     for(var pick=0; pick<picks.length; pick++){                                            
@@ -290,7 +291,10 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                     }
 
                                                     if(available){
-                                                        availables.push({"date":auxDate, "resource": resourcesAux[random].resource.id});
+                                                        endDate = new Date(auxDate);
+                                                        endDate.setMinutes(endDate.getMinutes()+4);
+                                                        endDate.setSeconds(59);
+                                                        availables.push({"initDate":auxDate,"endDate":endDate, "resource": resourcesAux[random].resource.id});
                                                          break;
                                                     }                            
                                                 }else resourcesAux.splice(random, 1);

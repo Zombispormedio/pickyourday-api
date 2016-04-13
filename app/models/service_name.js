@@ -16,6 +16,7 @@ var Service_NameSchema = new Schema({
     duration: Number,
     keywords: [String],
     description: String,
+    price: Number,
     category:{
 		type: Schema.ObjectId, 
 		ref: "Category"

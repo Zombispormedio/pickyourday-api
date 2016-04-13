@@ -209,12 +209,14 @@ Controller.getTimeLine = function(customer, params, cb) {
         params.initDate.setHours(0);
         params.initDate.setMinutes(0);
         params.initDate.setSeconds(0);
-    }
+    }else params.initDate = new Date(params.initDate);
     if (!params.endDate) {
         var dateTemp = new Date();
         params.endDate = new Date();
         params.endDate.setDate(dateTemp.getDate() + 30);
-    }
+    }else params.endDate = new Date(params.endDate);
+
+
 
     var timeLine = [];
     var self = this;

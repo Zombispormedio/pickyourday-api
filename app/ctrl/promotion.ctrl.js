@@ -1,6 +1,7 @@
 var C=require("../../config/config");
 
 var CompanyModel = require(C.models+"company");
+var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var async = require("async");
 var Controller = {};
 
@@ -14,23 +15,48 @@ Controller.new = function(user, body, cb){
 };
 
 Controller.search = function(user, query, cb){
-    CompanyModel.findById(user, function(err, c){
-        if(err) return cb(err); 
-        query.state = c.state;
 
-        CompanyModel.searchPromotion(user, query, function(err, promotions){
-            if(err) return cb(err);
+    if(user == 0){
+        CompanyModel.searchPromotion(0, query, function(err, promotions){
+                if(err) return cb(err);
 
-            cb(null, promotions);
+                cb(null, promotions);
+            })
+    }else{
+        CompanyModel.findById(user, function(err, c){
+            if(err) return cb(err); 
+            query.state = c.state;
+
+            CompanyModel.searchPromotion(user, query, function(err, promotions){
+                if(err) return cb(err);
+
+                cb(null, promotions);
+            })
         })
-    })
+    }
 };
 
 Controller.findById = function(user, id, cb){
     CompanyModel.findPromotionById(user, id, function(err, promotion){
         if(err) return cb(err);
-
-        cb(null, promotion);
+        promotion = promotion.toObject();
+        //promotion.services.toObject();
+        if(promotion){
+            promotion.company = user;
+            var count = 0;
+            async.map(promotion.services, function(service, next) {
+                if (!service) return next();
+                ServiceCtrl.findById(user, service, function(err, serviceData){
+                    
+                    promotion.services[count] =serviceData;
+                    count++;
+                    next(); 
+                })
+            }, function(err, result) {
+                if (err) return cb(err);
+                cb(null, promotion);
+            });
+        }else cb(null, promotion);
 
     });
 };

@@ -458,11 +458,17 @@ CompanySchema.statics={
 	searchPromotion: function(id_company, params, cb){
 		if(!params.state || params.state == "")
 			params.state = "active";
-		var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state:params.state}}]);
+		if(id_company == 0)
+			var query = this.aggregate([{$unwind:"$promotions"},{$match: {state:params.state}}]);
+		else
+			var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state:params.state}}]);
 
 		for(var key in params){
 			switch(key){
 				case 'state': break;
+				case 'statePromotion':
+					query.match({'promotions.state' : params.statePromotion});
+					break;
 				case 'beforeInitDate':
 					query.match({'promotions.initDate': {'$lte': new Date(params[key])}});
 					break;
@@ -476,16 +482,16 @@ CompanySchema.statics={
 					query.match({'promotions.endDate': {'$gte': new Date(params[key])}});
 					break;
 				case 'greaterUseLimit':
-					query.match({'services.useLimit' : {'$gte' : parseInt(params[key])}});
+					query.match({'promotions.useLimit' : {'$gte' : parseInt(params[key])}});
 					break;
 				case 'lessUseLimit':
-					query.match({'services.useLimit' : {'$gte' : parseInt(params[key])}});
+					query.match({'promotions.useLimit' : {'$gte' : parseInt(params[key])}});
 					break;
 				case 'greaterTimeUsed':
-					query.match({'services.timesUsed' : {'$gte' : parseInt(params[key])}});
+					query.match({'promotions.timesUsed' : {'$gte' : parseInt(params[key])}});
 					break;
 				case 'lessTimeUsed':
-					query.match({'services.timesUsed' : {'$gte' : parseInt(params[key])}});
+					query.match({'promotions.timesUsed' : {'$gte' : parseInt(params[key])}});
 					break;
 				case 'beforeDateCreated':
 					query.match({'promotions.dateCreated': {'$lte': new Date(params[key])}});
@@ -505,21 +511,18 @@ CompanySchema.statics={
 		}
 
 		query.exec(function(err, companyPromotion){			
-			var promotions = companyPromotion.map(function(a){
-				return a.promotions;
-			});
-			cb(null, promotions);
+			cb(null, companyPromotion);
 		});
 	},	
 
 	findPromotionById: function(id_company, id, cb){
 		this.findOne({_id: id_company}, function(err, company){
 			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+		    if(!company)return cb([]);
 
 			var promotion = company.promotions.id(id);
 			if(!promotion)
-				return cb("Promotion not found");
+				return cb([]);
 			cb(null, promotion);
 
 		});

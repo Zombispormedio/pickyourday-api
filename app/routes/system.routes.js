@@ -21,6 +21,16 @@ router.route("/category")
         });
     });
 
+router.route("/addClient")
+        .post(AuthController.checkAdmin(), function (req, res){
+        SystemCtrl.addCliente(req.body, function(err, client){
+        if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, client);
+
+        });
+    });
+
 router.route("/prePick")
     .post(AuthController.checkAdmin(), function(req, res){
         SystemCtrl.calculatePrePicks(req.body, function(err){
@@ -91,7 +101,7 @@ router.route("/default_service")
     });
 
 
-    router.route("/preferences")
+router.route("/preferences")
         .get(AuthController.checkAdmin(),function(req, res){
         SystemCtrl.getPreferences(req.query, function(err,  preferences){
             if(err) Response.printError(res, err);

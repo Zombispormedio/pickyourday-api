@@ -249,9 +249,9 @@ router.route("/category/:id")
         });
     });
 
-router.route("/promotion/:id")
+router.route("/promotion/:id/:company")
     .get(AuthController.checkCustomer(), function(req, res) {
-        CustomerCtrl.getPromotionById(req.params.id, function(err, event) {
+        CustomerCtrl.getPromotionById(req.params.company, req.params.id, function(err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, event);

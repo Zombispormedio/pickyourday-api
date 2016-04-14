@@ -115,7 +115,6 @@ Controller.getPreferenceById = function (id, cb) {
 
 
 
-
 //*******************Images
 
 Controller.uploadImage = function (type, image, cb) {

@@ -7,6 +7,7 @@ var PrePickCtrl = require(C.ctrl + "prePick.ctrl");
 var CompanyCtrl = require(C.ctrl + "company.ctrl");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var CategoryCtrl = require(C.ctrl + "category.ctrl");
+var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var CustomerModel = require(C.models + "customer");
 var PickModel = require(C.models + "pick");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
@@ -565,7 +566,21 @@ Controller.getCompanyById = function(id, cb) {
     CompanyCtrl.getProfile(id, cb);
 };
 
+//******************PROMOTION
 
+Controller.searchPromotion = function(customer, params, cb){
+    params.statePromotion = "started";
+    var company = params.company
+    if(params.company == null || params.company == "")
+        company=0;
+    delete params.company;
+
+    PromotionCtrl.search(company, params, cb);
+};
+
+Controller.getPromotionById = function(company, id, cb) {
+    PromotionCtrl.findById(company, id, cb);
+};
 
 // PREFERENCES
 Controller.getCustomPreferences = function(id, cb) {

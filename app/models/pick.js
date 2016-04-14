@@ -10,8 +10,7 @@ var CompanyModel = require(C.models + "company");
 var PickSchema = new Schema({
 	id_customer: { 
 		type: Schema.ObjectId, 
-		ref: "Customer",
-		required: true
+		ref: "Customer"
 	},
 	company: {
 		id_company:{
@@ -32,6 +31,8 @@ var PickSchema = new Schema({
 	dateCreated: Date,
 	observation: String,
 	promotion: Schema.ObjectId,
+	name: String,
+	phone: String,
 	state: {
 		type: String, 
 		enum: ['pending', 'active', 'cancelled', 'finished'],

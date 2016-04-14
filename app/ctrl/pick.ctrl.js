@@ -11,8 +11,12 @@ var Utils=require(C.lib+"utils");
 var Controller = {};
 
 Controller.new = function (body, cb) {
-    if (!body || !body.id_customer || !body.company || !body.initDate)
+    if (!body  || !body.company || !body.initDate)
         return cb("Fields not filled");
+    if(body.origin != "manual")
+        if(!body.id_customer)
+            return cb("Fields not filled");
+        
     var date = new Date(body.initDate);
 
     if(date < new Date())

@@ -285,12 +285,14 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                     auxDate.setMilliseconds(0);
                                                     var picks = timeLine[0].picks;
                                                     var available = true; 
-                                                    for(var pick=0; pick<picks.length; pick++){                                            
-                                                        if(picks[pick].init < auxDate && picks[pick].end > auxDate){
-                                                            available = false;
-                                                            break;
+                                                    if(!picks){
+                                                        for(var pick=0; pick<picks.length; pick++){                                            
+                                                            if(picks[pick].init < auxDate && picks[pick].end > auxDate){
+                                                                available = false;
+                                                                break;
+                                                            }
+                                                            
                                                         }
-                                                        
                                                     }
 
                                                     if(available){

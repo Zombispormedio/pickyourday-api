@@ -592,7 +592,7 @@ Controller.searchPick = function(company, params, cb) {
 };
 
 Controller.newPick = function(company, params, cb) {
-    params.company = {"id_service": params.service, "id_company": Company};
+    params.company = {"id_service": params.service, "id_company": company};
     params.origin = "manual";
     PickCtrl.new(params, cb);
 };

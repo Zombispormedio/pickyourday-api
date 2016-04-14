@@ -61,7 +61,7 @@ Controller.deleteServiceName = function(id, cb){
 
 Controller.new= function(user, body, cb){
 	if (!body || !body.id_name || (body.price==null))		
-	 	return cb("Fields not Filled");
+	 	return cb("Fields not Filled New Service");
 
 	var self = this;
 	self.findServiceNameById(body.id_name, function(err, serviceName){

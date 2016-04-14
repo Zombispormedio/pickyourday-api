@@ -543,6 +543,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         var need = duration/step;
                         need--;
                         var initDate = timeLineArray[0].metadata.open;
+                        var date = new Date();
                         for(var resource in timeLineArray[0].timeLine){
                             var days = timeLineArray[0].timeLine[resource].steps;
                             var size = days[0].length;
@@ -563,7 +564,9 @@ Controller.getTimeLine = function(id_company, params, cb){
                                             if(avaiable){
                                                 var auxDate = new Date(initDate);
                                                 auxDate.setMinutes(key*step);
-                                                steps[key] = auxDate;
+                                                if(auxDate > date)
+                                                    steps[key] = auxDate;
+                                                
                                             }
                                         }
                                     }else break;

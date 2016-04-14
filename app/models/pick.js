@@ -31,8 +31,8 @@ var PickSchema = new Schema({
 	dateCreated: Date,
 	observation: String,
 	promotion: Schema.ObjectId,
-	name: String,
-	phone: String,
+	nameCli: String,
+	phoneCli: String,
 	state: {
 		type: String, 
 		enum: ['pending', 'active', 'cancelled', 'finished'],

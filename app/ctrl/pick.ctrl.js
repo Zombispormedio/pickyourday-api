@@ -11,6 +11,7 @@ var Utils=require(C.lib+"utils");
 var Controller = {};
 
 Controller.new = function (body, cb) {
+    console.log(body);
     if (!body  || !body.company || !body.initDate)
         return cb("Fields not filled");
     if(body.origin != "manual")

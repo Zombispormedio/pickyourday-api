@@ -11,7 +11,7 @@ var CustomerModel = require(C.models + "customer");
 var PickModel = require(C.models + "pick");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
 
-
+var _=require("lodash");
 var Utils = require(C.lib + "utils");
 var Controller = {};
 
@@ -238,6 +238,7 @@ Controller.getTimeLine = function(customer, params, cb) {
             });
         },
         function getAvailables(callback){
+
             if(params.service != null && params.company != null){
                 self.getServiceById(params.company, params.service, function(err, service){
                     if(err)return callback(err);
@@ -250,12 +251,14 @@ Controller.getTimeLine = function(customer, params, cb) {
                         paramsTemp.date = date;
                     paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
                     paramsTemp.statePick = "all";
+
+                    console.log("crea timelinecompany");
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
+                        console.log(timeLineCompany);
                         if(timeLineCompany){
-                            var duration = service.duration;
                             var step = timeLineCompany[0].metadata.step;
-                            var need = duration/step;
+                            var need = service.duration/step;
                             need--;                           
                             var stepsSize = timeLineCompany[0].metadata.steps;
                             var initDate = timeLineCompany[0].metadata.open;
@@ -264,30 +267,28 @@ Controller.getTimeLine = function(customer, params, cb) {
 
                             if(resources!= null && resources.length > 0){
                                 var days = resources[0].steps.length;
-                                console.log("days");
-                                console.log(days);
                                 for(var day=0; day<days; day++)                         
-                                    for(var key=0; key<stepsSize; key++){                                       
+                                    for(var key=0; key<stepsSize; key++){ 
+
                                         key =parseInt(key);
                                         var resourcesAux = [];
-                                        for(var r in resources)
-                                            resourcesAux.push(resources[r]);
+                                        resourcesAux = _.clone(resources);
                                         while(resourcesAux.length > 0){ 
                                             var random = Math.floor(Math.random() * resourcesAux.length);
                                             var steps = resourcesAux[random].steps[day];
-                                           
                                             var rAvailable = true;  
                                             if(key+need < stepsSize){
-                                                if(typeof (steps[key]) == "object"){
+                                                if(steps[key]!= null && typeof (steps[key]) == "object"){
                                                     var auxDate = new Date(initDate);
                                                     auxDate.setMinutes(key*step);
-                                                    auxDate.setDate(initDate.getDate()+day);
+                                                    auxDate.setDate(initDate.getDate()+parseInt(day));
                                                     auxDate.setMilliseconds(0);
+                                                    if(auxDate < date) break;
                                                     var picks = timeLine[0].picks;
                                                     var available = true; 
                                                     if(!picks){
                                                         for(var pick=0; pick<picks.length; pick++){                                            
-                                                            if(picks[pick].init < auxDate && picks[pick].end > auxDate){
+                                                            if(picks[pick].init < auxDate && picks[pick].end > auxDate ){
                                                                 available = false;
                                                                 break;
                                                             }
@@ -303,7 +304,10 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                          break;
                                                     }                            
                                                 }else resourcesAux.splice(random, 1);
-                                            }else break;                      
+                                            }else{
+                                                resourcesAux.splice(random, 1);
+                                                break;    
+                                             }                  
                                         } 
                                         
                                     }

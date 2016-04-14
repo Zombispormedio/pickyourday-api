@@ -566,7 +566,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                                 auxDate.setDate(initDate.getDate() + parseInt(day));
                                                 auxDate.setMinutes(key*step);
                                                 if(auxDate > date)
-                                                steps[key] = auxDate;
+                                                    steps[key] = auxDate;
                                             }
                                         }
                                     }else break;

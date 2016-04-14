@@ -563,10 +563,10 @@ Controller.getTimeLine = function(id_company, params, cb){
 
                                             if(avaiable){
                                                 var auxDate = new Date(initDate);
+                                                auxDate.setDate(initDate.getDate() + parseInt(day));
                                                 auxDate.setMinutes(key*step);
                                                 if(auxDate > date)
-                                                    steps[key] = auxDate;
-                                                
+                                                steps[key] = auxDate;
                                             }
                                         }
                                     }else break;

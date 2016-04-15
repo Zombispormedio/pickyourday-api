@@ -307,12 +307,13 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                 afterInitDate.setDate(afterInitDate.getDate()+1);
                 paramsTemp.afterInitDate = afterInitDate;
             }
-            
+
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
                 if(picks != null && picks.length > 0)
                     for(var pick in picks)
                         formatDate[day].push({"pick":picks[pick]._id, "init":picks[pick].initDate, "duration":picks[pick].duration});  
+                
                 
                 next(null, null);
             });

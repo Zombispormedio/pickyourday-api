@@ -46,8 +46,7 @@ Controller.findById = function(user, id, cb){
             var count = 0;
             async.map(promotion.services, function(service, next) {
                 if (!service) return next();
-                ServiceCtrl.findById(user, service, function(err, serviceData){
-                    
+                ServiceCtrl.findById(user, service, function(err, serviceData){                   
                     promotion.services[count] =serviceData;
                     count++;
                     next(); 

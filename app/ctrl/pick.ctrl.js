@@ -272,22 +272,18 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
         var firstDate = new Date();
         if(date)
-            firstDate.setDate(date.getDate());
+            firstDate = new Date(date);
+
         if(allDay){
             firstDate.setHours(0);
             firstDate.setMinutes(0);
         }
        
-        if(!date)
-            date = new Date();
-
-        var beforeInitDate = new Date();
-        beforeInitDate.setDate(date.getDate());
+        var beforeInitDate = new Date(firstDate);
         beforeInitDate.setHours(23);
         beforeInitDate.setMinutes(59);
 
-        var afterInitDate = new Date();
-        afterInitDate.setDate(date.getDate());
+        var afterInitDate = new Date(firstDate);
         afterInitDate.setHours(0);
         afterInitDate.setMinutes(0);
 
@@ -306,12 +302,12 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                 beforeInitDate.setDate(beforeInitDate.getDate()+1);
             paramsTemp.beforeInitDate = beforeInitDate;
             if(day == 0)
-                paramsTemp.afterInitDate = firstDate;
+                paramsTemp.afterInitDate = afterInitDate;
             else{
                 afterInitDate.setDate(afterInitDate.getDate()+1);
                 paramsTemp.afterInitDate = afterInitDate;
             }
-
+            
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
                 if(picks != null && picks.length > 0)

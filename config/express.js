@@ -17,7 +17,7 @@ module.exports = function (app) {
     app.use(bodyParser.urlencoded({ extended: false, limit:"5mb" })); //parse x-www-form-urlencoded
 
     app.use(bodyParser.json({limit:"5mb"})); //parsea json;
-/*
+
     app.use(function(req, res, next){
         for(var query in req.query){
             console.log("Antes de decode:" + req.query[query] );
@@ -25,7 +25,7 @@ module.exports = function (app) {
             console.log("Despues de decode:" + req.query[query] );
         }
         next();
-    });*/
+    });
 
     //Simula delete y put
     app.use(methodOverride());

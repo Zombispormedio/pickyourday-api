@@ -630,6 +630,7 @@ Controller.searchPick = function(company, params, cb) {
 };
 
 Controller.newPick = function(company, params, cb) {
+    console.log(params);
     params.company = {"id_service": params.service, "id_company": company};
     params.origin = "manual";
     delete params.service;

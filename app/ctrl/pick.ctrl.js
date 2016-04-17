@@ -29,7 +29,8 @@ Controller.new = function (body, cb) {
         if(err) return cb(err);
         if(!service) return cb(null, "Service not found in new Pick");
         pick.duration = service.duration;
-        pick.state = ["pending"];
+        if(!pick.state || pick.state ="")
+            pick.state = "pending";
         if(service.promotion != null){
             
             if(service.promotion.initDate <= date && service.promotion.endDate > date)

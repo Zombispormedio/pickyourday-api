@@ -205,7 +205,6 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
-console.log(params);
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
@@ -258,22 +257,21 @@ console.log(params);
                   
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
-                        
+                       
                         if(timeLineCompany){
                             var scheduleCompany = timeLineCompany[0].metadata.schedule;
                             var step = timeLineCompany[0].metadata.step;
                             var need = service.duration/step;
-                            need--;                           
-                            
+                            need--;                                                    
                             
                             var availables =[];
                             var resources =timeLineCompany[0].timeLine;
-
                             if(resources!= null && resources.length > 0){
                                 var days = scheduleCompany.length;
                                 for(var day=0; day<days; day++){
                                     var stepsSize = scheduleCompany[day].steps;
-                                    var initDate = scheduleCompany[0].open;
+                                    var initDate = scheduleCompany[day].open;
+
                                     for(var key=0; key<stepsSize; key++){ 
                                         key =parseInt(key);
                                         var resourcesAux = [];
@@ -284,20 +282,38 @@ console.log(params);
                                             var rAvailable = true;  
                                             if(key+need < stepsSize){
                                                 if(steps[key]!= null && typeof (steps[key]) == "object"){
+                                                    
+                                                    var available = true; 
+                                                    var c = key+need-1;
+                                                   
+                                                    while(available && key < c){
+                                                       
+                                                        if(steps[c] != null && typeof (steps[c]) != "object"){
+                                                            available=false;
+                                                        }
+                                                        c--;
+                                                    }                                               
+
+                                                    if(!available) {
+                                                        break;
+                                                    }
+
                                                     var auxDate = new Date(initDate);
                                                     auxDate.setMinutes(key*step);
                                                     auxDate.setDate(initDate.getDate()+parseInt(day));
                                                     auxDate.setMilliseconds(0);
+
                                                     if(auxDate < date) break;
                                                     var picks = timeLine[0].picks;
-                                                    var available = true; 
-                                                    if(!picks){
-                                                        for(var pick=0; pick<picks.length; pick++){                                            
-                                                            if(picks[pick].init < auxDate && picks[pick].end > auxDate ){
+
+                                                    
+                                                    
+                                                    if(picks){
+                                                        for(var p=0; p<picks.length; p++){ 
+                                                            if(picks[p].init < auxDate && picks[p].end > auxDate ){
                                                                 available = false;
                                                                 break;
-                                                            }
-                                                            
+                                                            }       
                                                         }
                                                     }
 
@@ -306,15 +322,11 @@ console.log(params);
                                                         endDate.setMinutes(endDate.getMinutes()+4);
                                                         endDate.setSeconds(59);
                                                         availables.push({"initDate":auxDate,"endDate":endDate, "resource": resourcesAux[random].resource.id});
-                                                         break;
-                                                    }                            
+                                                        break;
+                                                    }else resourcesAux.splice(random, 1);                        
                                                 }else resourcesAux.splice(random, 1);
-                                            }else{
-                                                resourcesAux.splice(random, 1);
-                                                break;    
-                                             }                  
-                                        } 
-                                        
+                                            }else break;                                  
+                                        }      
                                     }
                                 }
                             }
@@ -527,6 +539,10 @@ Controller.getPrePickById = function(customer, id, cb) {
 Controller.newReviewCompany = function(customer, params, cb) {
     CompanyCtrl.newReview(customer, params, cb);
 };
+
+Controller.searchReview = function(customer, params, cb){
+    CompanyCtrl.searchReview(customer, params.company, cb);
+}
 
 Controller.newRateService = function(customer, params, cb) {
     CompanyCtrl.newRateService(customer, params, cb);

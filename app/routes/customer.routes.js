@@ -119,6 +119,13 @@ router.route("/prePick")
     });
 
 router.route("/reviewCompany")
+    .get(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.searchReview(req.user, req.query, function(err, review) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, review);
+        });
+    })
     .post(AuthController.checkCustomer(), function(req, res) {
         CustomerCtrl.newReviewCompany(req.user, req.body, function(err) {
             if (err) Response.printError(res, err);

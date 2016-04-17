@@ -236,6 +236,18 @@ CompanySchema.statics={
 				cb();
 	    });
 	},
+	searchReview: function(customer, company, cb){
+		var query;
+		query = this.aggregate([{$unwind:"$review"},{$match: {_id: new mongoose.Types.ObjectId(company)}}]);
+
+		query.match({'review.id_customer': new mongoose.Types.ObjectId(customer)});
+
+		query.exec(function(err, companyReview){
+			if(err) return cb(err);
+			if(!companyReview) return (null, []);
+			cb(null, companyReview[0].review);
+		});
+	},
 
 	newRateService: function(user, params, cb){
 		this.findOne({_id: params.company_id},  function(err, company){

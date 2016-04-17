@@ -327,8 +327,6 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
 Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb){
     var formatDate = [];
-    console.log(initDate);
- console.log(endDate);
     var self = this;
     var paramsTemp = {"id_customer":id_customer};
     paramsTemp.beforeInitDate = endDate;

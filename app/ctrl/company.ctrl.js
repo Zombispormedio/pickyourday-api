@@ -344,6 +344,10 @@ Controller.newReview = function(user, body, cb) {
     });
 };
 
+Controller.searchReview = function(customer, company, cb){
+    CompanyModel.searchReview(customer,company, cb);
+}
+
 Controller.newRateService = function(user, body, cb) {
     if (!body || !body.service_id || !body.company_id || !body.rating) return cb("Fields not Filled");
 
@@ -631,7 +635,6 @@ Controller.searchPick = function(company, params, cb) {
 };
 
 Controller.newPick = function(company, params, cb) {
-    console.log(params);
     params.company = {"id_service": params.service, "id_company": company};
     params.origin = "manual";
     params.state = "active";

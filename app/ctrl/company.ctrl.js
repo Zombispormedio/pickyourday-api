@@ -433,6 +433,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 for(var r=0; r<timeLine.length; r++)
                     timeLineTemp[r] = [];
                 var schedule = company.scheduleActivity;
+                if(!schedule || schedule.length == 0) return cb([]);
                 var scheduleDays = [];
                 var dateIterator = new Date(params.date);
                 var ranges = [];

@@ -425,6 +425,9 @@ Controller.getTimeLine = function(id_company, params, cb){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
                 var timeLineArray = new Array();
+                var timeLineTemp = new Array();
+                for(var r=0; r<timeLine.length; r++)
+                    timeLineTemp[r] = [];
                 var schedule = company.scheduleActivity;
                 var scheduleDays = [];
                 var dateIterator = new Date(params.date);
@@ -519,25 +522,24 @@ Controller.getTimeLine = function(id_company, params, cb){
 
 
                     }
+
                     for(var resource=0; resource<timeLine.length; resource++) {
-                        timeLine[resource][1][dayI] =_.clone(steps);
+                        timeLineTemp[resource][dayI] =_.clone(steps);
                     }
                 }
 
 
                 for(var r=0; r<timeLine.length; r++)
-                    temp.push({"resource":timeLine[r][0], "steps":timeLine[r][1]});  
-
+                    temp.push({"resource":timeLine[r][0], "steps":timeLineTemp[r]});  
+               
                 
                 for(var r=0; r<timeLine.length; r++){
-
                     var days = timeLine[r][1];
 
-                     
                     for(var day=0; day<days.length; day++){
                         var picks = days[day];
                         var count = scheduleDays[day].steps;
-                            
+                        
                         for(var pick=0; pick<picks.length; pick++){
                             var date = picks[pick].init;
                             date = new Date(date);
@@ -561,7 +563,6 @@ Controller.getTimeLine = function(id_company, params, cb){
             });
         }, function getAvailables(timeLineArray, callback){
             if(params.service != null ){
-
                 self.getServiceById(id_company, params.service, function(err, service){
                     if(err) return callback(err);
                     if(service != null){

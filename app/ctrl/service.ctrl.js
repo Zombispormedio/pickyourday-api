@@ -9,6 +9,7 @@ Controller.newServiceName= function (body, cb) {
 	if (!body || !body.name) return cb("Fields not Filled");
 	
 	var service = new ServiceNameModel(body);
+	service.dateCreated = new Date();
 	service.save(function (err, result) {
 		if (err) return cb(err);
 		cb(null, result);

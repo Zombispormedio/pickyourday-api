@@ -463,7 +463,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                         minInit = init.getHours()*60 + init.getMinutes();
                         minEnd = end.getHours()*60 + end.getMinutes();
                         count = Math.floor((minEnd - minInit)/5);
-                        count++;                      
+                                            
                         scheduleDays.push({ "open":init, "close":end, "steps":count});
                     }else scheduleDays.push([]);
 

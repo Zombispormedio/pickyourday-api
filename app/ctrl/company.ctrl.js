@@ -403,8 +403,9 @@ Controller.getTimeLine = function(id_company, params, cb){
                 count.push(i);
                 timeLine.push([]);
             }
+
             async.eachSeries(count, function(i, next){ 
-                if(params.statePick != null || params.statePick != "")
+                if(params.statePick != null || params.statePick != "" || params.statePick =="all")
                     state = ["active","pending"];
                 else state =["active"];
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){
@@ -670,6 +671,10 @@ Controller.activePick = function(id_pick, cb) {
         }else cb(-1);
     })
 };
+
+Controller.nextPick = function(company, params, cb){
+    PickCtrl.nextPick(company, params, cb);
+}
 
 
 

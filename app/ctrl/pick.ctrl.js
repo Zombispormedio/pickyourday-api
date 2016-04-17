@@ -314,7 +314,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                     for(var pick in picks)
                         formatDate[day].push({"pick":picks[pick]._id, "init":picks[pick].initDate, "duration":picks[pick].duration});  
                 
-                
+
                 next(null, null);
             });
         }, function(err, result){
@@ -327,8 +327,8 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
 Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb){
     var formatDate = [];
-
-
+    console.log(initDate);
+ console.log(endDate);
     var self = this;
     var paramsTemp = {"id_customer":id_customer};
     paramsTemp.beforeInitDate = endDate;
@@ -349,10 +349,8 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
 };
 
 Controller.clearPicks = function(cb){
-    var date = new Date();
-
     var paramsTemp = {};
-    paramsTemp.beforeInitDate = date;
+    paramsTemp.beforeInitDate = new Date();
 
     var self = this;
     self.searchQuick(paramsTemp,function(err, picks){    
@@ -368,7 +366,42 @@ Controller.clearPicks = function(cb){
             cb()
         });
     });
+}
 
+Controller.nextPick = function(company, params, cb){
+    var self= this;
+    if(!params.pick || !params.state)
+        return cb("field not filled: pick, state");
+
+    self.changeState(params.pick, params.state, function(err){
+        if(err) return cb(err);
+        self.findByIdQuick(params.pick, function(err, pick){
+            if(err) return cb(err);
+            if(!pick)return cb([]);
+
+            var initDate = pick.initDate;
+            initDate.setMinutes(initDate.getMinutes() + pick.duration-1);
+
+            var endDate = new Date(initDate);
+            endDate.setHours(23);
+            endDate.setMinutes(59);
+
+            var paramsTemp = {};
+            paramsTemp["company.id_company"]= company;
+            paramsTemp.beforeInitDate = endDate;
+            paramsTemp.afterInitDate  = initDate;
+            paramsTemp.state =["active"];
+
+            self.searchQuick(paramsTemp, function(err, picks){
+                if(err) return (err);
+                if(!picks || picks.length == 0)
+                    return cb([]);
+
+                self.findById(picks[0]._id, cb);
+            })
+
+        })
+    });
 
 }
 

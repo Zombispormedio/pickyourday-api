@@ -70,6 +70,15 @@ router.route("/pick")
         });
     });
 
+router.route("/nextPick")
+    .post(AuthController.checkCompany(), function(req, res) {
+        CompanyCtrl.nextPick(req.user, req.body, function(err, pick) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pick);
+        });
+    });  
+
 
 router.route("/serviceName")
     .get(AuthController.checkCompany(),function(req, res){
@@ -234,6 +243,7 @@ router.route("/cancelPick/:id")
                 Response.printSuccess(res, "");
         });
     });   
+
 
 router.route("/pick/:id")
     .get(AuthController.checkCompany(), function(req, res) {

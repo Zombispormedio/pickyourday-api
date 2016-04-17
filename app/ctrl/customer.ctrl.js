@@ -205,6 +205,7 @@ Controller.searchThings = function(params, cb) {
 Controller.getTimeLine = function(customer, params, cb) {
     if (!params) params = {};
 
+console.log(params);
     if (!params.initDate){
         params.initDate = new Date();
         params.initDate.setHours(0);
@@ -213,11 +214,12 @@ Controller.getTimeLine = function(customer, params, cb) {
     }else params.initDate = new Date(params.initDate);
 
     if (!params.endDate) {
-        var dateTemp = new Date();
         params.endDate = new Date();
-        params.endDate.setDate(dateTemp.getDate() + 30);
+        params.endDate.setDate(params.endDate.getDate() + 30);
+        params.endDate.setHours(23);
+        params.endDate.setMinutes(59);
+        params.endDate.setSeconds(0);
     }else params.endDate = new Date(params.endDate);
-
 
 
     var timeLine = [];

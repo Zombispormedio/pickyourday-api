@@ -257,7 +257,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                   
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
-                      
+                           
                         if(timeLineCompany){
                             var scheduleCompany = timeLineCompany[0].metadata.schedule;
                             var step = timeLineCompany[0].metadata.step;
@@ -271,18 +271,16 @@ Controller.getTimeLine = function(customer, params, cb) {
                                 for(var day=0; day<days; day++){
                                     var stepsSize = scheduleCompany[day].steps;
                                     var initDate = scheduleCompany[day].open;
-
-                                    for(var key=0; key<stepsSize; key++){ 
+                                    for(var key=0; key<stepsSize; key++){                                        
                                         key =parseInt(key);
                                         var resourcesAux = [];
                                         resourcesAux = _.clone(resources);
                                         while(resourcesAux.length > 0){ 
                                             var random = Math.floor(Math.random() * resourcesAux.length);
                                             var steps = resourcesAux[random].steps[day];
-                                            var rAvailable = true;  
                                             if(key+need < stepsSize){
                                                 if(steps[key]!= null && typeof (steps[key]) == "object"){
-                                                    
+                                                   
                                                     var available = true; 
                                                     var c = key+need-1;
                                                    
@@ -300,13 +298,11 @@ Controller.getTimeLine = function(customer, params, cb) {
 
                                                     var auxDate = new Date(initDate);
                                                     auxDate.setMinutes(key*step);
-                                                    auxDate.setDate(initDate.getDate()+parseInt(day));
                                                     auxDate.setMilliseconds(0);
+
 
                                                     if(auxDate < date) break;
                                                     var picks = timeLine[0].picks;
-
-                                                    
                                                     
                                                     if(picks){
                                                         for(var p=0; p<picks.length; p++){ 
@@ -317,7 +313,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                         }
                                                     }
 
-                                                    if(available){
+                                                    if(available){                                                         
                                                         endDate = new Date(auxDate);
                                                         endDate.setMinutes(endDate.getMinutes()+4);
                                                         endDate.setSeconds(59);

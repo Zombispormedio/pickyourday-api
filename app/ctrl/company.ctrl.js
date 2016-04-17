@@ -423,112 +423,137 @@ Controller.getTimeLine = function(id_company, params, cb){
         function scheduleCompany(timeLine, callback){
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
-                var date = new Date();
-
-                var schedule = company.scheduleActivity;
-                var now = new Date();
-                var scheduleNow = now.getDay()-1;
-                if(scheduleNow == -1)
-                    scheduleNow = 6;
-                scheduleNow = schedule[0].week[scheduleNow];
-                var times = [];
-                for(var key in scheduleNow.times){
-                    var split = scheduleNow.times[key].split("-");
-                    for(var time in split){
-                        var date = new Date();
-                        var hm = split[time].split(":");                         
-                        date.setHours(parseInt(hm[0]));
-                        date.setMinutes(hm[1]);
-                        date.setSeconds(0);
-                        times.push(date);
-                    } 
-                }
-                times.sort();
-
-                var init;
-                var end;              
-                var minInit;
-                var minEnd;
-                var count;
                 var timeLineArray = new Array();
+                var schedule = company.scheduleActivity;
+                var scheduleDays = [];
+                var dateIterator = new Date(params.date);
+                var ranges = [];
+                var steps =[];
 
-                if(times.length > 1){
-                    init = times[0];
-                    end = times[times.length-1];
+                for(var day = 0; day<params.rangeDays; day++){
+                    var scheduleNow = dateIterator.getDay()-1;
+                    if(scheduleNow == -1)
+                        scheduleNow = 6;
+                    scheduleNow = schedule[0].week[scheduleNow];
+                    var times = [];
+                    for(var key in scheduleNow.times){
+                        var split = scheduleNow.times[key].split("-");
+                        for(var time in split){
+                            var date = new Date();
+                            var hm = split[time].split(":");                         
+                            date.setHours(parseInt(hm[0]));
+                            date.setMinutes(hm[1]);
+                            date.setSeconds(0);
+                            times.push(date);
+                        } 
+                    }
+                    times.sort();
 
-                    minInit = init.getHours()*60 + init.getMinutes();
-                    minEnd = end.getHours()*60 + end.getMinutes();
-                    count = Math.floor((minEnd - minInit)/5);
-                    count++;
-                    timeLineArray = new Array();
-                }
+                    var init;
+                    var end;              
+                    var minInit;
+                    var minEnd;
+                    var count;
+                    
+                    if(times.length > 1){
+                        init = times[0];
+                        init.setDate(dateIterator.getDate());
+                        end = times[times.length-1];
+                        end.setDate(dateIterator.getDate());
+                        minInit = init.getHours()*60 + init.getMinutes();
+                        minEnd = end.getHours()*60 + end.getMinutes();
+                        count = Math.floor((minEnd - minInit)/5);
+                        count++;                      
+                        scheduleDays.push({ "open":init, "close":end, "steps":count});
+                    }else scheduleDays.push([]);
+
+                    
+                    var rangesAcum = [];
+                    for(var t=0; t<times.length; t++){
+                        var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                        t++;
+                        var pos2 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
+                      
+                        rangesAcum.push({0:pos1, 1:pos2});
+                    }
+                      ranges.push(rangesAcum);
+
+
+                    
+                    dateIterator.setDate(dateIterator.getDate()+1);
+                } 
+
                 var metadata = {
-                    "open":init, "close":end, "step":step, "steps": count, "legend":{
+                    "schedule":scheduleDays, "step":step, "legend":{
                         "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event", "date":"available"
                         }
                     };
 
-                var ranges = [];
-                for(var t=0; t<times.length; t++){
-                    var pos1 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
-                    t++;
-                    var pos2 = ((times[t].getHours()*60 + times[t].getMinutes())-minInit)/step; 
-                    
-                    ranges.push({0:pos1, 1:pos2});
-                }
 
                 var temp = new Array();
 
-                var steps = new Array();
-                for(var i=0; i<count; i++){
-                    var inSchedule = false;
-                    for(var r=0; r<ranges.length; r++){
-                        if(i>=ranges[r][0]  && i<ranges[r][1]){
-                            inSchedule = true;
-                            r=ranges.length;
-                        }
-                    };
+                var stepsAcum = [];
+                var dayIterator = 0;
 
-                    if(inSchedule)
-                        steps.push(0);  
-                    else
-                        steps.push(2);                                            
-                }
+                for(var  dayI=0; dayI<params.rangeDays; dayI++){
 
-                for(var r=0; r<timeLine.length; r++){  
-                    var stepsTemp = [];
-                    for(var t in timeLine[r][1])
-                        stepsTemp.push(_.clone(steps))
-                    temp.push({"resource":timeLine[r][0], "steps":_.clone(stepsTemp)});                   
-                }
+                    var rangeTimes = ranges[dayI];
 
+                    var stepsDay = scheduleDays[dayI].steps;
+                    var steps= [];
 
-
-                if(count >  0){
-                    for(var r=0; r<timeLine.length; r++){
-
-                        var days = timeLine[r][1];
-                         
-                        for(var day=0; day<days.length; day++){
-                            var picks = days[day];
-                                
-                            for(var pick=0; pick<picks.length; pick++){
-                                var date = picks[pick].init;
-                                date = new Date(date);
-
-                                var fill = Math.floor(picks[pick].duration/step);
-                                var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
-
-                                if(pos >= 0 && pos < count){
-                                    for(var f=0; f<fill; f++)
-                                        temp[r]["steps"][day][pos+f] =1;
-                                }
-
-                                
+                    for(var i=0; i<stepsDay; i++){
+                        var inSchedule = false;
+                        for(var r=0; r<rangeTimes.length; r++){
+                            if(i>=rangeTimes[r][0]  && i<rangeTimes[r][1]){
+                                inSchedule = true;
+                                r=ranges.length;
                             }
+                        }; 
+                        if(inSchedule)
+                            steps.push(0);  
+                        else
+                            steps.push(2);
+
+
+
+                    }
+                    for(var resource=0; resource<timeLine.length; resource++) {
+                        timeLine[resource][1][dayI] =_.clone(steps);
+                    }
+                }
+
+
+                for(var r=0; r<timeLine.length; r++)
+                    temp.push({"resource":timeLine[r][0], "steps":timeLine[r][1]});  
+
+                
+                for(var r=0; r<timeLine.length; r++){
+
+                    var days = timeLine[r][1];
+
+                     
+                    for(var day=0; day<days.length; day++){
+                        var picks = days[day];
+                        var count = scheduleDays[day].steps;
+                            
+                        for(var pick=0; pick<picks.length; pick++){
+                            var date = picks[pick].init;
+                            date = new Date(date);
+
+                            var fill = Math.floor(picks[pick].duration/step);
+                            var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
+
+                            if(pos >= 0 && pos < count){
+                                for(var f=0; f<fill; f++)
+                                    temp[r]["steps"][day][pos+f] =1;
+                            }
+
+                            
                         }
                     }
                 }
+                
                 timeLineArray.push({"metadata":metadata, "timeLine":temp});
 
                 callback(null, timeLineArray);
@@ -542,13 +567,22 @@ Controller.getTimeLine = function(id_company, params, cb){
                         var duration = service.duration;
                         var need = duration/step;
                         need--;
-                        var initDate = timeLineArray[0].metadata.open;
-                        var date = new Date();
+                        var initDate = new Date(params.date);
+                        initDate.setMilliseconds(0);
+                        var scheduleCompany = timeLineArray[0].metadata.schedule;
+
                         for(var resource in timeLineArray[0].timeLine){
                             var days = timeLineArray[0].timeLine[resource].steps;
-                            var size = days[0].length;
+                            
                             for(var day in days){
-                                var steps = days[day];                            
+
+                                var open = scheduleCompany[day].open;
+                                initDate.setHours(open.getHours());
+                                initDate.setMinutes(open.getMinutes()); 
+                                initDate.setSeconds(open.getSeconds());
+
+                                var steps = days[day];    
+                                var size = days[day].length;               
                                 for(var key in steps){
                                     key =parseInt(key);                     
                                     if(key+need < size){
@@ -565,7 +599,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                                 var auxDate = new Date(initDate);
                                                 auxDate.setDate(initDate.getDate() + parseInt(day));
                                                 auxDate.setMinutes(key*step);
-                                                if(auxDate > date)
+                                                if(auxDate > params.date)
                                                     steps[key] = auxDate;
                                             }
                                         }

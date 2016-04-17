@@ -253,24 +253,26 @@ Controller.getTimeLine = function(customer, params, cb) {
                     paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
                     paramsTemp.statePick = "all";
 
-                    console.log("crea timelinecompany");
+                  
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
-                        console.log(timeLineCompany);
+                        
                         if(timeLineCompany){
+                            var scheduleCompany = timeLineCompany[0].metadata.schedule;
                             var step = timeLineCompany[0].metadata.step;
                             var need = service.duration/step;
                             need--;                           
-                            var stepsSize = timeLineCompany[0].metadata.steps;
-                            var initDate = timeLineCompany[0].metadata.open;
+                            
+                            
                             var availables =[];
                             var resources =timeLineCompany[0].timeLine;
 
                             if(resources!= null && resources.length > 0){
-                                var days = resources[0].steps.length;
-                                for(var day=0; day<days; day++)                         
+                                var days = scheduleCompany.length;
+                                for(var day=0; day<days; day++){
+                                    var stepsSize = scheduleCompany[day].steps;
+                                    var initDate = scheduleCompany[0].open;
                                     for(var key=0; key<stepsSize; key++){ 
-
                                         key =parseInt(key);
                                         var resourcesAux = [];
                                         resourcesAux = _.clone(resources);
@@ -312,6 +314,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                                         } 
                                         
                                     }
+                                }
                             }
 
                         

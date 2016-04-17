@@ -336,7 +336,6 @@ Controller.delete = function(id, cb) {
 
 
 Controller.newReview = function(user, body, cb) {
-    console.log(body);
     if (!body || !body.company_id || !body.rating) return cb("Fields not Filled");
 
     CompanyModel.newReview(user, body, function(err) {

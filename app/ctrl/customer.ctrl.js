@@ -257,7 +257,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                   
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
-                       
+                      
                         if(timeLineCompany){
                             var scheduleCompany = timeLineCompany[0].metadata.schedule;
                             var step = timeLineCompany[0].metadata.step;

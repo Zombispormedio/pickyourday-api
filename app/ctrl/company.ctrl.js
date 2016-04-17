@@ -633,6 +633,7 @@ Controller.newPick = function(company, params, cb) {
     console.log(params);
     params.company = {"id_service": params.service, "id_company": company};
     params.origin = "manual";
+    params.state = "active";
     delete params.service;
     PickCtrl.new(params, cb);
 };

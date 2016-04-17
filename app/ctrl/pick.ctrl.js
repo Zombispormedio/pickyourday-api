@@ -31,8 +31,7 @@ Controller.new = function (body, cb) {
         pick.duration = service.duration;
         if(!pick.state || pick.state ="")
             pick.state = "pending";
-        if(service.promotion != null){
-            
+        if(service.promotion != null){          
             if(service.promotion.initDate <= date && service.promotion.endDate > date)
                 pick.promotion = service.promotion._id;
             else pick.promotion = null;

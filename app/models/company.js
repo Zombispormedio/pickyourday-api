@@ -419,6 +419,8 @@ CompanySchema.statics={
 				service[key] = params[key];
 			}
 
+			company.lastUpdate=new Date();
+
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -438,6 +440,7 @@ CompanySchema.statics={
 				return cb("Service not found in DeleteService");
 
 			company.services.id(id).remove();
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
@@ -459,6 +462,7 @@ CompanySchema.statics={
 			}else promotion.state = "waiting";
 			
 			promotion.timesUsed = 0;
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -553,6 +557,7 @@ CompanySchema.statics={
 				promotion[key] = params[key];
 			}
 
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -570,6 +575,7 @@ CompanySchema.statics={
 				return cb("Promotion not found");
 
 			company.promotions.id(id).remove();
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
@@ -577,9 +583,7 @@ CompanySchema.statics={
 		});
 	},
 
-    newResource: function(id_company, params, cb){
-    	
-
+    newResource: function(id_company, params, cb){	
     	this.findOne({_id: id_company}, function(err, company){
 			if(err)return cb(err);
 			if(!company)return cb("Company not found");
@@ -587,6 +591,7 @@ CompanySchema.statics={
 			company.resources.push(params);
 			var resource = company.resources[company.resources.length-1];
 			resource.initDate = new Date();
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -604,6 +609,7 @@ CompanySchema.statics={
 				return cb("Resource not found Delete Resource");
 
 			company.resources.splice(index, 1);
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);
 				cb();
@@ -621,7 +627,7 @@ CompanySchema.statics={
 			for(var key in params){
 				resource[key] = params[key];
 			}
-
+			company.lastUpdate=new Date();
 			company.save(function(err){
 				if(err) return cb(err);				
 				cb();
@@ -840,9 +846,6 @@ CompanySchema.statics={
 			}
 		});
 	},
-
-	 
-
 
 
 	servicePromoted: function(id_company, id_service, cb){

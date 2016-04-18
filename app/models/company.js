@@ -244,7 +244,8 @@ CompanySchema.statics={
 
 		query.exec(function(err, companyReview){
 			if(err) return cb(err);
-			if(!companyReview) return (null, []);
+			if(!companyReview) return cb(null, []);
+			if( companyReview.length===0)return cb(null, []);
 			cb(null, companyReview[0].review);
 		});
 	},

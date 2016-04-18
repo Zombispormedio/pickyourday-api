@@ -584,6 +584,8 @@ Controller.getTimeLine = function(id_company, params, cb){
                             for(var day in days){
 
                                 var open = scheduleCompany[day].open;
+								if(open===void 0) continue;
+								
                                 initDate.setHours(open.getHours());
                                 initDate.setMinutes(open.getMinutes()); 
                                 initDate.setSeconds(open.getSeconds());

@@ -840,8 +840,6 @@ Controller.rollback = function(id) {
     });
 };
 
-
-
 Controller.updateProfile = function(company_id, params, cb) {
     var f_params = _.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords", "scheduleActivity"]);
 

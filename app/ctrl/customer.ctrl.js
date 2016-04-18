@@ -24,6 +24,7 @@ Controller.newUser = function(body, cb) { //datos del body, callback
 
     var customer = new CustomerModel(body);
     customer.registerDate = new Date();
+    customer.lastUpdate=new Date();
     customer.save(function(err, result) {
         if (err) return cb(err);
 

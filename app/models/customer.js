@@ -209,6 +209,7 @@ CustomerSchema.statics = {
                 event[key] = params[key];
             }
 
+            customer.lastUpdate=new Date();
             customer.save(function (err) {
                 if (err) return cb(err);
                 cb();
@@ -227,6 +228,7 @@ CustomerSchema.statics = {
             if (!customer.events.id(id))
                 return cb("Event not found");
 
+            customer.lastUpdate=new Date();
             customer.events.id(id).remove();
             customer.save(function (err) {
                 if (err) return cb(err);

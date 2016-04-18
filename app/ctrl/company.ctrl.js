@@ -577,12 +577,14 @@ Controller.getTimeLine = function(id_company, params, cb){
                         var initDate = new Date(params.date);
                         initDate.setMilliseconds(0);
                         var scheduleCompany = timeLineArray[0].metadata.schedule;
+                        if(!scheduleCompany || scheduleCompany.length == 0) return callback([]);
 
                         for(var resource in timeLineArray[0].timeLine){
                             var days = timeLineArray[0].timeLine[resource].steps;
                             
                             for(var day in days){
 
+                                if(!scheduleCompany[day]) continue;
                                 var open = scheduleCompany[day].open;
 								if(open===void 0) continue;
 								

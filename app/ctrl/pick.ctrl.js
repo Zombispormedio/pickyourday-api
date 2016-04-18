@@ -89,6 +89,7 @@ Controller.search = function (query, cb) {
                 function (callback) {
                     CustomerModel.findById(pick.id_customer, 'name surname email location', function (err, customer) {
                         if (err) return callback(err);
+                        if(!pick) return callback([]);
                         var pObj = pick.toObject();
                         delete pObj.id_customer
                         pObj.customer = customer;
@@ -98,6 +99,7 @@ Controller.search = function (query, cb) {
                 function (p, callback) {
                     CompanyModel.findById(p.company.id_company, 'cif email name category promotions location phone photos ', function (err, company) {
                         if (err) return callback(err);
+                        if(!company) return callback([]);
                         var c = company.toObject();
                         delete p.company.id_company;
                         p.service = p.company.id_service;
@@ -107,9 +109,8 @@ Controller.search = function (query, cb) {
                     });
                 },
                 function (p, callback) {
-
                     CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
-                      
+                        if (err) return callback(err);
                         if (service) {
                           
                             var s = service.toObject();          
@@ -164,6 +165,7 @@ Controller.findById = function (id, cb) {
             function (callback) {
                 CustomerModel.findById(pick.id_customer, 'name surname email location', function (err, customer) {
                     if (err) return callback(err);
+                    if(!pick) return callback([])
                     var pObj = pick.toObject();
                     delete pObj.id_customer
                     pObj.customer = customer;
@@ -173,6 +175,7 @@ Controller.findById = function (id, cb) {
             function (p, callback) {
                 CompanyModel.findById(p.company.id_company, 'cif email name category promotions location phone photos ', function (err, company) {
                     if (err) return callback(err);
+                    if(!company) return callback([]);
                     var c = company.toObject();
                     delete p.company.id_company;
                     p.service = p.company.id_service;
@@ -220,23 +223,6 @@ Controller.findById = function (id, cb) {
             if (err) return cb(err);
             cb(null, result);
         });
-
-/*
-        CustomerModel.findById(pick.id_customer, 'name surname email location', function (err, customer) {
-            if (err) return cb(err);
-            pick.id_customer = customer;
-            CompanyModel.findById(pick.company.id_company, 'cif email name category promotions locations phone photos ', function (err, company) {
-                if (err) return cb(err);
-                pick.company.id_company = company;
-                CompanyModel.findServiceById(pick.company.id_company, pick.company.id_service, function (err, service) {
-                    if (err) return cb(err);
-                    var pickData = [];
-                    pickData.push(pick);
-                    pickData.push({ "serviceData": service });
-                    cb(null, pickData);
-                })
-            });
-        });*/
     });
 };
 

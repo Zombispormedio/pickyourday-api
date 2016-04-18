@@ -268,9 +268,26 @@ Controller.getTimeLine = function(customer, params, cb) {
                             var resources =timeLineCompany[0].timeLine;
                             if(resources!= null && resources.length > 0){
                                 var days = scheduleCompany.length;
+
+                                var picks =_.clone(timeLine[0].picks);
+                                
+
+
                                 for(var day=0; day<days; day++){
                                     var stepsSize = scheduleCompany[day].steps;
                                     var initDate = scheduleCompany[day].open;
+                                    var closeDate = scheduleCompany[day].close;
+
+                                    var picksDay = [];
+                                    if(picks){
+                                        while(picks.length > 0 ){
+                                            if(picks[0].init < closeDate){
+                                                picksDay.push( picks[0]);
+                                                picks.splice(0, 1);
+                                            }else break;
+                                        }
+                                    }
+
                                     for(var key=0; key<stepsSize; key++){                                        
                                         key =parseInt(key);
                                         var resourcesAux = [];
@@ -282,36 +299,32 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                 if(steps[key]!= null && typeof (steps[key]) == "object"){
                                                    
                                                     var available = true; 
-                                                    var c = key+need-1;
-                                                   
-                                                    while(available && key < c){
-                                                       
-                                                        if(steps[c] != null && typeof (steps[c]) != "object"){
-                                                            available=false;
-                                                        }
-                                                        c--;
-                                                    }                                               
-
-                                                    if(!available) {
-                                                        break;
-                                                    }
 
                                                     var auxDate = new Date(initDate);
                                                     auxDate.setMinutes(key*step);
                                                     auxDate.setMilliseconds(0);
 
-
                                                     if(auxDate < date) break;
-                                                    var picks = timeLine[0].picks;
+                                                   
                                                     
-                                                    if(picks){
-                                                        for(var p=0; p<picks.length; p++){ 
-                                                            if(picks[p].init < auxDate && picks[p].end > auxDate ){
-                                                                available = false;
-                                                                break;
-                                                            }       
+                                                    if(picksDay){
+                                                        var auxDateNeed = new Date(auxDate);
+
+                                                        for(var n=1; n<=need; n++){  
+                                                            for(var p=0; p<picksDay.length; p++){ 
+                                                                if(picksDay[p].init < auxDateNeed && picksDay[p].end > auxDateNeed ){
+                                                                    available = false;
+                                                                    break;
+                                                                }       
+                                                            }
+
+                                                            auxDateNeed.setMinutes(auxDateNeed.getMinutes()+(n*step));
                                                         }
+
+
                                                     }
+                                                    //Falta comprobar lomismo de la company, pero conel lsitado de fechas
+                                                    //restar duration al auxDate y ver sino hay fechas dentro de ese rango
 
                                                     if(available){                                                         
                                                         endDate = new Date(auxDate);

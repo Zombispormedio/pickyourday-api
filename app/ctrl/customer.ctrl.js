@@ -319,7 +319,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                                                                 }       
                                                             }
 
-                                                            auxDateNeed.setMinutes(auxDateNeed.getMinutes()+(n*step));
+                                                            auxDateNeed.setMinutes(auxDateNeed.getMinutes()+(n*step)-1);
                                                         }
 
 

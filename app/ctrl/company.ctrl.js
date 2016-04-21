@@ -372,6 +372,11 @@ Controller.getTimeLine = function(id_company, params, cb){
     if(params.resource == undefined || params.resource == "")
         params.resource = 0;
 
+    var customerData = true;
+    if(params.origin == "customer")
+        customerData=false;
+
+
     var step = 5;
 
 
@@ -420,7 +425,6 @@ Controller.getTimeLine = function(id_company, params, cb){
                 });
             }, function(err, result){
                 if(err) return callback(err);   
-
                 callback(null, timeLine);
             }); 
 
@@ -494,7 +498,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
                 var metadata = {
                     "schedule":scheduleDays, "step":step, "legend":{
-                        "0":"void", "1":"pick","2":"closed", "3":"holiday", "4":"event", "date":"available"
+                        "0":"void", "pick":"data pick","2":"closed", "3":"holiday", "4":"event", "date":"available"
                         }
                     };
 
@@ -548,13 +552,85 @@ Controller.getTimeLine = function(id_company, params, cb){
                         for(var pick=0; pick<picks.length; pick++){
                             var date = picks[pick].init;
                             date = new Date(date);
+                            
 
+                                        
                             var fill = Math.floor(picks[pick].duration/step);
                             var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
 
                             if(pos >= 0 && pos < count){
-                                for(var f=0; f<fill; f++)
-                                    temp[r]["steps"][day][pos+f] =1;
+                                for(var f=0; f<fill; f++){
+                                    if(!customerData){
+                                        temp[r]["steps"][day][pos+f] =1;
+                                    }else{
+                                        if(picks[pick]!= null){
+                                            var pick =picks[pick].pick;
+                                            if(pick){
+                                                var customer = pick.customer;
+                                                var name="";
+                                                var phone="";
+                                               
+                                                if(customer == null){
+                                                    name=pick.nameCli;
+                                                    phone=pick.phoneCli;
+                                                }else{
+                                                    name=customer.name + " " + customer.surname;
+                                                    phone=customer.phone;
+                                                }
+                                                var service = pick.service;
+                                                
+                                                var serviceName= "";
+                                                    
+                                                }
+                                                if(service){
+
+                                                    serviceName = service.name;
+                                                   
+                                                    if(serviceName == "" || serviceName ==undefined){
+                                                        if(service["metadata"])
+                                                            serviceName = service["metadata"].name;
+
+                                                    }
+                                                        
+                                                }
+
+                                                if(serviceName == undefined)
+                                                    serviceName= "";
+                                                if(phone == undefined)
+                                                    phone = "";
+                                                
+                                                temp[r]["steps"][day][pos+f] = {"customer": name, "phone": phone, "service":serviceName}
+                                             
+                                                }
+                                        
+                                       
+                                        /*
+
+                                       
+                                        var name="";
+                                        var phone="";
+                                       
+                                        if(customer == null){
+                                            name=pick.nameCli;
+                                            phone=pick.phoneCli;
+                                        }else{
+                                            name=customer.name + " " + customer.surname;
+                                            phone=customer.phone;
+                                        }
+                                        var service = pick.service;
+                                        
+                                        var serviceName= "";
+                                        
+                                        /*if(service){
+
+                                            serviceName = service.name;
+                                            if(serviceName == "" || serviceName ==undefined)
+                                                serviceName = service.metatada.name;
+                                        }*/
+                                        
+                                        //temp[r]["steps"][day][pos+f] = {"customerName": name, "phone": phone, "service":service}
+                                     }
+                                }
                             }
 
                             
@@ -644,6 +720,7 @@ Controller.newPick = function(company, params, cb) {
     params.origin = "manual";
     params.state = "active";
     delete params.service;
+
     PickCtrl.new(params, cb);
 };
 

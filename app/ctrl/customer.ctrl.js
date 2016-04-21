@@ -255,7 +255,7 @@ Controller.getTimeLine = function(customer, params, cb) {
                     paramsTemp.rangeDays = Utils.countDays(params.initDate, params.endDate);
                     paramsTemp.statePick = "all";
 
-                  
+                    paramsTemp.origin = "customer";
                     CompanyCtrl.getTimeLine(params.company, paramsTemp, function(err, timeLineCompany){
                         if(err) return callback(err);
                            
@@ -321,12 +321,7 @@ Controller.getTimeLine = function(customer, params, cb) {
 
                                                             auxDateNeed.setMinutes(auxDateNeed.getMinutes()+(n*step)-1);
                                                         }
-
-
                                                     }
-                                                    //Falta comprobar lomismo de la company, pero conel lsitado de fechas
-                                                    //restar duration al auxDate y ver sino hay fechas dentro de ese rango
-
                                                     if(available){                                                         
                                                         endDate = new Date(auxDate);
                                                         endDate.setMinutes(endDate.getMinutes()+4);

@@ -1,4 +1,5 @@
 var C = require("../../config/config");
+var C = require("../../config/config");
 var Response = require(C.lib + "response");
 var AuthModel = require(C.models + "auth").Auth;
 var SystemCtrl = require(C.ctrl + "system.ctrl");

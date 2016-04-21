@@ -1,4 +1,3 @@
-
 var C = require("../../config/config");
 var async = require("async");
 var PickModel = require(C.models + "pick");
@@ -7,6 +6,7 @@ var CustomerModel = require(C.models + "customer");
 var ServiceNameModel = require(C.models + "service_name");
 var CategoryModel = require(C.models + "category");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
+//var HistoryCtrl = require(C.ctrl + "history.ctrl");
 var Utils=require(C.lib+"utils");
 var Controller = {};
 
@@ -238,7 +238,9 @@ Controller.delete = function (id, cb) {
                 return cb("No pick deleted");
 
             CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err){
-                cb();
+                if(err) return cb(err);
+                HistoryCtrl.savePick(pickTemp, cb);
+                
             });
 
             
@@ -293,7 +295,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                 afterInitDate.setDate(afterInitDate.getDate()+1);
                 paramsTemp.afterInitDate = afterInitDate;
             }
-
+            console.log(paramsTemp);
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
                 if(picks != null && picks.length > 0)
@@ -341,9 +343,13 @@ Controller.clearPicks = function(cb){
         if(err) return cb(err);
         if(picks != null && picks.length > 0)
         async.map(picks, function(pick, next){
-             self.changeState(pick._id, "finished", function(err){
+             self.changeState(pick._id, "cancelled", function(err){
                 if(err) next(err);
-                next();
+                HistoryCtrl.savePick(pick, function(err){
+                    if(err) return next(err);
+                    next();
+                });
+
              });
         }, function(err){
             if(err) return cb(err);

@@ -412,7 +412,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
             async.eachSeries(count, function(i, next){ 
                 if(params.service != null && params.statePick !="all"){
-                    state =["active"];
+                    state =["active","pending"];
                 }else if(params.statePick =="all"){
                     state = ["active","pending"];
                 }else state =["active"];

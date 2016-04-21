@@ -574,12 +574,17 @@ Controller.getTimeLine = function(id_company, params, cb){
                                                     name=pick.nameCli;
                                                     phone=pick.phoneCli;
                                                 }else{
-                                                    name=customer.name + " " + customer.surname;
+                                                    if(customer.name != undefined)
+                                                        name=customer.name + " " + customer.surname;
                                                     phone=customer.phone;
                                                 }
                                                 var service = pick.service;
                                                 
                                                 var serviceName= "";
+                                                if(name == undefined)
+                                                    name= "";
+                                                if(phone == undefined)
+                                                    phone="";
                                                     
                                                 }
                                                 if(service){

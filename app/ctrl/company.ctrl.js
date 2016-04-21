@@ -416,7 +416,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 }else if(params.statePick =="all"){
                     state = ["active","pending"];
                 }else state =["active"];
-
+                console.log(state);
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});

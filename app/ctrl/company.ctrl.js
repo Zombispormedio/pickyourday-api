@@ -430,6 +430,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
         },
         function scheduleCompany(timeLine, callback){
+            console.log(timeLine);  
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
                 var timeLineArray = new Array();
@@ -563,7 +564,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                     if(!customerData){
                                         temp[r]["steps"][day][pos+f] =1;
                                     }else{
-                                        temp[r]["steps"][day][pos+f] =1;
+
                                         if(picks[pick]!= null){
                                             var pick =picks[pick].pick;
                                             if(pick){

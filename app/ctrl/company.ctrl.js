@@ -235,8 +235,6 @@ Controller.getProfile = function(id, cb) {
                             async.map(resource.services, function(service, n) {
                                 ServiceCtrl.findById(id, service, function(err, serv) {
                                     if (err) {
-
-                                        console.log(err);
                                         return n();
                                     }
                                     service = serv;
@@ -413,10 +411,12 @@ Controller.getTimeLine = function(id_company, params, cb){
             }
 
             async.eachSeries(count, function(i, next){ 
-                if(params.statePick != null || params.statePick != "" || params.statePick =="all")
+                if(params.service != null && params.statePick !="all"){
+                    state =["active"];
+                }else if(params.statePick =="all"){
                     state = ["active","pending"];
-                else state =["active"];
-                console.log(params);
+                }else state =["active"];
+
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});
@@ -430,7 +430,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
         },
         function scheduleCompany(timeLine, callback){
-            console.log(timeLine);  
+
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
                 var timeLineArray = new Array();
@@ -865,7 +865,6 @@ Controller.getResourcesByService = function(company, params, cb) {
     ResourceCtrl.getResourcesByService(company, params.service, cb);
 };
 Controller.toggleService = function(company, params, cb) {
-    console.log(params);
     if (!company || !params.service || !params.resource) return cb("Fields not Filled ToggleService");
     CompanyModel.toggleService(company, params.service, params.resource, cb);
 };

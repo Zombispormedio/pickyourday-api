@@ -295,7 +295,6 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                 afterInitDate.setDate(afterInitDate.getDate()+1);
                 paramsTemp.afterInitDate = afterInitDate;
             }
-            console.log(paramsTemp);
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
                 if(picks != null && picks.length > 0)

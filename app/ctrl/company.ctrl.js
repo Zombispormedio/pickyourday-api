@@ -563,6 +563,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                     if(!customerData){
                                         temp[r]["steps"][day][pos+f] =1;
                                     }else{
+                                        temp[r]["steps"][day][pos+f] =1;
                                         if(picks[pick]!= null){
                                             var pick =picks[pick].pick;
                                             if(pick){
@@ -586,55 +587,30 @@ Controller.getTimeLine = function(id_company, params, cb){
                                                 if(phone == undefined)
                                                     phone="";
                                                     
+                                            }
+                                            if(service){
+
+                                                serviceName = service.name;
+                                               
+                                                if(serviceName == "" || serviceName ==undefined){
+                                                    if(service["metadata"])
+                                                        serviceName = service["metadata"].name;
+
                                                 }
-                                                if(service){
+                                                    
+                                            }
 
-                                                    serviceName = service.name;
-                                                   
-                                                    if(serviceName == "" || serviceName ==undefined){
-                                                        if(service["metadata"])
-                                                            serviceName = service["metadata"].name;
-
-                                                    }
-                                                        
-                                                }
-
-                                                if(serviceName == undefined)
-                                                    serviceName= "";
-                                                if(phone == undefined)
-                                                    phone = "";
-                                                
-                                                temp[r]["steps"][day][pos+f] = {"customer": name, "phone": phone, "service":serviceName}
+                                            if(serviceName == undefined)
+                                                serviceName= "";
+                                            if(phone == undefined)
+                                                phone = "";
+                                            
+                                            temp[r]["steps"][day][pos+f] = {"customer": name, "phone": phone, "service":serviceName}
                                              
-                                                }
-                                        
-                                       
-                                        /*
-
-                                       
-                                        var name="";
-                                        var phone="";
-                                       
-                                        if(customer == null){
-                                            name=pick.nameCli;
-                                            phone=pick.phoneCli;
-                                        }else{
-                                            name=customer.name + " " + customer.surname;
-                                            phone=customer.phone;
                                         }
-                                        var service = pick.service;
                                         
-                                        var serviceName= "";
-                                        
-                                        /*if(service){
-
-                                            serviceName = service.name;
-                                            if(serviceName == "" || serviceName ==undefined)
-                                                serviceName = service.metatada.name;
-                                        }*/
-                                        
-                                        //temp[r]["steps"][day][pos+f] = {"customerName": name, "phone": phone, "service":service}
-                                     }
+                                       
+                                    }
                                 }
                             }
 

@@ -359,7 +359,6 @@ Controller.newRateService = function(user, body, cb) {
 
 
 Controller.getTimeLine = function(id_company, params, cb){
-
     if(!id_company) return cb("Fields not Filled getTimeLine");
     if(!params) params={};
     if(!params.date)
@@ -417,6 +416,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 if(params.statePick != null || params.statePick != "" || params.statePick =="all")
                     state = ["active","pending"];
                 else state =["active"];
+                console.log(params);
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});

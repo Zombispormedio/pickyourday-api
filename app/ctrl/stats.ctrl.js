@@ -178,17 +178,15 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 		result.push([]);
 		for(var x in arrayData){
 			x = parseInt(x);
-			for(var w in arrayData[x]){
-				for(var z in arrayData[x][w]){
-					z = parseInt(z);
+			for(var z in arrayData[x][key]){
+				z = parseInt(z);
+				var yValue = arrayData[x][key][z];
+				var data = [xValues[x], yValue, zValues[z]];
+				var position = [(x+1)/(maxX+1) *grill, (yValue/(maxY) *grill) || 0, (z+1)/(maxZ) *grill ];
+				result[key].push(new Stat(position, data));
 
-					var yValue = arrayData[x][w][z];
-					var data = [xValues[x], yValue, zValues[z]];
-					var position = [(x+1)/(maxX+1) *grill, (yValue/(maxY) *grill) || 0, (z+1)/(maxZ) *grill ];
-					result[key].push(new Stat(position, data));
-
-				}
 			}
+			
 
 		}
 	}

@@ -343,27 +343,73 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
     });
 };
 
-Controller.clearPicks = function(cb){
+Controller.cancelPicks = function(cb){
     var paramsTemp = {};
     paramsTemp.beforeInitDate = new Date();
 
     var self = this;
-    self.searchQuick(paramsTemp,function(err, picks){    
-        if(err) return cb(err);
-        if(picks != null && picks.length > 0)
-        async.map(picks, function(pick, next){
-             self.changeState(pick._id, "cancelled", function(err){
-                if(err) next(err);
-                HistoryCtrl.savePick(pick, function(err){
-                    if(err) return next(err);
-                    next();
-                });
 
-             });
-        }, function(err){
-            if(err) return cb(err);
-            cb()
-        });
+    
+    async.waterfall([
+        function deletePendings(next){
+            paramsTemp.state = ["pending"];
+            self.searchQuick(paramsTemp,function(err, picks){
+                if(picks != null && picks.length > 0){
+                    async.map(picks, function(pick, subNext){
+                        self.delete(pick._id, subNext);
+                    }, function(err){
+                        next();
+                    });
+                }else next();
+            });
+        }, function cancelActives(next){
+            paramsTemp.state = ["active"];
+            self.searchQuick(paramsTemp,function(err, picks){    
+                if(err) return cb(err);
+                if(picks != null && picks.length > 0){
+                    async.map(picks, function(pick, subNext){
+                         self.changeState(pick._id, "cancelled", function(err){
+                            if(err) subNext(err);
+                            subNext();
+                         });
+                    }, function(err){
+                        if(err) return next(err);
+                        next();
+                    });
+                }else next();
+            });
+        }
+    ], function(err, result) {
+        if (err) return cb(err);
+        cb();
+    });
+
+   
+};
+
+Controller.clearPicks = function(cb){
+    var paramsTemp = {};
+    beforeInitDate = new Date();
+    beforeInitDate.setMinutes(0);
+    beforeInitDate.setHours(0);
+    beforeInitDate.setSeconds(0);
+    beforeInitDate.setDate(beforeInitDate.getDate()-1);
+    paramsTemp.beforeInitDate = beforeInitDate;
+    var self = this;
+    self.searchQuick(paramsTemp,function(err, picks){
+          
+        if(err) return cb(err);
+        if(picks != null && picks.length > 0){
+            async.map(picks, function(pick, next){
+                 self.delete(pick._id, function(err){
+                    if(err) next(err);
+                    next();
+                 });
+            }, function(err){
+                if(err) return cb(err);
+                cb();
+            });
+        }else cb();
     });
 }
 

@@ -56,9 +56,9 @@ router.route("/pick")
         });
     });
 
-router.route("/clearPicks")
+router.route("/clear")
     .get(function(req, res){
-        SystemCtrl.clearPicks(function(err,picks){
+        SystemCtrl.clear(function(err,picks){
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, picks);

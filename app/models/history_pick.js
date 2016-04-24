@@ -15,7 +15,7 @@ var HistoryPickSchema = new Schema({
 			ref: "Company",
 			required: true
 		},
-		id_service: Number
+		id_service: Schema.ObjectId
 	},
 	initDate: Date,
 	duration: Number,
@@ -83,4 +83,4 @@ HistoryPickSchema.statics={
 	}
 };
 
-module.exports = mongoose.model("History_pick", HistoryPickSchema);
+module.exports = mongoose.model("Historypick", HistoryPickSchema);

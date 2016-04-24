@@ -81,13 +81,15 @@ Controller.getServiceNameById = function (id, cb) {
 };
 
 //******************MAINTENANCE
-Controller.clearPicks = function(cb){
-    PickCtrl.clearPicks(cb);
-}
+Controller.clear = function(cb){
+    PickCtrl.cancelPicks(function(err){
+        PickCtrl.clearPicks(cb);
+    });
+};
 
 Controller.refreshPromotions = function(cb){
     PromotionCtrl.refreshPromotions(cb);
-}
+};
 
 
 //****************Preferences

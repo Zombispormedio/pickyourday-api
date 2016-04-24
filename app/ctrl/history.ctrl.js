@@ -11,10 +11,9 @@ var Controller = {};
 
 Controller.savePick = function(pick, cb){
 	if(!pick) return cb([]);
-
-	var HPick = new HPick(pick);
-	pick.deleteDate = new Date();
-    HPick.save(function (err) {
+	var p = new HPick(pick);
+	p.deleteDate = new Date();
+    p.save(function (err) {
         if (err) return cb(err);
         cb();       
     });

@@ -17,11 +17,9 @@ Controller.new = function(user, body, cb){
 };
 
 Controller.search = function(user, query, cb){
-
     if(user == 0){
         CompanyModel.searchPromotion(0, query, function(err, promotions){
                 if(err) return cb(err);
-
                 cb(null, promotions);
             })
     }else{
@@ -91,8 +89,6 @@ Controller.delete = function(user, id, cb){
             
         });
     });
-
-
 };
 
 Controller.refreshPromotions = function(cb){
@@ -140,8 +136,6 @@ Controller.refreshPromotions = function(cb){
 
 
     });
-
-
 
 };
 

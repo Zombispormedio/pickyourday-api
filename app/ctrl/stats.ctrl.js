@@ -110,7 +110,7 @@ Controller.statsPicks = function(company, query, cb){
 							var count = 0;
 							if(picks)
 								count = picks.length;
-								
+							
 							if(maxY < count)
 								maxY = count;
 
@@ -158,6 +158,11 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 	var fit = false;
 	var max = maxX;
 	var result = [];
+	if(maxY== null)
+		maxY=0;
+	if(maxZ == null)
+		maxZ=0;
+	
 	if(max < maxY)
 		max = maxY;
 	if(max < maxZ)

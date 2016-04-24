@@ -18,13 +18,59 @@ var HistoryPickSchema = new Schema({
 		id_service: Number
 	},
 	initDate: Date,
-	deletedDate: Date,
+	duration: Number,
+	dateCreated: Date,
 	observation: String,
+	promotion: Schema.ObjectId,
+	nameCli: String,
+	phoneCli: String,
 	state: {
 		type: String, 
 		enum: ['pending', 'active', 'cancelled', 'finished'],
 		required: true
-	}	
+	},
+	origin: {
+		type: String, 
+		enum: ['prepick', 'mobile', 'manual', 'promotion']
+		
+	}
 });
 
-module.exports = mongoose.model("HistoryPick", HistoryPickSchema);
+HistoryPickSchema.statics={
+	search:function(params, cb){ //en params no meter id, todos los demas datos si
+		var query = this.find({}).sort({initDate: 1});
+		for(var key in params){
+			switch(key){
+				case "id_customer":  
+				case "company.id_company":
+				case "company.id_service":
+					query.where(key).equals(params[key].toString());
+					break;	
+				case 'beforeInitDate':
+					query.where('initDate').lt(params[key]);
+					break;
+				case 'afterInitDate':
+					query.where('initDate').gt(params[key]);
+					break;		
+				case 'beforeDateCreated':
+					query.where('dateCreated').lt(params[key]);
+					break;
+				case 'afterDateCreated':
+					query.where('dateCreated').gt(params[key]);
+					break;
+				case 'picks': 
+					query.where( {'_id': { '$in': params[key] }});
+					break;
+				case 'state': 
+					query.where( {'state': { '$in': params[key] }});
+					break;
+				default:
+					query.where(key).equals(Utils.like(params[key]));
+			}
+		}	
+		query.exec(cb);
+		
+	}
+};
+
+module.exports = mongoose.model("History_pick", HistoryPickSchema);

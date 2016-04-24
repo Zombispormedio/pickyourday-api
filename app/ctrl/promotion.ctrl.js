@@ -2,6 +2,8 @@ var C=require("../../config/config");
 
 var CompanyModel = require(C.models+"company");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
+var HistoryCtrl = require(C.ctrl + "history.ctrl");
+
 var async = require("async");
 var Controller = {};
 
@@ -73,10 +75,18 @@ Controller.modify = function(user, id, body, cb){
 Controller.delete = function(user, id, cb){
     if (!id) return cb("Fields not Filled");
 
-    CompanyModel.deletePromotion(user, id, function(err){
-        if(err) return cb(err);
-        cb();
+    this.findById(user, id, function(err, promotion){
+        if(err) cb(err);
+        CompanyModel.deletePromotion(user, id, function(err){
+            if(err) return cb(err);
+            HistoryCtrl.savePromotion(promotion, function(err){
+                cb();
+            });
+            
+        });
     });
+
+
 };
 
 Controller.refreshPromotions = function(cb){

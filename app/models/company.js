@@ -12,7 +12,6 @@ var GeolocationType = CustomType.GeolocationSchema;
 var ImageType=CustomType.ImageSchema;
 
 
-
 var RatingSchema = new Schema({
 	id_customer: {
 		type: Schema.ObjectId, 
@@ -21,8 +20,6 @@ var RatingSchema = new Schema({
 	rating: Number,
 	date: Date
 });
-
-
 
 
 var WeekTable = new Schema({
@@ -142,7 +139,11 @@ var CompanySchema = new Schema({
 	state: {
 		type: String, 
 		enum: ['active', 'demo', 'pending', 'refused']
-	}
+	},
+
+	premium: Boolean,
+	dateExpire: Date,
+	datePayment: Date
 	
 
 });
@@ -203,7 +204,6 @@ CompanySchema.statics={
    modify:function(id_company, params, cb){
         this.findById(id_company, function(err, company){
 			if(err) return cb(err);
-		
 		    if(!company)
 				return cb("Company not found");
 
@@ -796,24 +796,37 @@ CompanySchema.statics={
 		});
 	},
 
-	asignPick: function(id_company, id_resource, id_pick, cb){
+	asignPick: function(id_company, id_resource, id_pick, id_service, cb){
 		this.findOne({_id: id_company}, function(err, company){
 			if(err) return cb(err);
 			if(company){
 				var resource = company.resources.id(id_resource);
-
 				if(resource){
-					if(resource.picks)
-						resource.picks.push(id_pick);
-					else{
-						resource.picks = [];
-						resource.picks.push(id_pick);
-					}
+					var serviceFound = false;
 
-					company.save(function(err){
-							if(err) return cb(err);				
-							cb();
-						});
+					if(resource.services)
+						for(service in resource.services ){
+							if(resource.services[service].equals(id_service)){
+								serviceFound=true;
+								break;
+							}
+						}
+
+
+					if(serviceFound){
+						if(resource.picks)
+							resource.picks.push(id_pick);
+						else{
+							resource.picks = [];
+							resource.picks.push(id_pick);
+						}
+
+
+						company.save(function(err){
+								if(err) return cb(err);				
+								cb();
+							});
+					} else cb(-1);
 				}else cb(-1);
 			}else cb(-1);
 			

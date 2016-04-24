@@ -1,12 +1,14 @@
 var C = require("../../config/config");
 var async = require("async");
+
 var PickModel = require(C.models + "pick");
 var CompanyModel = require(C.models + "company");
 var CustomerModel = require(C.models + "customer");
 var ServiceNameModel = require(C.models + "service_name");
 var CategoryModel = require(C.models + "category");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
-//var HistoryCtrl = require(C.ctrl + "history.ctrl");
+var HistoryCtrl = require(C.ctrl + "history.ctrl");
+
 var Utils=require(C.lib+"utils");
 var Controller = {};
 
@@ -39,9 +41,17 @@ Controller.new = function (body, cb) {
         else pick.promotion = null;
         pick.save(function (err) {
             if (err) return cb(err);
-            CompanyModel.asignPick(pick.company.id_company, body.resource, pick._id, function(err){
-                if(err) return cb(err);
-                cb(null, pick);
+            CompanyModel.asignPick(pick.company.id_company, body.resource, pick._id, body.company.id_service, function(err){
+                if(err){ 
+                    if(err == -1){
+                        PickModel.find({ _id:pick._id }).remove().exec(function(err, result){
+                             cb(-1);
+                        });
+                    }
+                }else 
+                 cb(null, pick);
+
+                
             })
             
         });

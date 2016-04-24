@@ -81,7 +81,7 @@ Controller.getServiceNameById = function (id, cb) {
 };
 
 //******************MAINTENANCE
-Controller.clear = function(cb){
+Controller.clearPicks = function(cb){
     PickCtrl.cancelPicks(function(err){
         PickCtrl.clearPicks(cb);
     });

@@ -79,7 +79,6 @@ Controller.statsPicks = function(company, query, cb){
 	                servicesArray = services.map(function(a) {
 	                    return a._id;
 	                });
-	                console.log(services);
 	                zValues = services.map(function(a) {
 	                	if(a.name == undefined)
 	                		return a.id_name.name;
@@ -93,7 +92,6 @@ Controller.statsPicks = function(company, query, cb){
 		}, function getPicks(next){
 
 			maxZ = servicesArray.length;
-			console.log(maxZ);
 			async.eachSeries(states, function(state, subNext){
 				var datesPick = [];
 				async.eachSeries(timeArray, function(date, subSubNext){

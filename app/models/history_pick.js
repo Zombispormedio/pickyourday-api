@@ -20,6 +20,7 @@ var HistoryPickSchema = new Schema({
 	initDate: Date,
 	duration: Number,
 	dateCreated: Date,
+	deleteDate: Date,
 	observation: String,
 	promotion: Schema.ObjectId,
 	nameCli: String,
@@ -63,6 +64,15 @@ HistoryPickSchema.statics={
 					break;
 				case 'state': 
 					query.where( {'state': { '$in': params[key] }});
+					break;
+				case 'origin': 
+					query.where( {'origin': { '$in': params[key] }});
+					break;
+				case 'beforeDeleteDate':
+					query.where('deleteDate').lt(params[key]);
+					break;
+				case 'afterDeleteDate':
+					query.where('deleteDate').gt(params[key]);
 					break;
 				default:
 					query.where(key).equals(Utils.like(params[key]));

@@ -38,11 +38,17 @@ Controller.search = function(user, query, cb){
     }
 };
 
+Controller.findByIdQuick = function(user, id, cb){
+     CompanyModel.findPromotionById(user, id, function(err, promotion){
+        if(err) return cb(err);
+        cb(null, promotion);
+     });
+};
+
 Controller.findById = function(user, id, cb){
     CompanyModel.findPromotionById(user, id, function(err, promotion){
         if(err) return cb(err);
         promotion = promotion.toObject();
-        //promotion.services.toObject();
         if(promotion){
             promotion.company = user;
             var count = 0;
@@ -75,7 +81,7 @@ Controller.modify = function(user, id, body, cb){
 Controller.delete = function(user, id, cb){
     if (!id) return cb("Fields not Filled");
 
-    this.findById(user, id, function(err, promotion){
+    this.findByIdQuick(user, id, function(err, promotion){
         if(err) cb(err);
         CompanyModel.deletePromotion(user, id, function(err){
             if(err) return cb(err);

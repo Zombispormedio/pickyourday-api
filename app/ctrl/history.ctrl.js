@@ -12,15 +12,24 @@ var Controller = {};
 Controller.savePick = function(pick, cb){
 	if(!pick) return cb([]);
 
-	var pick = new HPick(body);
-    pick.save(function (err) {
+	var HPick = new HPick(pick);
+	pick.deleteDate = new Date();
+    HPick.save(function (err) {
         if (err) return cb(err);
-        cb(null, []);       
+        cb();       
     });
 };
 
 Controller.savePromotion = function(promotion, cb){
-	
+	if(!promotion) return cb([]);
+
+	var p = new HPromotion(promotion);
+	p.deleteDate = new Date();
+	p.save(function(err){
+		if(err) return cb(err);
+		cb();
+	})
+
 };
 
 

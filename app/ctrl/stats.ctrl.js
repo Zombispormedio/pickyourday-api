@@ -162,7 +162,7 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 		maxY=0;
 	if(maxZ == null)
 		maxZ=0;
-	
+
 	if(max < maxY)
 		max = maxY;
 	if(max < maxZ)
@@ -186,7 +186,7 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 
 					var yValue = arrayData[x][w][z];
 					var data = [xValues[x], yValue, zValues[z]];
-					var position = [(x+1)/(maxX+1) *grill, yValue/(maxY) *grill, (z+1)/(maxZ) *grill ];
+					var position = [(x+1)/(maxX+1) *grill, (yValue/(maxY) *grill) || 0, (z+1)/(maxZ) *grill ];
 					result[key].push(new Stat(position, data));
 
 				}

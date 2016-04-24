@@ -6,8 +6,7 @@ var C=require("../../config/config");
 var HistoryPickSchema = new Schema({
 	id_customer: { 
 		type: Schema.ObjectId, 
-		ref: "Customer",
-		required: true
+		ref: "Customer"
 	},
 	company: {
 		id_company:{

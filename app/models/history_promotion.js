@@ -26,6 +26,4 @@ var HistoryPromotionSchema = new Schema({
 
 });
 
-
-
 module.exports = mongoose.model("HistoryPromotion", HistoryPromotionSchema);

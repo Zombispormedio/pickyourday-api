@@ -11,6 +11,7 @@ var CategoryModel = require(C.models + "category");
 var PickModel = require(C.models + "pick");
 var AuthCtrl = require(C.ctrl + "auth.ctrl");
 var ResourceCtrl = require(C.ctrl + "resource.ctrl");
+var StatsCtrl = require(C.ctrl + "stats.ctrl");
 var CustomerModel = require(C.models + "customer");
 var async = require("async");
 var Utils = require(C.lib + "utils");
@@ -416,7 +417,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                 }else if(params.statePick =="all"){
                     state = ["active","pending"];
                 }else state =["active"];
-                console.log(state);
+
                 PickCtrl.formatDatePick(id_company, params.date, true, params.rangeDays, resources[i].picks, state,  function(err, datePick){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});
@@ -807,6 +808,11 @@ Controller.searchCategory = function(params, cb) {
     CategoryCtrl.search(params, cb);
 };
 
+
+//*******************STATS
+Controller.statsPicks = function(company,query, cb){
+    StatsCtrl.statsPicks(company, query, cb);
+}
 
 //*******************RESOURCE
 Controller.newResource = function(company, params, cb) {

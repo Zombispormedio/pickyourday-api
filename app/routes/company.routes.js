@@ -191,7 +191,14 @@ router.route("/category")
         } );
     });
 
-
+router.route("/statsPicks")
+    .get(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.statsPicks(req.user, req.query, function(err, stats){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, stats);
+        } );
+    });
 
 router.route("/developer")
     .get(AuthController.checkCompany(), function(req, res) {

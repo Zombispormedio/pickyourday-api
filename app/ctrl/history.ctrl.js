@@ -28,8 +28,16 @@ Controller.savePromotion = function(promotion, cb){
 		if(err) return cb(err);
 		cb();
 	})
-
 };
+
+
+Controller.getPicks= function(query, cb){
+	HPick.search(query, function(err, picks){
+		if(err) return cb(err);
+		if(!picks) return cb(null, []);
+		cb(null, picks);
+	})
+}
 
 
 

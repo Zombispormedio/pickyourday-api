@@ -724,7 +724,10 @@ Controller.getPickById = function(id, cb) {
 };
 
 Controller.cancelPick = function(pick, cb) {
-    PickCtrl.changeState(pick, "cancelled", cb);
+    PickCtrl.changeState(pick, "cancelled", function(err){
+        if(err) return cb(err);
+        PickCtrl.delete(pick, cb);
+    });
 };
 
 Controller.activePick = function(id_pick, cb) {

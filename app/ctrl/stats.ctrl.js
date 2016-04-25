@@ -14,7 +14,7 @@ var Controller = {};
 function Stat(position, data, size, color){
 	this.position = position || [];
 	this.size = size || [1,1,1];
-	this.color = color || [1, 0, 0, 0.7];
+	this.color = color || [1, 0, 0, 0.1];
 	this.data = data || ["", 0, ""];
 }
 

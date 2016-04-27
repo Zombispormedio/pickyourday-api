@@ -10,6 +10,7 @@ var Utils = require(C.lib + "utils");
 var async = require("async");
 var path = require("path");
 var fs = require("fs");
+var gcm = require('node-gcm');
 var Controller = {};
 
 //***************CATEGORIES
@@ -93,8 +94,6 @@ Controller.refreshPromotions = function(cb){
 
 
 //****************Preferences
-
-
 Controller.getPreferences = function (params, cb) {
     PreferencesCtrl.search(params, cb);
 };
@@ -115,6 +114,45 @@ Controller.getPreferenceById = function (id, cb) {
     PreferencesCtrl.findById(id,cb);
 };
 
+
+//*******************NOTIFICACTION
+Controller.notification = function (cb){
+    var message = new gcm.Message({
+
+        data: {
+            key1: 'message1'
+        },
+        notification: {
+            title: "Hello, World",
+            icon: "ic_launcher",
+            body: "This is a notification that will be displayed ASAP."
+        }
+    });
+     
+    message.addData({
+        key1: 'message1'
+    });
+     
+    // Set up the sender with you API key 
+    var sender = new gcm.Sender('AIzaSyBhkbCm9SOVYiWhgcmEmSDOTgrigfjOV8U');
+     
+    // Add the registration tokens of the devices you want to send to 
+    var registrationTokens = [];
+    registrationTokens.push(
+"APA91bH7s8SqRAlLt-8EY7CTuirHdxsdtWrDJtjteAwLGb8xmCa-6_UGJv_lnJ9HjxrtItyPlYhdj-cBqeT6tKBSftwdqMlUSI5IJp_M8TujhMQ5yDdoHJGxVYUtZpmqhYJmmfx4ulrwMBCNnE8MqpiT8RtesCqDsA");
+    //registrationTokens.push('regToken2');
+     
+
+    sender.sendNoRetry(message, { registrationTokens: registrationTokens }, function(err, response) {
+      if(err) console.error(err);
+      else {   console.log(response); console.log("response");
+      }
+      cb();
+    });
+
+
+     
+}
 
 
 //*******************Images

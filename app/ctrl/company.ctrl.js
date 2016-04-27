@@ -695,7 +695,26 @@ Controller.getTimeLine = function(id_company, params, cb){
 //*********************PICKS
 Controller.searchPick = function(company, params, cb) {
     params["company.id_company"] = company;
-    PickCtrl.search(params, cb);
+    var self= this;
+    if(params.resource != undefined && params.resource != ""){
+        var paramsTemp= {};
+        paramsTemp.format = false;
+        ResourceCtrl.findById(company, params.resource, paramsTemp, function(err, resource){
+            if(err) return cb(err);
+            if(!resource) return cb([]);
+            params.picks = resource.picks;
+            delete params.resource;
+            var endDate = new Date();
+            endDate.setHours(23);
+            endDate.setMinutes(59);
+            var initDate = new Date();
+            params.beforeInitDate = endDate;
+            params.afterInitDate  = initDate;
+            PickCtrl.search(params, cb);
+        })
+    }else PickCtrl.search(params, cb);
+
+    
 };
 
 Controller.newPick = function(company, params, cb) {

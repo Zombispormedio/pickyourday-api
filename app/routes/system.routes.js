@@ -102,7 +102,7 @@ router.route("/default_service")
 
 
 router.route("/preferences")
-        .get(AuthController.checkAdmin(),function(req, res){
+    .get(AuthController.checkAdmin(),function(req, res){
         SystemCtrl.getPreferences(req.query, function(err,  preferences){
             if(err) Response.printError(res, err);
                 else
@@ -115,6 +115,15 @@ router.route("/preferences")
                 else
             Response.printSuccess(res, result);
         });
+    });
+
+router.route("/notification")
+    .get(function(req, res){
+        SystemCtrl.notification(function(err,obj){
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, []);
+        })
     });
 
 

@@ -46,7 +46,7 @@ Controller.findById = function(user, id, params, cb){
 
 		if(!resource)
 			return cb("Resource not found");	
-		if(params.format == false)
+		if(params && params.format != undefined && params.format == false)
 			return cb(null, resource);
 		else{
 			async.waterfall([

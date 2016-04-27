@@ -70,7 +70,8 @@ var CustomerSchema = new Schema({
     prepicks: [PrepickSchema],
     registerDate: Date,
     lastAccess: Date,
-    lastUpdate: Date
+    lastUpdate: Date,
+    notification: String
     
 
 });

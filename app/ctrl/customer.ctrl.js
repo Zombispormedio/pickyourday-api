@@ -592,8 +592,35 @@ Controller.getCompanyById = function(id, cb) {
     CompanyCtrl.getProfile(id, cb);
 };
 
-//******************PROMOTION
 
+//******************NOTIFICATION
+Controller.checkNotification = function(customer_id, body, cb){
+    this.findById(customer_id, function(err, customer){
+        if(err) return cb(err);
+        if(!customer) return cb([]);
+        if(customer.notification == undefined || customer.notification == "")
+            return cb(null, false);
+        else return cb(null, true);
+    });
+};
+
+Controller.saveNotification = function(customer_id, body, cb){
+    if(!body && !body.token ) return cb(-1);
+    this.findById(customer_id, function(err, customer){
+        if(err) return cb(err);
+        if(!customer) return cb([]);
+        customer.notification = body.token;
+        customer.save(function(err, result) {
+        if (err) return cb(err);
+
+        cb(null);
+    });
+
+    });
+}
+
+
+//******************PROMOTION
 Controller.searchPromotion = function(customer, params, cb){
     params.statePromotion = "started";
     var company = params.company

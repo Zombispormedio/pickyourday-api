@@ -38,7 +38,21 @@ router.route("")
     })
 
 
-
+router.route("/notification")
+    .post(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.saveNotification(req.user, req.body, function(err, pick) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pick);
+        });
+    })
+    .get(AuthController.checkCustomer(), function(req, res) {
+        CustomerCtrl.checkNotification(req.user, req.query, function(err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        });
+    });
 
 router.route("/profile")
     .get(AuthController.checkCustomer(), function(req, res) {

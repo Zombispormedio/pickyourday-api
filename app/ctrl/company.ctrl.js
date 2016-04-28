@@ -708,7 +708,7 @@ Controller.searchPick = function(company, params, cb) {
             endDate.setHours(23);
             endDate.setMinutes(59);
             var initDate = new Date();
-            initDate.setHours(initDate.getHours()-1);
+            initDate.setHours(0);
             params.beforeInitDate = endDate;
             params.state = ["active"];
             params.afterInitDate  = initDate;

@@ -132,6 +132,8 @@ Controller.notification = function (cb){
     message.addData({
         key1: 'message1'
     });
+
+    message.addData("content-available", 1);
      
     // Set up the sender with you API key 
     var sender = new gcm.Sender('AIzaSyBhkbCm9SOVYiWhgcmEmSDOTgrigfjOV8U');
@@ -139,7 +141,7 @@ Controller.notification = function (cb){
     // Add the registration tokens of the devices you want to send to 
     var registrationTokens = [];
     registrationTokens.push(
-"APA91bH7s8SqRAlLt-8EY7CTuirHdxsdtWrDJtjteAwLGb8xmCa-6_UGJv_lnJ9HjxrtItyPlYhdj-cBqeT6tKBSftwdqMlUSI5IJp_M8TujhMQ5yDdoHJGxVYUtZpmqhYJmmfx4ulrwMBCNnE8MqpiT8RtesCqDsA");
+"APA91bHHwIDa8rA_LmYdMCXsph0JGyDAMYeX9ESQ5UlXaki_-Jzir-DtRan5eNdGSBDRRPnTzKwNdfcgFODd_93JeN1lAwdV8nnMguzrBPP6tjhxpTfHwppSYt1XrIA_ubSsxt_2fNwBFJSoNaHi5rrSZTuTCAYQrg");
     //registrationTokens.push('regToken2');
      
 

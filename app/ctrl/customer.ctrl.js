@@ -594,7 +594,7 @@ Controller.getCompanyById = function(id, cb) {
 
 
 //******************NOTIFICATION
-Controller.checkNotification = function(customer_id, body, cb){
+Controller.checkNotification = function(customer_id, cb){
     this.findById(customer_id, function(err, customer){
         if(err) return cb(err);
         if(!customer) return cb([]);

@@ -40,14 +40,14 @@ router.route("")
 
 router.route("/notification")
     .post(AuthController.checkCustomer(), function(req, res) {
-        CustomerCtrl.saveNotification(req.user, function(err, pick) {
+        CustomerCtrl.saveNotification(req.user, req.body, function(err, pick) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, pick);
         });
     })
     .get(AuthController.checkCustomer(), function(req, res) {
-        CustomerCtrl.checkNotification(req.user, req.query, function(err, picks) {
+        CustomerCtrl.checkNotification(req.user, function(err, picks) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, picks);

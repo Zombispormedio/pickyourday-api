@@ -11,7 +11,7 @@ Utils.validatePresenceOf = function (value) {
 };
 
 Utils.like = function (value) {
-   return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig")
+   return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig");
 };
 
 Utils.likeLowerCase = function (value) {

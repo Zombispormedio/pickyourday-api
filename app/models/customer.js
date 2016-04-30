@@ -42,7 +42,7 @@ var PrepickSchema = new Schema({
 var CustomerSchema = new Schema({
     preferences: [{
         question: Schema.ObjectId,
-        answer:{}
+        answer: {}
     }],
     email: {
         type: String,
@@ -72,52 +72,81 @@ var CustomerSchema = new Schema({
     lastAccess: Date,
     lastUpdate: Date,
     notification: String
-    
+
 
 });
 
 
 CustomerSchema.statics = {
-    search: function (params, cb) { //en params no meter id, todos los demas datos si
+    getQuery: function (params) { //en params no meter id, todos los demas datos si
         var query = this.find({});
         for (var key in params) {
 
             switch (key) {
-                case 'beforeBirthDate':
-                    query.where('birthDate').lt(params[key]);
-                    break;
-                case 'afterBirthDate':
+                case 'fromBirthDate':
                     query.where('birthDate').gt(params[key]);
                     break;
-
-                case 'beforeRegister':
-                    query.where('registerDate').lt(params[key]);
+                case 'toBirthDate':
+                    query.where('birthDate').lt(params[key]);
                     break;
-                case 'afterRegister':
+                case 'fromRegister':
                     query.where('registerDate').gt(params[key]);
                     break;
-
-                case 'beforeLastUpdate':
-                    query.where('lastUpdate').lt(params[key]);
+                case 'toRegister':
+                    query.where('registerDate').lt(params[key]);
                     break;
-                case 'afterLastUpdate':
+                case 'fromLastUpdate':
                     query.where('lastUpdate').gt(params[key]);
                     break;
-
-                case 'beforeAccess':
-                    query.where('lastAccess').lt(params[key]);
+                case 'toLastUpdate':
+                    query.where('lastUpdate').lt(params[key]);
                     break;
-                case 'afterAccess':
+                case 'fromAccess':
                     query.where('lastAccess').gt(params[key]);
                     break;
-                default: query.where(key).equals(Utils.like(params[key]));
+                case 'toAccess':
+                    query.where('lastAccess').lt(params[key]);
+                    break;
+
+                case "p": {
+                    var p = params[key];
+
+                    var s = Number(params.s) || C.pagination;
+
+                    var skip = s * p;
+
+                    query.skip(skip);
+                    query.limit(s);
+                    break;
+                }
+
+                case "email":
+                case "surname":
+                case "name": query.where(key).equals(Utils.like(params[key]));
+                    break;
+
+                case "search_text": {
+                    var val = params[key];
+                    query.or([
+                        { "email": { "$regex": Utils.like(val) } },
+                        { "name": { "$regex": Utils.like(val) } },
+                        { "surname": { "$regex": Utils.like(val) } }
+
+                    ]);
+                    break;
+                }
 
             }
 
         }
 
-        query.exec(cb);
+        return query;
 
+
+    },
+
+    search: function (params, cb) {
+        this.getQuery(params).exec(cb);
     },
 
     newEvent: function (user, params, cb) {
@@ -210,7 +239,7 @@ CustomerSchema.statics = {
                 event[key] = params[key];
             }
 
-            customer.lastUpdate=new Date();
+            customer.lastUpdate = new Date();
             customer.save(function (err) {
                 if (err) return cb(err);
                 cb();
@@ -229,7 +258,7 @@ CustomerSchema.statics = {
             if (!customer.events.id(id))
                 return cb("Event not found");
 
-            customer.lastUpdate=new Date();
+            customer.lastUpdate = new Date();
             customer.events.id(id).remove();
             customer.save(function (err) {
                 if (err) return cb(err);

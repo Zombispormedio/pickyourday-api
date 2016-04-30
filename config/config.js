@@ -38,7 +38,8 @@ var config = Object.create(Config.prototype, {
     domain:secure("pickyourday.herokuapp.com"),
     company:secure("KenoviApps"),
     product:secure("PickYourDay"),
-    lang:secure("ES")
+    lang:secure("ES"),
+    pagination:secure(5)
 });
 
 

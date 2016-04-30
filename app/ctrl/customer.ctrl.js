@@ -44,6 +44,13 @@ Controller.search = function(query, cb) {
     });
 };
 
+Controller.count=function(params, cb){
+    if(params.p)delete params.p;
+     var query=CustomerModel.getQuery(params);
+       query.count().exec(cb);
+    
+};
+
 Controller.findById = function(id, cb) {
     CustomerModel.findById(id, function(err, customer) {
         if (err) return cb(err);
@@ -52,7 +59,7 @@ Controller.findById = function(id, cb) {
 
         return cb(null, customer);
     });
-}
+};
 
 Controller.modify = function(id, body, cb) {
 

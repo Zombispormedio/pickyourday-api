@@ -11,6 +11,7 @@ Utils.validatePresenceOf = function (value) {
 };
 
 Utils.like = function (value) {
+    if(value==void 0)return value;
     value=value.replace(/\"|\(|\)/g, "");
    return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig");
 };

@@ -42,6 +42,9 @@ CategorySchema.statics={
 						{ "icon.src": { "$regex": Utils.like(val) } },
 						{ "icon.alt": { "$regex": Utils.like(val) } },
                     ];
+					 if(Utils.isValidObjectID(val)){
+                        or_seq.push( { "_id":mongoose.Types.ObjectId(val)  });
+                    }
 					
 					
                     query.or(or_seq);

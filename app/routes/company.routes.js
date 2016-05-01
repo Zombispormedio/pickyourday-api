@@ -217,6 +217,14 @@ router.route("/originPicks")
             Response.printSuccess(res, stats);
         } );
     });
+router.route("/scoreService")
+    .get(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.scoreServices(req.user, req.query, function(err, stats){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, stats);
+        } );
+    });
 
 router.route("/developer")
     .get(AuthController.checkCompany(), function(req, res) {

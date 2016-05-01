@@ -124,6 +124,16 @@ Utils.countDays = function(initDate, endDate){
     return 0;
 };
 
+Utils.countMonth = function(initDate, endDate){
+    var _MS_PER_MONTH = 1000 * 60 * 60 ;
+    if(initDate != null && endDate != null){
+      var utc1 = Date.UTC(initDate.getFullYear(), initDate.getMonth(), initDate.getDate());
+      var utc2 = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+      return Math.floor((utc2 - utc1) / _MS_PER_MONTH);
+    }
+    return 0;
+};
+
 Utils.countMinutes = function(initDate, endDate){
     var dif = initDate.getTime() - endDate.getTime()
     var seconds = dif / 1000/ 60;

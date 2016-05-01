@@ -18,6 +18,7 @@ var RatingSchema = new Schema({
 		ref: "Customer"
 	},
 	rating: Number,
+	descripcion: String,
 	date: Date
 });
 
@@ -332,17 +333,30 @@ CompanySchema.statics = {
 		});
 	},
 
-	newRateService: function (user, params, cb) {
-		this.findOne({ _id: params.company_id }, function (err, company) {
-			if (err) return cb(err);
-			if (!company) return cb("Company not found");
+	newRateService: function(user, params, cb){		
+		this.findOne({_id: params.company_id},  function(err, company){
+			if(err)return cb(err);
+			if(!company)return cb([]);
 
 
 			var service = company.services.id(params.service_id);
-			if (!service) return cb("Service not found in NewRateService");
-			service.rating.push({ id_customer: user, rating: params.rating, date: new Date() });
-			company.save(function (err) {
-				if (err) return cb(err);
+			if(!service) return cb([]);
+
+			var found =false;
+			for(var key in service.rating){
+				if(service.rating[key].id_customer.equals(user))
+					return cb("El usuario ya ha hecho un review al servicio")
+			}
+
+			var rate = {};
+			rate.id_customer = user;
+			rate.rating = params.rating;
+			rate.description = params.description;
+			rate.date = new Date();
+
+			service.rating.push(rate);
+			company.save(function(err){
+				if(err) return cb(err);				
 				cb();
 			});
 

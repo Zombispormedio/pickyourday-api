@@ -842,6 +842,11 @@ Controller.originPicks = function(company,query, cb){
     StatsCtrl.originPicks(company, query, cb);
 }
 
+Controller.scoreServices = function(company,query, cb){
+    StatsCtrl.scoreServices(company, query, cb);
+}
+
+
 //*******************RESOURCE
 Controller.newResource = function(company, params, cb) {
     ResourceCtrl.new(company, params, function(err) {

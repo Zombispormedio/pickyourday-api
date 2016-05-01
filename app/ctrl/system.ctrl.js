@@ -148,7 +148,7 @@ Controller.notification = function (cb){
     // Add the registration tokens of the devices you want to send to 
     var registrationTokens = [];
     registrationTokens.push(
-"APA91bHHwIDa8rA_LmYdMCXsph0JGyDAMYeX9ESQ5UlXaki_-Jzir-DtRan5eNdGSBDRRPnTzKwNdfcgFODd_93JeN1lAwdV8nnMguzrBPP6tjhxpTfHwppSYt1XrIA_ubSsxt_2fNwBFJSoNaHi5rrSZTuTCAYQrg");
+"APA91bFHnZJvsKN9_wQuqZXMxtz_iK4lNmksPQT3mziGU74Ag8WUv4rmZxRVZzSy067q8paccFwhEdgRgMaA8NqRCJ9SXYO9jDTFVs2Mm9xiIBIxGGQhDy4XTNb97Ng3hG-qovLQuQ3DJml-Fz71XDCS6tyvM1k3lQ");
     //registrationTokens.push('regToken2');
      
 

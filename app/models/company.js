@@ -18,7 +18,7 @@ var RatingSchema = new Schema({
 		ref: "Customer"
 	},
 	rating: Number,
-	descripcion: String,
+	description: String,
 	date: Date
 });
 

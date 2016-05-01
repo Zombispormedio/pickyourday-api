@@ -114,7 +114,7 @@ Controller.refreshPromotions = function(cb){
                     })
                 },  function changeFinished(next) {
                     var paramsTemp = {};
-                    paramsTemp.beforeEndDate = date;
+                    paramsTemp.toEndDate = date;
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "finished"};
                         async.map(promotions, function(promotion, subNext){

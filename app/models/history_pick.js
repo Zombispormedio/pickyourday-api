@@ -46,16 +46,16 @@ HistoryPickSchema.statics={
 				case "company.id_service":
 					query.where(key).equals(params[key].toString());
 					break;	
-				case 'beforeInitDate':
+				case 'toInitDate':
 					query.where('initDate').lt(params[key]);
 					break;
-				case 'afterInitDate':
+				case 'fromInitDate':
 					query.where('initDate').gt(params[key]);
 					break;		
-				case 'beforeDateCreated':
+				case 'toDateCreated':
 					query.where('dateCreated').lt(params[key]);
 					break;
-				case 'afterDateCreated':
+				case 'fromDateCreated':
 					query.where('dateCreated').gt(params[key]);
 					break;
 				case 'picks': 
@@ -67,10 +67,10 @@ HistoryPickSchema.statics={
 				case 'origin': 
 					query.where( {'origin': { '$in': params[key] }});
 					break;
-				case 'beforeDeleteDate':
+				case 'toDeleteDate':
 					query.where('deleteDate').lt(params[key]);
 					break;
-				case 'afterDeleteDate':
+				case 'fromDeleteDate':
 					query.where('deleteDate').gt(params[key]);
 					break;
 				default:

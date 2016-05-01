@@ -405,10 +405,10 @@ CompanySchema.statics = {
 					query.match(match);
 					break;
 				case 'state': break;
-				case 'beforeDateCreated':
+				case 'toDateCreated':
 					query.match({ 'services.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
-				case 'afterDateCreated':
+				case 'fromDateCreated':
 					query.match({ 'services.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterPrice':
@@ -571,10 +571,11 @@ CompanySchema.statics = {
 	searchPromotion: function (id_company, params, cb) {
 		if (!params.state || params.state == "")
 			params.state = "active";
+			var query;
 		if (id_company == 0)
-			var query = this.aggregate([{ $unwind: "$promotions" }, { $match: { state: params.state } }]);
+			query = this.aggregate([{ $unwind: "$promotions" }, { $match: { state: params.state } }]);
 		else
-			var query = this.aggregate([{ $unwind: "$promotions" }, { $match: { _id: new mongoose.Types.ObjectId(id_company), state: params.state } }]);
+			query = this.aggregate([{ $unwind: "$promotions" }, { $match: { _id: new mongoose.Types.ObjectId(id_company), state: params.state } }]);
 
 		for (var key in params) {
 			switch (key) {
@@ -582,16 +583,16 @@ CompanySchema.statics = {
 				case 'statePromotion':
 					query.match({ 'promotions.state': params.statePromotion });
 					break;
-				case 'beforeInitDate':
+				case 'toInitDate':
 					query.match({ 'promotions.initDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'afterInitDate':
+				case 'fromInitDate':
 					query.match({ 'promotions.initDate': { '$gte': new Date(params[key]) } });
 					break;
-				case 'beforeEndDate':
+				case 'toEndDate':
 					query.match({ 'promotions.endDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'afterEndDate':
+				case 'fromEndDate':
 					query.match({ 'promotions.endDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterUseLimit':
@@ -606,10 +607,10 @@ CompanySchema.statics = {
 				case 'lessTimeUsed':
 					query.match({ 'promotions.timesUsed': { '$gte': parseInt(params[key]) } });
 					break;
-				case 'beforeDateCreated':
+				case 'toDateCreated':
 					query.match({ 'promotions.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
-				case 'afterDateCreated':
+				case 'fromDateCreated':
 					query.match({ 'promotions.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
 				case 'service':
@@ -618,6 +619,7 @@ CompanySchema.statics = {
 				default:
 					var field = "promotions." + key;
 					var match = {};
+				
 					match[field] = Utils.like(params[key]);
 					query.match(match);
 			}
@@ -752,10 +754,10 @@ CompanySchema.statics = {
 		for (var key in params) {
 			switch (key) {
 				case 'state': break;
-				case 'beforeInitDate':
+				case 'toInitDate':
 					query.match({ 'resources.initDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'afterInitDate':
+				case 'fromInitDate':
 					query.match({ 'resources.initDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'service':

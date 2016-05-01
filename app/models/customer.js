@@ -180,22 +180,22 @@ CustomerSchema.statics = {
 
         for (var key in params) {
             switch (key) {
-                case 'beforeInitDate':
+                case 'toInitDate':
                     query.match({ 'events.initDate': { '$lte': new Date(params[key]) } }); //en agregate para trabajar con las fechas pide un objeto date,no es como find		
                     break;
-                case 'afterInitDate':
+                case 'fromInitDate':
                     query.match({ 'events.initDate': { '$gte': new Date(params[key]) } });
                     break;
-                case 'beforeEndDate':
+                case 'toEndDate':
                     query.match({ 'events.endDate': { '$lte': new Date(params[key]) } });
                     break;
-                case 'afterEndDate':
+                case 'fromEndDate':
                     query.match({ 'events.endDate': { '$gte': new Date(params[key]) } });
                     break;
-                case 'beforeDateCreated':
+                case 'toDateCreated':
                     query.match({ 'events.dateCreated': { '$lte': new Date(params[key]) } });
                     break;
-                case 'afterDateCreated':
+                case 'fromDateCreated':
                     query.match({ 'events.dateCreated': { '$gte': new Date(params[key]) } });
                     break;
                 default:
@@ -298,16 +298,16 @@ CustomerSchema.statics = {
 
         for (var key in params) {
             switch (key) {
-                case 'beforeDate':
+                case 'toDate':
                     query.match({ 'prepicks.date': { '$lte': new Date(params[key]) } });
                     break;
-                case 'afterDate':
+                case 'fromDate':
                     query.match({ 'prepicks.date': { '$gte': new Date(params[key]) } });
                     break;
-                case 'beforeDateCreated':
+                case 'toDateCreated':
                     query.match({ 'prepicks.dateCreated': { '$lte': new Date(params[key]) } });
                     break;
-                case 'afterDateCreated':
+                case 'fromDateCreated':
                     query.match({ 'prepicks.dateCreated': { '$gte': new Date(params[key]) } });
                     break;
                 default:

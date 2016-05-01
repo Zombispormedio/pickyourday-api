@@ -7,6 +7,8 @@ var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
 var SystemModel = require(C.models + "system");
 var PickModel = require(C.models + "pick");
+var ServiceNameModel = require(C.models + "service_name");
+var CategoryModel = require(C.models + "category");
 var Utils = require(C.lib + "utils");
 var async = require("async");
 var path = require("path");
@@ -17,6 +19,11 @@ var Controller = {};
 //***************CATEGORIES
 Controller.searchCategory = function (params, cb) {
     CategoryCtrl.search(params, cb);
+};
+Controller.countCategory = function (params, cb) {
+    if(params.p)delete params.p;
+     var query=CategoryModel.getQuery(params);
+       query.count().exec(cb);
 };
 
 Controller.newCategory = function (params, cb) {
@@ -70,6 +77,12 @@ Controller.searchService = function (params, cb) {
 
 Controller.searchServiceName = function (params, cb) {
     ServiceCtrl.searchServiceName(params, cb);
+};
+
+Controller.countServiceName = function (params, cb) {
+    if(params.p)delete params.p;
+     var query=ServiceNameModel.getQuery(params);
+       query.count().exec(cb);
 };
 
 Controller.newServiceName = function (params, cb) {

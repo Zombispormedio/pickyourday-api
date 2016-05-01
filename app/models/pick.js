@@ -43,7 +43,7 @@ var PickSchema = new Schema({
 		enum: ['prepick', 'mobile', 'manual', 'promotion']
 
 	}
-	
+
 });
 
 
@@ -58,16 +58,28 @@ PickSchema.statics = {
 				case "promotion":
 					query.where(key).equals(params[key].toString());
 					break;
-				case 'beforeInitDate':
+
+				case "by_state":
+					query.where("state").equals(params[key]);
+					break;
+				case "by_origin":
+					query.where("origin").equals(params[key]);
+					break;
+				case "nameCli":
+				case "phoneCli":
+				case "duration":
+					query.where(key).equals(params[key]);
+					break;
+				case 'toInitDate':
 					query.where('initDate').lt(params[key]);
 					break;
-				case 'afterInitDate':
+				case 'fromInitDate':
 					query.where('initDate').gt(params[key]);
 					break;
-				case 'beforeDateCreated':
+				case 'toDateCreated':
 					query.where('dateCreated').lt(params[key]);
 					break;
-				case 'afterDateCreated':
+				case 'fromDateCreated':
 					query.where('dateCreated').gt(params[key]);
 					break;
 				case 'picks':
@@ -95,9 +107,8 @@ PickSchema.statics = {
 						or_seq.push({ "company.id_company": mongoose.Types.ObjectId(val) });
 						or_seq.push({ "company.id_service": mongoose.Types.ObjectId(val) });
 						or_seq.push({ "promotion": mongoose.Types.ObjectId(val) });
-                    }else{
-						or_seq.push({ "duration": val });
-					}
+                    }
+
                     query.or(or_seq);
 
 

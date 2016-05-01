@@ -20,6 +20,14 @@ router.route("/category")
 
         });
     });
+      router.route("/category/count")
+    .get(AuthController.checkAdmin(), function (req, res) {
+        SystemCtrl.countCategory(req.query, function (err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        });
+    });
 
 router.route("/addClient")
         .post(AuthController.checkAdmin(), function (req, res){
@@ -105,6 +113,15 @@ router.route("/default_service")
             if(err) Response.printError(res, err);
                 else
             Response.printSuccess(res, result);
+        });
+    });
+    
+    router.route("/default_service/count")
+    .get(AuthController.checkAdmin(), function (req, res) {
+        SystemCtrl.countServiceName(req.query, function (err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
         });
     });
 

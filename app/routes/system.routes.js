@@ -141,6 +141,15 @@ router.route("/preferences")
             Response.printSuccess(res, result);
         });
     });
+    
+    router.route("/preferences/count")
+    .get(AuthController.checkAdmin(), function (req, res) {
+        SystemCtrl.countPreferences(req.query, function (err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        });
+    });
 
 router.route("/notification")
     .get(function(req, res){

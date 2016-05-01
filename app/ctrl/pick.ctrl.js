@@ -298,12 +298,12 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
         async.eachSeries(count, function(day, next){ 
             if(day > 0)
                 beforeInitDate.setDate(beforeInitDate.getDate()+1);
-            paramsTemp.beforeInitDate = beforeInitDate;
+            paramsTemp.toInitDate = beforeInitDate;
             if(day == 0)
-                paramsTemp.afterInitDate = afterInitDate;
+                paramsTemp.fromInitDate = afterInitDate;
             else{
                 afterInitDate.setDate(afterInitDate.getDate()+1);
-                paramsTemp.afterInitDate = afterInitDate;
+                paramsTemp.fromInitDate = afterInitDate;
             }
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
@@ -326,8 +326,8 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
     var formatDate = [];
     var self = this;
     var paramsTemp = {"id_customer":id_customer};
-    paramsTemp.beforeInitDate = endDate;
-    paramsTemp.afterInitDate  = initDate;
+    paramsTemp.toInitDate = endDate;
+    paramsTemp.fromInitDate  = initDate;
     paramsTemp.state =["active"];
 
     self.search(paramsTemp,function(err, picks){    
@@ -345,7 +345,7 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
 
 Controller.cancelPicks = function(cb){
     var paramsTemp = {};
-    paramsTemp.beforeInitDate = new Date();
+    paramsTemp.toInitDate = new Date();
 
     var self = this;
 
@@ -394,7 +394,7 @@ Controller.clearPicks = function(cb){
     beforeInitDate.setHours(0);
     beforeInitDate.setSeconds(0);
     beforeInitDate.setDate(beforeInitDate.getDate()-1);
-    paramsTemp.beforeInitDate = beforeInitDate;
+    paramsTemp.toInitDate = beforeInitDate;
     var self = this;
     self.searchQuick(paramsTemp,function(err, picks){
           
@@ -433,8 +433,8 @@ Controller.nextPick = function(company, params, cb){
 
             var paramsTemp = {};
             paramsTemp["company.id_company"]= company;
-            paramsTemp.beforeInitDate = endDate;
-            paramsTemp.afterInitDate  = initDate;
+            paramsTemp.toInitDate = endDate;
+            paramsTemp.fromInitDate  = initDate;
             paramsTemp.state =["active"];
 
             self.searchQuick(paramsTemp, function(err, picks){

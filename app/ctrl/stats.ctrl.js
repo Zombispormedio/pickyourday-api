@@ -55,8 +55,8 @@ Controller.statsPicks = function(company, query, cb){
 						paramsTemp["company.id_service"] = service;
 						paramsTemp["company.id_company"] = company;
 						paramsTemp.state = state;
-						paramsTemp.beforeInitDate = date.end;
-						paramsTemp.afterInitDate = date.init;
+						paramsTemp.toInitDate = date.end;
+						paramsTemp.fromInitDate = date.init;
 						HistoryCtrl.getPicks(paramsTemp, function(err, picks){
 							var count = 0;
 							if(picks)
@@ -136,8 +136,8 @@ Controller.originPicks = function(company, query, cb){
 						paramsTemp["company.id_service"] = service;
 						paramsTemp["company.id_company"] = company;
 						paramsTemp.origin = [origin];
-						paramsTemp.beforeInitDate = date.end;
-						paramsTemp.afterInitDate = date.init;
+						paramsTemp.toInitDate = date.end;
+						paramsTemp.fromInitDate = date.init;
 						HistoryCtrl.getPicks(paramsTemp, function(err, picks){
 							var count = 0;
 							if(picks)

@@ -18,16 +18,17 @@ Controller.new = function (body, cb) {
 };
 
 Controller.search = function (query, cb) {
-    PreferencesModel.search(query, function (err, preferences) {
-        if (err) return cb(err);
-
-        if (!preferences)
-            return cb("Preferences not found");
-
-        cb(null, preferences);
-
-    });
+    PreferencesModel.search(query, cb);
 };
+
+Controller.count = function (params, cb) {
+  
+    if(params.p)delete params.p;
+     var query= PreferencesModel.getQuery(params);
+       query.count().exec(cb);
+};
+
+
 
 Controller.findById = function (id, cb) {
     PreferencesModel.findById(id, function (err, preferences) {

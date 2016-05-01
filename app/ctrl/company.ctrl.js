@@ -709,9 +709,9 @@ Controller.searchPick = function(company, params, cb) {
             endDate.setMinutes(59);
             var initDate = new Date();
             initDate.setHours(0);
-            params.beforeInitDate = endDate;
+            params.toInitDate = endDate;
             params.state = ["active"];
-            params.afterInitDate  = initDate;
+            params.fromInitDate  = initDate;
             PickCtrl.search(params, cb);
         })
     }else PickCtrl.search(params, cb);

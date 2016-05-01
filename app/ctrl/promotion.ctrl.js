@@ -100,7 +100,7 @@ Controller.refreshPromotions = function(cb){
             async.waterfall([
                 function changeStart(next) {
                     var paramsTemp = {};
-                    paramsTemp.beforeInitDate = date;
+                    paramsTemp.toInitDate = date;
                     paramsTemp.state = "waiting";
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "started"};

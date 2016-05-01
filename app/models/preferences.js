@@ -31,12 +31,18 @@ var PreferencesSchema = new Schema({
 });
 
 PreferencesSchema.statics={
-    search:function(params, cb){ //en params no meter id, todos los demas datos si
+    getQuery:function(params){ //en params no meter id, todos los demas datos si
         var query = this.find({});
         for(var key in params){
-            query.where(key).equals(Utils.like(params[key]));
+            switch(key){
+                
+            }
         }
-        query.exec(cb);
+        return query;
+    },
+    
+    search: function (params, cb) {
+        this.getQuery(params, true).exec(cb);
     },
 
     modify:function(id, params, cb){

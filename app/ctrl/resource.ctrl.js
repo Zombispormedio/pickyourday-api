@@ -213,8 +213,8 @@ Controller.getTimeLine = function(company, idResource, date, cb){
     	function getPicks(callback){
     		var paramsTemp = {};
     		paramsTemp["company.id_company"] = company;
-    		paramsTemp.beforeInitDate = endDate;
-    		paramsTemp.afterInitDate = date;
+    		paramsTemp.toInitDate = endDate;
+    		paramsTemp.fromInitDate = date;
     		PickCtrl.search(paramsTemp, function(err, picks){
     			if(err) return callback(err);
 				callback(null, picks);

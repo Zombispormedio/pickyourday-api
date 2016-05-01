@@ -118,6 +118,12 @@ Controller.getPreferences = function (params, cb) {
     PreferencesCtrl.search(params, cb);
 };
 
+Controller.countPreferences = function (params, cb) {
+    PreferencesCtrl.count(params, cb);
+};
+
+
+
 Controller.newPreference = function (params, cb) {
     PreferencesCtrl.new(params, cb);
 };

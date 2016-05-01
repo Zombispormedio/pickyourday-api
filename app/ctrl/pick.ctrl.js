@@ -84,8 +84,8 @@ Controller.changeState = function(pick, state, cb){
     PickModel.changeState(pick, state, function(err){
         if (err) return cb(err);
         cb();
-    })
-}
+    });
+};
 
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
@@ -101,7 +101,7 @@ Controller.search = function (query, cb) {
                         if (err) return callback(err);
                         if(!pick) return callback([]);
                         var pObj = pick.toObject();
-                        delete pObj.id_customer
+                        delete pObj.id_customer;
                         pObj.customer = customer;
                         callback(null, pObj);
                     });

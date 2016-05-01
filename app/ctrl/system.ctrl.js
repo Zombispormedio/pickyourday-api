@@ -6,6 +6,7 @@ var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
 var SystemModel = require(C.models + "system");
+var PickModel = require(C.models + "pick");
 var Utils = require(C.lib + "utils");
 var async = require("async");
 var path = require("path");
@@ -45,6 +46,12 @@ Controller.searchPrePick = function (params, cb) {
 
 Controller.searchPick = function (params, cb) {
     PickCtrl.search(params, cb);
+};
+
+Controller.countPick = function (params, cb) {
+    if(params.p)delete params.p;
+     var query=PickModel.getQuery(params);
+       query.count().exec(cb);
 };
 
 Controller.getPickById = function (id, cb) {

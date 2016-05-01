@@ -55,6 +55,14 @@ router.route("/pick")
                 Response.printSuccess(res, picks);
         });
     });
+router.route("/pick/count")
+    .get(AuthController.checkAdmin(), function (req, res) {
+        SystemCtrl.countPick(req.query, function (err, picks) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, picks);
+        });
+    });
 
 router.route("/clearPicks")
     .get(function(req, res){

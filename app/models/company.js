@@ -143,7 +143,12 @@ var CompanySchema = new Schema({
 
 	premium: Boolean,
 	dateExpire: Date,
-	datePayment: Date
+	datePayment: Date,
+	
+	ra_settings:{
+		marker_id:Number,
+		animation_url:String
+	}
 
 
 });

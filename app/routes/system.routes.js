@@ -62,7 +62,7 @@ router.route("/clearPicks")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, picks);
-        })
+        });
     });
 
 router.route("/refreshpromotion")
@@ -71,7 +71,7 @@ router.route("/refreshpromotion")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, promotions);
-        })
+        });
     });
 
 
@@ -123,7 +123,7 @@ router.route("/notification")
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, []);
-        })
+        });
     });
 
 

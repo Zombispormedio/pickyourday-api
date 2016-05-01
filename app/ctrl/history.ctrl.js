@@ -27,7 +27,7 @@ Controller.savePromotion = function(promotion, cb){
 	p.save(function(err){
 		if(err) return cb(err);
 		cb();
-	})
+	});
 };
 
 
@@ -36,8 +36,8 @@ Controller.getPicks= function(query, cb){
 		if(err) return cb(err);
 		if(!picks) return cb(null, []);
 		cb(null, picks);
-	})
-}
+	});
+};
 
 
 

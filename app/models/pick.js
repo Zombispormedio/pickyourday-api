@@ -77,8 +77,8 @@ PickSchema.statics={
 				case 'origin': 
 					query.where( {'origin': { '$in': params[key] }});
 					break;
-				default:
-					query.where(key).equals(Utils.like(params[key]));
+				/*default:
+					query.where(key).equals(Utils.like(params[key]));*/
 			}
 		}	
 		query.exec(cb);

@@ -159,7 +159,7 @@ CompanySchema.statics = {
 		for (var key in params) {
 			switch (key) {
 				case 'cif':
-				case 'email':
+				case "name":
 				case 'category':
 					query.where(key).equals(params[key]);
 					break;
@@ -188,7 +188,7 @@ CompanySchema.statics = {
 					query.where({ '_id': { $nin: params.idCompanies } });
 					break;
 				case "search_text": {
-                    var val = params[key];
+					var val = params[key];
                     query.or([
                         { "cif": { "$regex": Utils.like(val) } },
                         { "email": { "$regex": Utils.like(val) } },
@@ -206,6 +206,44 @@ CompanySchema.statics = {
                     ]);
                     break;
                 }
+				case 'email': {
+					var val = params[key];
+                    query.or([
+						{ "email": val },
+                        { "emailSecond": val },
+					]);
+					break;
+				}
+				case "country":
+					query.where("location.country").equals(Utils.like(params[key]));
+					break;
+				case "province":
+					query.where("location.province").equals(Utils.like(params[key]));
+					break;
+				case "city":
+					query.where("location.city").equals(Utils.like(params[key]));
+					break;
+				case "zipcode":
+					query.where("location.zipcode").equals(Utils.like(params[key]));
+					break;
+				case "address":
+					query.where("location.address").equals(Utils.like(params[key]));
+					break;
+				case "phone": {
+					query.where(key).equals(Utils.like(params[key]));
+					break;
+				}
+				case "service": {
+					query.where("services.id_name").equals(params[key]);
+					break;
+				}
+				
+				case "keywords_seq": {
+				var val=params[key].split(",");
+				query.where("keywords").in(val);
+					break;
+				}
+
 
 
 				case "p": {

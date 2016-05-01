@@ -127,13 +127,18 @@ CustomerSchema.statics = {
 
                 case "search_text": {
                     var val = params[key];
-                    query.or([
+                    var or_seq=[
                         { "email": { "$regex": Utils.like(val) } },
                         { "name": { "$regex": Utils.like(val) } },
                         { "surname": { "$regex": Utils.like(val) } },
                         { "location.country": { "$regex": Utils.like(val) } }
 
-                    ]);
+                    ];
+                    
+                    if(Utils.isValidObjectID(val)){
+                        or_seq.push( { "_id":mongoose.Types.ObjectId(val)  });
+                    }
+                    query.or(or_seq);
                     break;
                 }
 

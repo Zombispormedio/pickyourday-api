@@ -189,7 +189,7 @@ CompanySchema.statics = {
 					break;
 				case "search_text": {
 					var val = params[key];
-                    query.or([
+					var or_seq=[
                         { "cif": { "$regex": Utils.like(val) } },
                         { "email": { "$regex": Utils.like(val) } },
                         { "emailSecond": { "$regex": Utils.like(val) } },
@@ -203,7 +203,14 @@ CompanySchema.statics = {
 						{ "location.city": { "$regex": Utils.like(val) } },
 						{ "location.zipcode": { "$regex": Utils.like(val) } },
 						{ "location.address": { "$regex": Utils.like(val) } }
-                    ]);
+                    ];
+					
+					 if(Utils.isValidObjectID(val)){
+                        or_seq.push( { "_id":mongoose.Types.ObjectId(val)  });
+                    }
+                    query.or(or_seq);
+					
+                    
                     break;
                 }
 				case 'email': {

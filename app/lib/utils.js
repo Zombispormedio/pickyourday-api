@@ -11,11 +11,12 @@ Utils.validatePresenceOf = function (value) {
 };
 
 Utils.like = function (value) {
+    value=value.replace(/\"|\(|\)/g, "");
    return new RegExp('(\\b)(.*' + value + '.*)(\\b)', "ig");
 };
 
 Utils.likeLowerCase = function (value) {
-    return new RegExp('^' + value + '$', "i")
+    return new RegExp('^' + value + '$', "i");
 };
 
 Utils.sign = function (data) {
@@ -166,5 +167,15 @@ Utils.generateDeveloperToken=function(size){
 Utils.generateDeveloperID=function(){
     return uuid.v4();
 };
+
+  Utils.isValidObjectID= function(str) {
+        str = str + '';
+        var len = str.length,
+            valid = false;
+        if (len == 12 || len == 24) {
+            valid = /^[0-9a-fA-F]+$/.test(str);
+        }
+        return valid;
+    };
 
 module.exports = Utils;

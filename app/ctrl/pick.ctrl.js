@@ -402,7 +402,7 @@ Controller.clearPicks = function(cb){
         if(picks != null && picks.length > 0){
             async.map(picks, function(pick, next){
                  self.delete(pick._id, function(err){
-                    if(err) next(err);
+                    if(err) return next(err);
                     next();
                  });
             }, function(err){

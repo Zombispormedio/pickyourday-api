@@ -130,7 +130,8 @@ CustomerSchema.statics = {
                     query.or([
                         { "email": { "$regex": Utils.like(val) } },
                         { "name": { "$regex": Utils.like(val) } },
-                        { "surname": { "$regex": Utils.like(val) } }
+                        { "surname": { "$regex": Utils.like(val) } },
+                        { "location.country": { "$regex": Utils.like(val) } }
 
                     ]);
                     break;

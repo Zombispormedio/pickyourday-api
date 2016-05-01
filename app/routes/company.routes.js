@@ -35,6 +35,15 @@ router.route("")
                 Response.printSuccess(res,  companies);
         });
     });
+    
+    router.route("/count")
+    .get(AuthController.checkAdmin(), function (req, res) {
+        CompanyCtrl.count(req.query, function (err, count) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, count);
+        });
+    });
 
 
 router.route("/profile")

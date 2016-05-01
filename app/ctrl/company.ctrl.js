@@ -954,17 +954,21 @@ Controller.updateProfile = function(company_id, params, cb) {
 
 
 Controller.getAll = function(params, cb) {
-    if(!params.state || params.state == "" )
-        var query = CompanyModel.find({});
-    else var query = CompanyModel.find({"state":params.state});
-    
-    //Pending pagination
-    query.exec(function(err, result) {
-        if (err) return cb(err);
-        cb(null, result);
-    });
+     var query=CompanyModel.getQuery(params);
+     
+    if(params.state && params.state != "" )
+       	query.where("state").equals(params.state);
+  
+
+    query.exec(cb);
 };
 
+Controller.count=function(params, cb){
+    if(params.p)delete params.p;
+     var query=CompanyModel.getQuery(params);
+       query.count().exec(cb);
+    
+};
 
 
 

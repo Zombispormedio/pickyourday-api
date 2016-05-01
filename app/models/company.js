@@ -1,20 +1,20 @@
 var C = require("../../config/config");
 
-var async=require("async");
-var _=require("lodash");
+var async = require("async");
+var _ = require("lodash");
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 
-var Utils = require(C.lib+"utils");
+var Utils = require(C.lib + "utils");
 var CustomType = require("./customType.js");
 var GeolocationType = CustomType.GeolocationSchema;
-var ImageType=CustomType.ImageSchema;
+var ImageType = CustomType.ImageSchema;
 
 
 var RatingSchema = new Schema({
 	id_customer: {
-		type: Schema.ObjectId, 
+		type: Schema.ObjectId,
 		ref: "Customer"
 	},
 	rating: Number,
@@ -25,21 +25,21 @@ var RatingSchema = new Schema({
 var WeekTable = new Schema({
 	times: [String],
 	day: {
-		type: String, 
+		type: String,
 		enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 	}
 });
 
-var IntervalTable=new Schema({
-	initial:Date,
-	end:Date,
-	week:[WeekTable]
+var IntervalTable = new Schema({
+	initial: Date,
+	end: Date,
+	week: [WeekTable]
 });
 
 
 var ReviewSchema = new Schema({
 	id_customer: {
-		type: Schema.ObjectId, 
+		type: Schema.ObjectId,
 		ref: "Customer"
 	},
 	rating: Number,
@@ -60,22 +60,22 @@ var PromotionSchema = new Schema({
 	description: String,
 	timesUsed: Number,
 	ownCustomers: Boolean,
-	services:[Schema.ObjectId],
+	services: [Schema.ObjectId],
 	discount: Number,
 	dateCreated: Date,
 	state: {
-		type: String, 
+		type: String,
 		enum: ['waiting', 'started', 'spent', 'finished']
 	}
 });
 
 var ServiceSchema = new Schema({
-	id_name: { 
-		type: Schema.ObjectId, 
+	id_name: {
+		type: Schema.ObjectId,
 		ref: "Service_name"
 	},
 	description: String,
-    name:String,
+    name: String,
 	duration: Number,
 	price: Number,
 	rating: [RatingSchema],
@@ -93,27 +93,27 @@ var Resource = new Schema({
 });
 
 var CompanySchema = new Schema({
-	cif:{
+	cif: {
 		type: String,
 		unique: true,
 		required: true
 	},
-	email:{
+	email: {
 		type: String,
 		unique: true,
 		required: true
 	},
-	emailSecond:[String],
-	name:{
+	emailSecond: [String],
+	name: {
 		type: String,
 		required: true
-	}, 
+	},
 	description: String,
 	images: [ImageType],
 	phone: [String],
 	keywords: [String],
 	web: String,
-	location:{
+	location: {
 		country: String,
 		province: String,
 		city: String,
@@ -121,8 +121,8 @@ var CompanySchema = new Schema({
 		address: String,
 		geolocation: GeolocationType
 	},
-	category:{
-		type: Schema.ObjectId, 
+	category: {
+		type: Schema.ObjectId,
 		ref: "Category",
 		required: true
 	},
@@ -132,153 +132,185 @@ var CompanySchema = new Schema({
 	resources: [Resource],
 	scheduleActivity: [IntervalTable],
 
-	customers: [{type: Schema.ObjectId, ref: "Customer"}],
+	customers: [{ type: Schema.ObjectId, ref: "Customer" }],
 	registerDate: Date,
 	lastAccess: Date,
 	lastUpdate: Date,
 	state: {
-		type: String, 
+		type: String,
 		enum: ['active', 'demo', 'pending', 'refused']
 	},
 
 	premium: Boolean,
 	dateExpire: Date,
 	datePayment: Date
-	
+
 
 });
 
-CompanySchema.statics={
-	search:function(params, cb){ 
-		if(!params.state || params.state == "")
+CompanySchema.statics = {
+	getQuery: function (params, isState) {
+		if (isState && (!params.state || params.state === ""))
 			params.state = "active";
 		params = Utils.filterParams(params);
 		var query;
 
 		query = this.find({});
-		for(var key in params){
-			switch(key){
+		for (var key in params) {
+			switch (key) {
 				case 'cif':
 				case 'email':
-				case 'category':				
+				case 'category':
 					query.where(key).equals(params[key]);
 					break;
-				case 'beforeRegister':
+				case 'toRegister':
 					query.where('registerDate').lt(params[key]);
 					break;
-				case 'afterRegister':
+				case 'fromRegister':
 					query.where('registerDate').gt(params[key]);
-					break; 
-				case 'beforeLastUpdate':
+					break;
+				case 'toLastUpdate':
 					query.where('lastUpdate').lt(params[key]);
 					break;
-				case 'afterLastUpdate':
+				case 'fromLastUpdate':
 					query.where('lastUpdate').gt(params[key]);
-					break; 		
-				case 'beforeAccess':
+					break;
+				case 'toAccess':
 					query.where('lastAccess').lt(params[key]);
 					break;
-				case 'afterAccess':
+				case 'fromAccess':
 					query.where('lastAccess').gt(params[key]);
 					break;
 				case 'keywords':
 					query.where(key).equals(Utils.likeLowerCase(params[key]));
 					break;
 				case 'idCompanies':
-					query.where( {'_id': { $nin: params.idCompanies }});
+					query.where({ '_id': { $nin: params.idCompanies } });
 					break;
-				default:
-					query.where(key).equals(Utils.like(params[key]));
+				case "search_text": {
+                    var val = params[key];
+                    query.or([
+                        { "cif": { "$regex": Utils.like(val) } },
+                        { "email": { "$regex": Utils.like(val) } },
+                        { "emailSecond": { "$regex": Utils.like(val) } },
+						{ "name": { "$regex": Utils.like(val) } },
+						{ "description": { "$regex": Utils.like(val) } },
+						{ "phone": { "$regex": Utils.like(val) } },
+						{ "keywords": { "$regex": Utils.like(val) } },
+						{ "web": { "$regex": Utils.like(val) } },
+                        { "location.country": { "$regex": Utils.like(val) } },
+						{ "location.province": { "$regex": Utils.like(val) } },
+						{ "location.city": { "$regex": Utils.like(val) } },
+						{ "location.zipcode": { "$regex": Utils.like(val) } },
+						{ "location.address": { "$regex": Utils.like(val) } }
+                    ]);
+                    break;
+                }
+
+
+				case "p": {
+                    var p = params[key];
+
+                    var s = Number(params.s) || C.pagination;
+
+                    var skip = s * p;
+
+                    query.skip(skip);
+                    query.limit(s);
+                    break;
+                }
+
+
 
 			}
-			
-		}
-	
-		query.exec(function(err, companies){
-			if(err) return cb(err);
 
-			cb(null, companies);
-		});	
+		}
+
+		return query;
 	},
-    
-   modify:function(id_company, params, cb){
-        this.findById(id_company, function(err, company){
-			if(err) return cb(err);
-		    if(!company)
+
+	search: function (params, cb) {
+        this.getQuery(params, true).exec(cb);
+    },
+
+	modify: function (id_company, params, cb) {
+        this.findById(id_company, function (err, company) {
+			if (err) return cb(err);
+			if (!company)
 				return cb("Company not found");
 
-			company=Utils.mergeMongoObjects(company, params);
+			company = Utils.mergeMongoObjects(company, params);
 
-			company.lastUpdate=new Date();
-		
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.lastUpdate = new Date();
+
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
 		});
     },
-    
 
-	newReview: function(user, params, cb){
+
+	newReview: function (user, params, cb) {
 		var review = {};
 		review.id_customer = user;
 		review.rating = params.rating;
 		review.description = params.description;
 		review.date = new Date();
 		this.update(
-	   		{_id: params.company_id, 'review.id_customer': {$ne: user}},
-	    	{$addToSet: {review: review}}, function(err, result){
+			{ _id: params.company_id, 'review.id_customer': { $ne: user } },
+			{ $addToSet: { review: review } }, function (err, result) {
 
-				if(err) return cb(err);	
-				if(result.nModified === 0){return cb("El usuario ya ha hecho un review");}
-					
+				if (err) return cb(err);
+				if (result.nModified === 0) { return cb("El usuario ya ha hecho un review"); }
+
 				cb();
-	    });
+			});
 	},
-	searchReview: function(customer, company, cb){
+	searchReview: function (customer, company, cb) {
 		var query;
-		query = this.aggregate([{$unwind:"$review"},{$match: {_id: new mongoose.Types.ObjectId(company)}}]);
+		query = this.aggregate([{ $unwind: "$review" }, { $match: { _id: new mongoose.Types.ObjectId(company) } }]);
 
-		query.match({'review.id_customer': new mongoose.Types.ObjectId(customer)});
+		query.match({ 'review.id_customer': new mongoose.Types.ObjectId(customer) });
 
-		query.exec(function(err, companyReview){
-			if(err) return cb(err);
-			if(!companyReview) return cb(null, []);
-			if( companyReview.length===0)return cb(null, []);
+		query.exec(function (err, companyReview) {
+			if (err) return cb(err);
+			if (!companyReview) return cb(null, []);
+			if (companyReview.length === 0) return cb(null, []);
 			cb(null, companyReview[0].review);
 		});
 	},
 
-	newRateService: function(user, params, cb){
-		this.findOne({_id: params.company_id},  function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb("Company not found");
+	newRateService: function (user, params, cb) {
+		this.findOne({ _id: params.company_id }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
-		
+
 			var service = company.services.id(params.service_id);
-			if(!service) return cb("Service not found in NewRateService");
-			service.rating.push( {id_customer: user, rating: params.rating, date: new Date()});
-			company.save(function(err){
-				if(err) return cb(err);				
+			if (!service) return cb("Service not found in NewRateService");
+			service.rating.push({ id_customer: user, rating: params.rating, date: new Date() });
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
 		});
 	},
 
-	newService: function(id_company, params, serviceName, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb("Company not found");
+	newService: function (id_company, params, serviceName, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			company.services.push(params);
-			var service = company.services[company.services.length-1];
+			var service = company.services[company.services.length - 1];
 			service.dateCreated = new Date();
-			if(service.duration == "" || !service.duration || service.duration < 5)
+			if (service.duration == "" || !service.duration || service.duration < 5)
 				service.duration = serviceName.duration;
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
@@ -286,185 +318,185 @@ CompanySchema.statics={
 		});
 	},
 
-	searchService: function(id_company, params, cb){
+	searchService: function (id_company, params, cb) {
 		var query;
-		if(!params.state || params.state == "")
+		if (!params.state || params.state == "")
 			params.state = "active";
-		if(id_company !== 0){
-			query = this.aggregate([{$unwind:"$services"},{$match: {_id: id_company, state:params.state}}]);
-		}else if(params.category === undefined || params.category=== '')
-			query = this.aggregate([{$unwind:"$services"}, {$match: {state:params.state}}]);
+		if (id_company !== 0) {
+			query = this.aggregate([{ $unwind: "$services" }, { $match: { _id: id_company, state: params.state } }]);
+		} else if (params.category === undefined || params.category === '')
+			query = this.aggregate([{ $unwind: "$services" }, { $match: { state: params.state } }]);
 		else
-			query = this.aggregate([{$unwind:"$services"},{$match: {category :new mongoose.Types.ObjectId(params.category), state: params.state}}]);
-		
-		var greaterRating=false;
-		var lessRating=false;
+			query = this.aggregate([{ $unwind: "$services" }, { $match: { category: new mongoose.Types.ObjectId(params.category), state: params.state } }]);
 
-		for(var key in params){
-			switch(key){
+		var greaterRating = false;
+		var lessRating = false;
+
+		for (var key in params) {
+			switch (key) {
 				case 'id_name':
-					var field = "services."+key;
-					var match={};
+					var field = "services." + key;
+					var match = {};
 					match[field] = params[key];
-					query.match(match);	
+					query.match(match);
 					break;
-				case 'state':break;
+				case 'state': break;
 				case 'beforeDateCreated':
-					query.match({'services.dateCreated': {'$lte': new Date(params[key])}});
+					query.match({ 'services.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
 				case 'afterDateCreated':
-					query.match({'services.dateCreated': {'$gte': new Date(params[key])}});
+					query.match({ 'services.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterPrice':
-					query.match({'services.price' : {'$gte' : parseFloat(params[key])}});
+					query.match({ 'services.price': { '$gte': parseFloat(params[key]) } });
 					break;
 				case 'lessPrice':
-					query.match({'services.price' : {'$lte' : parseFloat(params[key])}});
+					query.match({ 'services.price': { '$lte': parseFloat(params[key]) } });
 					break;
 				case 'greaterDuration':
-					query.match({'services.duration' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'services.duration': { '$gte': parseInt(params[key]) } });
 					break;
 				case 'lessPrice':
-					query.match({'services.duration' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'services.duration': { '$gte': parseInt(params[key]) } });
 					break;
-				case 'greaterRating': 
-					greaterRating=true;	
+				case 'greaterRating':
+					greaterRating = true;
 					break;
 				case 'lessRating':
-					lessRating=true;
+					lessRating = true;
 					break;
 				case 'idDefaultNames':
-					query.match( {'services.id_name': { '$in': params[key] }});
+					query.match({ 'services.id_name': { '$in': params[key] } });
 					break;
 				case 'category': break;
-				case 'location.country': 
+				case 'location.country':
 				case 'location.city': {
-					var field = ""+key;
-					var match={};
+					var field = "" + key;
+					var match = {};
 					match[field] = Utils.like(params[key]);
-					query.match(match);	
+					query.match(match);
 					break;
                 }
-				default : {
-					var field = "services."+key;
-					var match={};
+				default: {
+					var field = "services." + key;
+					var match = {};
 					match[field] = Utils.like(params[key]);
-					query.match(match);	
+					query.match(match);
                 }
 			}
 		}
 
-		query.exec(function(err, companyService){
+		query.exec(function (err, companyService) {
 
-			if(companyService.length != 0)
-				if(greaterRating || lessRating)	{
+			if (companyService.length != 0)
+				if (greaterRating || lessRating) {
 					var rates = getServiceRating(companyService);
-					var noDeleted=0;
-					for(var rate in rates){	
-						if(params.greaterRating && params.lessRating){
-							if(!(rates[rate] >= params.greaterRating && rates[rate] <= params.lessRating))
-								companyService.splice(noDeleted,1);
+					var noDeleted = 0;
+					for (var rate in rates) {
+						if (params.greaterRating && params.lessRating) {
+							if (!(rates[rate] >= params.greaterRating && rates[rate] <= params.lessRating))
+								companyService.splice(noDeleted, 1);
 							else
 								noDeleted++;
-						}else if(params.greaterRating && rates[rate] <= params.greaterRating){
-							companyService.splice(noDeleted,1);
-						}else if(params.lessRating && rates[rate] >= params.lessRating){
-							companyService.splice(noDeleted,1);
-						}else 
+						} else if (params.greaterRating && rates[rate] <= params.greaterRating) {
+							companyService.splice(noDeleted, 1);
+						} else if (params.lessRating && rates[rate] >= params.lessRating) {
+							companyService.splice(noDeleted, 1);
+						} else
 							noDeleted++;
 					}
 				}
 
-			if(id_company !== 0){		
-				var services = companyService.map(function(a){
+			if (id_company !== 0) {
+				var services = companyService.map(function (a) {
 					return a.services;
 				});
 				return cb(null, services);
 			}
 
 
-			
+
 			cb(null, companyService);
 		});
 
 	},
 
-	findServiceById: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
+	findServiceById: function (id_company, id, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
 
-			if(err) return cb(err);
+			if (err) return cb(err);
 
-		    if(!company)
+			if (!company)
 				return cb("Company not found");
 
 			var service = company.services.id(id);
-			if(!service)
+			if (!service)
 				return cb("Service not found FindServiceById");
-			
+
 			cb(null, service);
 
 		});
 	},
 
-	modifyService: function(id_company, id, params, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
+	modifyService: function (id_company, id, params, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
 
-		    if(!company)
+			if (!company)
 				return cb("Company not found");
 			var service = company.services.id(id);
-			if(!service)
+			if (!service)
 				return cb("Service not found in ModifyService");
-			for(var key in params){
+			for (var key in params) {
 				service[key] = params[key];
 			}
 
-			company.lastUpdate=new Date();
+			company.lastUpdate = new Date();
 
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
 		});
 	},
 
-	deleteService: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
+	deleteService: function (id_company, id, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
 
-		    if(!company)
+			if (!company)
 				return cb("Company not found");
 
-			if(!company.services.id(id))
+			if (!company.services.id(id))
 				return cb("Service not found in DeleteService");
 
 			company.services.id(id).remove();
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 		});
 	},
 
-	newPromotion: function(id_company, params, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb("Company not found");
+	newPromotion: function (id_company, params, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			company.promotions.push(params);
-			var promotion = company.promotions[company.promotions.length-1];
+			var promotion = company.promotions[company.promotions.length - 1];
 			var now = new Date();
 			promotion.dateCreated = now;
-			if(promotion.initDate < now){
+			if (promotion.initDate < now) {
 				promotion.state = "started";
-			}else promotion.state = "waiting";
-			
+			} else promotion.state = "waiting";
+
 			promotion.timesUsed = 0;
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
@@ -472,421 +504,425 @@ CompanySchema.statics={
 		});
 	},
 
-	searchPromotion: function(id_company, params, cb){
-		if(!params.state || params.state == "")
+	searchPromotion: function (id_company, params, cb) {
+		if (!params.state || params.state == "")
 			params.state = "active";
-		if(id_company == 0)
-			var query = this.aggregate([{$unwind:"$promotions"},{$match: {state:params.state}}]);
+		if (id_company == 0)
+			var query = this.aggregate([{ $unwind: "$promotions" }, { $match: { state: params.state } }]);
 		else
-			var query = this.aggregate([{$unwind:"$promotions"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state:params.state}}]);
+			var query = this.aggregate([{ $unwind: "$promotions" }, { $match: { _id: new mongoose.Types.ObjectId(id_company), state: params.state } }]);
 
-		for(var key in params){
-			switch(key){
+		for (var key in params) {
+			switch (key) {
 				case 'state': break;
 				case 'statePromotion':
-					query.match({'promotions.state' : params.statePromotion});
+					query.match({ 'promotions.state': params.statePromotion });
 					break;
 				case 'beforeInitDate':
-					query.match({'promotions.initDate': {'$lte': new Date(params[key])}});
+					query.match({ 'promotions.initDate': { '$lte': new Date(params[key]) } });
 					break;
 				case 'afterInitDate':
-					query.match({'promotions.initDate': {'$gte': new Date(params[key])}});
+					query.match({ 'promotions.initDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'beforeEndDate':
-					query.match({'promotions.endDate': {'$lte': new Date(params[key])}});
+					query.match({ 'promotions.endDate': { '$lte': new Date(params[key]) } });
 					break;
 				case 'afterEndDate':
-					query.match({'promotions.endDate': {'$gte': new Date(params[key])}});
+					query.match({ 'promotions.endDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterUseLimit':
-					query.match({'promotions.useLimit' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'promotions.useLimit': { '$gte': parseInt(params[key]) } });
 					break;
 				case 'lessUseLimit':
-					query.match({'promotions.useLimit' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'promotions.useLimit': { '$gte': parseInt(params[key]) } });
 					break;
 				case 'greaterTimeUsed':
-					query.match({'promotions.timesUsed' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'promotions.timesUsed': { '$gte': parseInt(params[key]) } });
 					break;
 				case 'lessTimeUsed':
-					query.match({'promotions.timesUsed' : {'$gte' : parseInt(params[key])}});
+					query.match({ 'promotions.timesUsed': { '$gte': parseInt(params[key]) } });
 					break;
 				case 'beforeDateCreated':
-					query.match({'promotions.dateCreated': {'$lte': new Date(params[key])}});
+					query.match({ 'promotions.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
 				case 'afterDateCreated':
-					query.match({'promotions.dateCreated': {'$gte': new Date(params[key])}});
+					query.match({ 'promotions.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
-				case 'service': 
-					query.match({'promotions.services': new mongoose.Types.ObjectId(params.service)});
+				case 'service':
+					query.match({ 'promotions.services': new mongoose.Types.ObjectId(params.service) });
 					break;
-				default : 
-					var field = "promotions."+key;
-					var match={};
+				default:
+					var field = "promotions." + key;
+					var match = {};
 					match[field] = Utils.like(params[key]);
-					query.match(match);	
+					query.match(match);
 			}
 		}
 
-		query.exec(function(err, companyPromotion){			
+		query.exec(function (err, companyPromotion) {
 			cb(null, companyPromotion);
 		});
-	},	
+	},
 
-	findPromotionById: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb([]);
+	findPromotionById: function (id_company, id, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb([]);
 
 			var promotion = company.promotions.id(id);
-			if(!promotion)
+			if (!promotion)
 				return cb([]);
 			cb(null, promotion);
 
 		});
 	},
 
-	modifyPromotion: function(id_company, id, params, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+	modifyPromotion: function (id_company, id, params, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			var promotion = company.promotions.id(id);
-			if(!promotion)
+			if (!promotion)
 				return cb("Promotion not found");
-			for(var key in params){
+			for (var key in params) {
 				promotion[key] = params[key];
 			}
 
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
 		});
 	},
 
-	deletePromotion: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+	deletePromotion: function (id_company, id, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
-			if(!company.promotions.id(id))
+			if (!company.promotions.id(id))
 				return cb("Promotion not found");
 
 			company.promotions.id(id).remove();
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 		});
 	},
 
-    newResource: function(id_company, params, cb){	
-    	this.findOne({_id: id_company}, function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb("Company not found");
+    newResource: function (id_company, params, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			company.resources.push(params);
-			var resource = company.resources[company.resources.length-1];
+			var resource = company.resources[company.resources.length - 1];
 			resource.initDate = new Date();
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 		});
     },
 
-    deleteResource: function(company_id, resource_id, cb){
-		this.findOne({_id: company_id}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found DeleteResource");
+    deleteResource: function (company_id, resource_id, cb) {
+		this.findOne({ _id: company_id }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found DeleteResource");
 
-            var index=_.findIndex(company.resources, function(o){return o._id.equals(resource_id); });
-			if(index==-1)
+            var index = _.findIndex(company.resources, function (o) { return o._id.equals(resource_id); });
+			if (index == -1)
 				return cb("Resource not found Delete Resource");
 
 			company.resources.splice(index, 1);
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 		});
 	},
-	modifyResource: function(id_company, id, params, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+	modifyResource: function (id_company, id, params, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			var resource = company.resources.id(id);
-			if(!resource)
+			if (!resource)
 				return cb("Resource not found");
-			for(var key in params){
+			for (var key in params) {
 				resource[key] = params[key];
 			}
-			company.lastUpdate=new Date();
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.lastUpdate = new Date();
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
 		});
 	},
 
-	findResourceById: function(id_company, id, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+	findResourceById: function (id_company, id, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
 			var resource = company.resources.id(id);
-			if(!resource)
+			if (!resource)
 				return cb("Resource not found");
 			cb(null, resource);
 
 		});
 	},
 
-    searchResources: function(id_company, params, cb){
-    	if(!params.state || params.state == "")
+    searchResources: function (id_company, params, cb) {
+		if (!params.state || params.state == "")
 			params.state = "active";
-		var query = this.aggregate([{$unwind:"$resources"},{$match: {_id: new mongoose.Types.ObjectId(id_company), state: params.state}}]);
-		for(var key in params){
-			switch(key){
-				case 'state' : break;
+		var query = this.aggregate([{ $unwind: "$resources" }, { $match: { _id: new mongoose.Types.ObjectId(id_company), state: params.state } }]);
+		for (var key in params) {
+			switch (key) {
+				case 'state': break;
 				case 'beforeInitDate':
-					query.match({'resources.initDate': {'$lte': new Date(params[key])}});
+					query.match({ 'resources.initDate': { '$lte': new Date(params[key]) } });
 					break;
 				case 'afterInitDate':
-					query.match({'resources.initDate': {'$gte': new Date(params[key])}});
-					break;	
-				case 'service': 
-					query.match({'resources.services': new mongoose.Types.ObjectId(params.service)});
+					query.match({ 'resources.initDate': { '$gte': new Date(params[key]) } });
 					break;
-				case 'format': break;			
-				default : 
-					var field = "resources."+key;
-					var match={};
+				case 'service':
+					query.match({ 'resources.services': new mongoose.Types.ObjectId(params.service) });
+					break;
+				case 'format': break;
+				default:
+					var field = "resources." + key;
+					var match = {};
 					match[field] = Utils.like(params[key]);
-					query.match(match);	
+					query.match(match);
 			}
 		}
 
-		query.exec(function(err, companyResource){
-           companyResource=companyResource || [];
-            
-			var resources = companyResource.map(function(a){
+		query.exec(function (err, companyResource) {
+			companyResource = companyResource || [];
+
+			var resources = companyResource.map(function (a) {
 				return a.resources;
 			});
 			cb(null, resources);
 		});
 	},
 
-	toggleService: function(company_id, service_id, resource_id , cb){
-        var self=this;
-       async.waterfall([
-           function enable(next){
-               self.update({_id: company_id, 
-                   "resources._id":resource_id,
-                            },
-                    {$addToSet:{"resources.$.services":service_id}}, function(err, result){
-                   if(err)return next(err);
-                  
-                   next(null, result.nModified);
-               });
-           },
-           
-           function disable(modified, next){
-                if(modified===1) return next();
-               
-               self.findOne({_id: company_id, 
-                   "resources._id":resource_id}, function(err, result){
-                      if(err)return next(err);
-                      if(!result)return next("Not Found Toggle Service");
-                       var indexResources=_.findIndex(result.resources, function(o){return o._id.equals(resource_id);});
-                       if(indexResources==-1)return next("Not found Resource Toggle Service");
-                       
-                       var resource=result.resources[indexResources];
-                
-                       var indexService=_.findIndex(resource.services, function(o){return o.equals(service_id);});
-                        if(indexService==-1)return next("Not found Service Toggle Service");
-                       
-                       resource.services.splice(indexService, 1);
-                       
-                       result.save(function(err){
-                           if(err)return next(err);
-                           next();
-                       });                   
-                   });
-           }
-           
-       ], function(err){
-           if(err)return cb(err);
-           cb();
-       });      
-	},
+	toggleService: function (company_id, service_id, resource_id, cb) {
+        var self = this;
+		async.waterfall([
+			function enable(next) {
+				self.update({
+					_id: company_id,
+					"resources._id": resource_id,
+				},
+                    { $addToSet: { "resources.$.services": service_id } }, function (err, result) {
+						if (err) return next(err);
 
-	getServicesAsigned: function(id_company, id_resource, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-		    if(!company)return cb("Company not found");
+						next(null, result.nModified);
+					});
+			},
 
-	    	var resource = company.resources.id(id_resource);
-	    	if(!resource) return cb("Resource not found");
-	    	cb(null, resource.services);
-			
+			function disable(modified, next) {
+                if (modified === 1) return next();
+
+				self.findOne({
+					_id: company_id,
+					"resources._id": resource_id
+				}, function (err, result) {
+					if (err) return next(err);
+					if (!result) return next("Not Found Toggle Service");
+					var indexResources = _.findIndex(result.resources, function (o) { return o._id.equals(resource_id); });
+					if (indexResources == -1) return next("Not found Resource Toggle Service");
+
+					var resource = result.resources[indexResources];
+
+					var indexService = _.findIndex(resource.services, function (o) { return o.equals(service_id); });
+					if (indexService == -1) return next("Not found Service Toggle Service");
+
+					resource.services.splice(indexService, 1);
+
+					result.save(function (err) {
+						if (err) return next(err);
+						next();
+					});
+				});
+			}
+
+		], function (err) {
+			if (err) return cb(err);
+			cb();
 		});
 	},
 
-	formatReviews: function(id_company, cb){
-		var query = this.aggregate(
-		[   { "$project" : { "hourly" : "$review" } },
-	    	{ "$unwind" : "$hourly" },
-	    	{$match: {_id: id_company}},
-		    {$group : {	        	
-		           _id:   "$hourly.rating"  ,
-		           count: { $sum: 1 },		          
-		        }
-		    },
-	    ]);
+	getServicesAsigned: function (id_company, id_resource, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb("Company not found");
 
-		query.exec(function(err, reviewsRating){
-			if(err) return cb(err);
+			var resource = company.resources.id(id_resource);
+			if (!resource) return cb("Resource not found");
+			cb(null, resource.services);
+
+		});
+	},
+
+	formatReviews: function (id_company, cb) {
+		var query = this.aggregate(
+			[{ "$project": { "hourly": "$review" } },
+				{ "$unwind": "$hourly" },
+				{ $match: { _id: id_company } },
+				{
+					$group: {
+						_id: "$hourly.rating",
+						count: { $sum: 1 },
+					}
+				},
+			]);
+
+		query.exec(function (err, reviewsRating) {
+			if (err) return cb(err);
 			var reviewsFormat = {};
-			var count=0;
-			var avg=0;
-			var reviesTotal=0;
-			for(var i=1; i<6; i++){
-				var posReview=-1;
-				for(var x=0; x<reviewsRating.length; x++)
-					if(reviewsRating[x]._id == i){
+			var count = 0;
+			var avg = 0;
+			var reviesTotal = 0;
+			for (var i = 1; i < 6; i++) {
+				var posReview = -1;
+				for (var x = 0; x < reviewsRating.length; x++)
+					if (reviewsRating[x]._id == i) {
 						posReview = x;
 						break;
 					}
-				if(posReview != -1){
-					reviewsFormat[i] =  reviewsRating[posReview].count;
+				if (posReview != -1) {
+					reviewsFormat[i] = reviewsRating[posReview].count;
 					count++;
-					avg+=(reviewsRating[posReview].count*i);
-					reviesTotal+=reviewsRating[posReview].count;
-				}else
+					avg += (reviewsRating[posReview].count * i);
+					reviesTotal += reviewsRating[posReview].count;
+				} else
 					reviewsFormat[i] = 0;
 			}
-			if(reviesTotal > 0)
-				avg = avg/reviesTotal;
+			if (reviesTotal > 0)
+				avg = avg / reviesTotal;
 			reviewsFormat.avg = Utils.round(avg, 0.5);
 
 			cb(null, reviewsFormat);
 		});
 	},
 
-	formatServideRating: function(id_company, id_service, cb){
-		this.findServiceById(id_company, id_service, function(err, service){
+	formatServideRating: function (id_company, id_service, cb) {
+		this.findServiceById(id_company, id_service, function (err, service) {
 
-			if(service.rating.length !== 0){
-				var rate=0;
+			if (service.rating.length !== 0) {
+				var rate = 0;
 
-				for(var rating in service.rating)
+				for (var rating in service.rating)
 					rate += service.rating[rating].rating;
-			
+
 				rate = rate / service.rating.length;
 				return cb(null, Utils.round(rate));
-			}else return cb(null, 0);
+			} else return cb(null, 0);
 		});
 	},
 
-	asignPick: function(id_company, id_resource, id_pick, id_service, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-			if(company){
+	asignPick: function (id_company, id_resource, id_pick, id_service, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (company) {
 				var resource = company.resources.id(id_resource);
-				if(resource){
+				if (resource) {
 					var serviceFound = false;
 
-					if(resource.services)
-						for(service in resource.services ){
-							if(resource.services[service].equals(id_service)){
-								serviceFound=true;
+					if (resource.services)
+						for (service in resource.services) {
+							if (resource.services[service].equals(id_service)) {
+								serviceFound = true;
 								break;
 							}
 						}
 
 
-					if(serviceFound){
-						if(resource.picks)
+					if (serviceFound) {
+						if (resource.picks)
 							resource.picks.push(id_pick);
-						else{
+						else {
 							resource.picks = [];
 							resource.picks.push(id_pick);
 						}
 
 
-						company.save(function(err){
-								if(err) return cb(err);				
-								cb();
-							});
+						company.save(function (err) {
+							if (err) return cb(err);
+							cb();
+						});
 					} else cb(-1);
-				}else cb(-1);
-			}else cb(-1);
-			
+				} else cb(-1);
+			} else cb(-1);
+
 		});
 	},
 
-	removePickAsigned: function(id_company, id_pick, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-			if(company){
+	removePickAsigned: function (id_company, id_pick, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (company) {
 				var resources = company.resources;
-				for(var r in resources){
+				for (var r in resources) {
 					var found = false;
-					if(resources[r].picks){
-						for(var p in resources[r].picks){
-							if(resources[r].picks[p].equals(id_pick)){
+					if (resources[r].picks) {
+						for (var p in resources[r].picks) {
+							if (resources[r].picks[p].equals(id_pick)) {
 								console.log("borrar");
-								resources[r].picks.splice(p,1);
-								found=true;
+								resources[r].picks.splice(p, 1);
+								found = true;
 								break;
 							}
 						}
 					}
-					if(found) break;
+					if (found) break;
 				}
-				company.save(function(err){
-						if(err) return cb(err);				
-						cb();
-					});
+				company.save(function (err) {
+					if (err) return cb(err);
+					cb();
+				});
 			}
 		});
 	},
 
 
-	servicePromoted: function(id_company, id_service, cb){
-		var params = {'service':id_service};
+	servicePromoted: function (id_company, id_service, cb) {
+		var params = { 'service': id_service };
 
-		this.searchPromotion(id_company, params, function(err, promotion){
-			if(err) cb(err);
+		this.searchPromotion(id_company, params, function (err, promotion) {
+			if (err) cb(err);
 
-			if(promotion && promotion.length > 0)
+			if (promotion && promotion.length > 0)
 				cb(null, promotion[0]);
 			else
 				cb(null, null);
 		})
 	},
 
-	usePromotion: function(id_company, id_promotion, cb){
-		this.findOne({_id: id_company}, function(err, company){
-			if(err) return cb(err);
-			if(company){
+	usePromotion: function (id_company, id_promotion, cb) {
+		this.findOne({ _id: id_company }, function (err, company) {
+			if (err) return cb(err);
+			if (company) {
 				var promotion = company.promotions.id(id_promotion);
-				if(promotion && promotion.useLimit > 0){
-					promotion.timesUsed = promotion.timesUsed +1;
-					if(promotion.timesUsed >= promotion.useLimit){
+				if (promotion && promotion.useLimit > 0) {
+					promotion.timesUsed = promotion.timesUsed + 1;
+					if (promotion.timesUsed >= promotion.useLimit) {
 						promotion.state = "spent";
 					}
 
-					company.save(function(err){
-						if(err) return cb(err);				
+					company.save(function (err) {
+						if (err) return cb(err);
 						cb();
 					});
 				} else cb(-1);
@@ -896,23 +932,23 @@ CompanySchema.statics={
 };
 
 
-function getServiceRating(services){		
-	var rate =0;
-	var rates=[];
-	for(var service in services){
-		if(services[service].services.rating.length !== 0){
-			for(var rating in services[service].services.rating){
+function getServiceRating(services) {
+	var rate = 0;
+	var rates = [];
+	for (var service in services) {
+		if (services[service].services.rating.length !== 0) {
+			for (var rating in services[service].services.rating) {
 				rate += services[service].services.rating[rating].rating;
 			}
 			rate = rate / services[service].services.rating.length;
 		}
 		rates.push(rate);
-		rate=0;			
+		rate = 0;
 	}
-	return rates;			
+	return rates;
 }
 
-	
+
 
 
 module.exports = mongoose.model("Company", CompanySchema);

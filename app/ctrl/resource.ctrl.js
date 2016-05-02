@@ -40,8 +40,6 @@ Controller.modify = function(user, id, body,cb){
 
 Controller.findById = function(user, id, params, cb){    
 	if (!id) return cb("Fields not Filled");
-	console.log("entra aqui");
-	console.log(id);
 	CompanyModel.findResourceById(user, id, function (err, resource){
     	if(err) return cb(err);
 

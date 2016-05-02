@@ -336,6 +336,8 @@ router.route("/service/:id")
 
 router.route("/resource/:id")
 	.get(AuthController.checkCompany(), function (req, res) {
+           console.log("entra aqui");
+    console.log(req);
 		CompanyCtrl.getResourceById(req.user, req.params.id, function (err, resource) {
 			if (err) Response.printError(res, err);
 			else

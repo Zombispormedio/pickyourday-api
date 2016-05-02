@@ -886,6 +886,8 @@ Controller.deleteResource = function(company, params, cb) {
 };
 
 Controller.getResourceById = function(company, id, cb) {
+    console.log("entra aqui2");
+    console.log(id);
     ResourceCtrl.findById(company, id, undefined, cb);
 };
 

@@ -277,13 +277,13 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
             firstDate.setMinutes(0);
         }
        
-        var beforeInitDate = new Date(firstDate);
-        beforeInitDate.setHours(23);
-        beforeInitDate.setMinutes(59);
+        var toInitDate = new Date(firstDate);
+        toInitDate.setHours(23);
+        toInitDate.setMinutes(59);
 
-        var afterInitDate = new Date(firstDate);
-        afterInitDate.setHours(0);
-        afterInitDate.setMinutes(0);
+        var fromInitDate = new Date(firstDate);
+        fromInitDate.setHours(0);
+        fromInitDate.setMinutes(0);
 
         var self = this;
         var paramsTemp = {"company.id_company":id_company};
@@ -297,13 +297,13 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
         async.eachSeries(count, function(day, next){ 
             if(day > 0)
-                beforeInitDate.setDate(beforeInitDate.getDate()+1);
-            paramsTemp.toInitDate = beforeInitDate;
+                toInitDate.setDate(toInitDate.getDate()+1);
+            paramsTemp.toInitDate = toInitDate;
             if(day == 0)
-                paramsTemp.fromInitDate = afterInitDate;
+                paramsTemp.fromInitDate = fromInitDate;
             else{
-                afterInitDate.setDate(afterInitDate.getDate()+1);
-                paramsTemp.fromInitDate = afterInitDate;
+                fromInitDate.setDate(fromInitDate.getDate()+1);
+                paramsTemp.fromInitDate = fromInitDate;
             }
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
@@ -389,12 +389,12 @@ Controller.cancelPicks = function(cb){
 
 Controller.clearPicks = function(cb){
     var paramsTemp = {};
-    beforeInitDate = new Date();
-    beforeInitDate.setMinutes(0);
-    beforeInitDate.setHours(0);
-    beforeInitDate.setSeconds(0);
-    beforeInitDate.setDate(beforeInitDate.getDate()-1);
-    paramsTemp.toInitDate = beforeInitDate;
+    toInitDate = new Date();
+    toInitDate.setMinutes(0);
+    toInitDate.setHours(0);
+    toInitDate.setSeconds(0);
+    toInitDate.setDate(toInitDate.getDate()-1);
+    paramsTemp.toInitDate = toInitDate;
     var self = this;
     self.searchQuick(paramsTemp,function(err, picks){
           

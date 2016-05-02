@@ -48,7 +48,7 @@ Controller.findById = function(user, id, params, cb){
 		if(params && params.format != undefined && params.format == false)
 			return cb(null, resource);
 		else{
-			console.log(resource);
+
 			async.waterfall([
 				function(callback){				
 					async.map(resource.services, function(service, next){						
@@ -65,12 +65,11 @@ Controller.findById = function(user, id, params, cb){
 					});
 				}, function(resource, callback){
 						async.map(resource.picks, function(idPick, next){						
-						PickCtrl.findById(idPick, function(err, pick){
-							if(err) return next(err);	
-							idPick=pick;
-							
-							next(null, idPick);
-						});
+							PickCtrl.findById(idPick, function(err, pick){									
+								idPick=pick;
+								
+								next(null, idPick);
+							});
 					},function(err, result){
 						if(err) return callback(err);							
 						resource.picks = result;

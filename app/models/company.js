@@ -740,8 +740,6 @@ CompanySchema.statics = {
 			if (!company) return cb("Company not found");
 
 			var resource = company.resources.id(id);
-			console.log(resource);
-			console.log(id);
 			if (!resource)
 				return cb("Resource not found");
 			cb(null, resource);

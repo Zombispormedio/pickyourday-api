@@ -48,6 +48,7 @@ Controller.findById = function(user, id, params, cb){
 		if(params && params.format != undefined && params.format == false)
 			return cb(null, resource);
 		else{
+			console.log(resource);
 			async.waterfall([
 				function(callback){				
 					async.map(resource.services, function(service, next){						

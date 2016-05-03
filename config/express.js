@@ -5,7 +5,7 @@ var methodOverride = require("method-override");
 var cors = require("cors");
 var compression = require('compression');
 var health = require('express-ping');
-var toobusy = require('toobusy-js');
+
 module.exports = function (app) {
 
 
@@ -27,13 +27,7 @@ module.exports = function (app) {
         next();
     });
 
-    app.use(function (req, res, next) {
-        if (toobusy()) {
-            res.send(503, "I'm busy right now, sorry.");
-        } else {
-            next();
-        }
-    });
+
 
     //Simula delete y put
     app.use(methodOverride());

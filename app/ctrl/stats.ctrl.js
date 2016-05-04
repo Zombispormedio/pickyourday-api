@@ -279,8 +279,6 @@ Controller.scoreServices = function(company, query, cb){
         	if(err) return cb(err);  
        		cb(null, result);
     	}); 
-
-
 }
 
 Controller.getServices = function(company, query, cb){

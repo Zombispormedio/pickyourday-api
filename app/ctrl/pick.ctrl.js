@@ -245,7 +245,7 @@ Controller.delete = function (id, cb) {
             if (err) return cb(err);
 
             if (result.result.n == 0)
-                return cb("No pick deleted");
+                return cb([-1]);
 
             CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err){
                 if(err) return cb(err);

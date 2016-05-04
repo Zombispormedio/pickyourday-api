@@ -16,6 +16,7 @@ var HistoryPickSchema = new Schema({
 		},
 		id_service: Schema.ObjectId
 	},
+	resource: Schema.ObjectId,
 	initDate: Date,
 	duration: Number,
 	dateCreated: Date,

@@ -607,7 +607,10 @@ Controller.getTimeLine = function(id_company, params, cb){
                                             if(phone == undefined)
                                                 phone = "";
                                             
-                                            temp[r]["steps"][day][pos+f] = {"customer": name, "phone": phone, "service":serviceName}
+                                            temp[r]["steps"][day][pos+f] = {"customer": name, 
+                                                                            "phone": phone, 
+                                                                            "service":serviceName, 
+                                                                            "id_pick":pick._id}
                                              
                                         }
                                         

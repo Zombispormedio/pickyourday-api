@@ -51,15 +51,12 @@ var CustomerSchema = new Schema({
     },
     name: {
         type: String,
-
     },
     surname: {
         type: String,
-
     },
     birthDate: {
         type: Date,
-
     },
     location: {
         country: String,
@@ -71,7 +68,11 @@ var CustomerSchema = new Schema({
     registerDate: Date,
     lastAccess: Date,
     lastUpdate: Date,
-    notification: String
+    notification: String,
+    gender: {
+        type: String,
+        enum: ['male', 'female', ]
+    }
 
 
 });

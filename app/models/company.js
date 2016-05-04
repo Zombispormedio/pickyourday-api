@@ -145,10 +145,10 @@ var CompanySchema = new Schema({
 	premium: Boolean,
 	dateExpire: Date,
 	datePayment: Date,
-	
-	ra_settings:{
-		marker_id:Number,
-		animation_url:String
+
+	ra_settings: {
+		marker_id: Number,
+		animation_url: String
 	}
 
 
@@ -195,7 +195,7 @@ CompanySchema.statics = {
 					break;
 				case "search_text": {
 					var val = params[key];
-					var or_seq=[
+					var or_seq = [
                         { "cif": { "$regex": Utils.like(val) } },
                         { "email": { "$regex": Utils.like(val) } },
                         { "emailSecond": { "$regex": Utils.like(val) } },
@@ -208,15 +208,20 @@ CompanySchema.statics = {
 						{ "location.province": { "$regex": Utils.like(val) } },
 						{ "location.city": { "$regex": Utils.like(val) } },
 						{ "location.zipcode": { "$regex": Utils.like(val) } },
-						{ "location.address": { "$regex": Utils.like(val) } }
+						{ "location.address": { "$regex": Utils.like(val) } },
+						{ "promotion.name": { "$regex": Utils.like(val) } },
+						{ "services.name": { "$regex": Utils.like(val) } }
+
                     ];
-					
-					 if(Utils.isValidObjectID(val)){
-                        or_seq.push( { "_id":mongoose.Types.ObjectId(val)  });
+
+					if (Utils.isValidObjectID(val)) {
+                        or_seq.push({ "_id": mongoose.Types.ObjectId(val) });
+						or_seq.push({ "promotions._id": mongoose.Types.ObjectId(val) });
+						or_seq.push({ "services._id": mongoose.Types.ObjectId(val) });
                     }
                     query.or(or_seq);
-					
-                    
+
+
                     break;
                 }
 				case 'email': {
@@ -250,13 +255,163 @@ CompanySchema.statics = {
 					query.where("services.id_name").equals(params[key]);
 					break;
 				}
-				
+
 				case "keywords_seq": {
-				var val=params[key].split(",");
-				query.where("keywords").in(val);
+					var val = params[key].split(",");
+					query.where("keywords").in(val);
 					break;
 				}
 
+				/***Pending admin */
+				case "id": {
+					query.where("_id").equals(params[key]);
+					break;
+				}
+				case "premium": {
+					query.where("premium").equals(params[key]);
+					break;
+				}
+				
+				case "other_emails": {
+					query.where("emailSecond").equals(params[key]);
+					break;
+				}
+
+				case 'toDateExpire':
+					query.where('promotions.dateExpire').lt(params[key]);
+					break;
+				case 'fromDateExpire':
+					query.where('promotions.dateExpire').gt(params[key]);
+					break;
+
+				case 'toDatePayment':
+					query.where('promotions.datePayment').lt(params[key]);
+					break;
+				case 'fromDatePayment':
+					query.where('promotions.datePayment').gt(params[key]);
+					break;
+				case "promotion_id": {
+					query.where("promotions._id").equals(params[key]);
+					break;
+				}
+
+				case "promotion_name": {
+					query.where("promotions.name").equals(params[key]);
+					break;
+				}
+
+				case "promotion_services": {
+					var val = params[key].split(",");
+					query.where("promotions.services").in(val);
+					break;
+				}
+
+				case 'promotion_to_initDate':
+					query.where('promotions.initDate').lt(params[key]);
+					break;
+				case 'promotion_from_initDate':
+					query.where('promotions.initDate').gt(params[key]);
+					break;
+
+				case 'promotion_to_endDate':
+					query.where('promotions.endDate').lt(params[key]);
+					break;
+				case 'promotion_from_endDate':
+					query.where('promotions.endDate').gt(params[key]);
+					break;
+
+				case 'promotion_to_dateCreated':
+					query.where('promotions.dateCreated').lt(params[key]);
+					break;
+				case 'promotion_from_dateCreated':
+					query.where('promotions.dateCreated').gt(params[key]);
+					break;
+
+				case 'promotion_state':
+					query.where('promotions.state').equals(params[key]);
+					break;
+
+				case 'service_name':
+					query.where('services.name').equals(params[key]);
+					break;
+				case "service_id": {
+					query.where("services._id").equals(params[key]);
+					break;
+				}
+				case 'service_to_price':
+					query.where('services.price').lt(params[key]);
+					break;
+				case 'service_from_price':
+					query.where('services.price').gt(params[key]);
+					break;
+				case 'service_to_duration':
+					query.where('services.duration').lt(params[key]);
+					break;
+				case 'service_from_duration':
+					query.where('services.duration').gt(params[key]);
+					break;
+
+				case 'service_to_dateCreated':
+					query.where('services.dateCreated').lt(params[key]);
+					break;
+				case 'service_from_dateCreated':
+					query.where('services.dateCreated').gt(params[key]);
+					break;
+
+				case 'service_review_to_rating':
+					query.where('service.rating.rating').lt(params[key]);
+					break;
+				case 'service_review_from_rating':
+					query.where('service.rating.rating').gt(params[key]);
+					break;
+				case 'service_review_to_date':
+					query.where('service.rating.date').lt(params[key]);
+					break;
+				case 'service_review_from_date':
+					query.where('service.rating.date').gt(params[key]);
+					break;
+
+				case 'review_to_rating':
+					query.where('review.rating').lt(params[key]);
+					break;
+				case 'review_from_rating':
+					query.where('review.rating').gt(params[key]);
+					break;
+				case 'review_to_date':
+					query.where('review.date').lt(params[key]);
+					break;
+				case 'review_from_date':
+					query.where('review.date').gt(params[key]);
+					break;
+
+				case "resource_services": {
+					var val = params[key].split(",");
+					query.where("resources.services").in(val);
+					break;
+				}
+				case "resource_id": {
+					query.where("resources._id").equals(params[key]);
+					break;
+				}
+				
+				case "resource_name": {
+					query.where("resources.name").equals(params[key]);
+					break;
+				}
+				case "resource_surname": {
+					query.where("resources.surname").equals(params[key]);
+					break;
+				}
+				
+				case 'resource_to_initDate':
+					query.where('resources.initDate').lt(params[key]);
+					break;
+				case 'resource_from_initDate':
+					query.where('resources.initDate').gt(params[key]);
+					break;
+
+
+				/*** */
 
 
 				case "p": {
@@ -333,18 +488,18 @@ CompanySchema.statics = {
 		});
 	},
 
-	newRateService: function(user, params, cb){		
-		this.findOne({_id: params.company_id},  function(err, company){
-			if(err)return cb(err);
-			if(!company)return cb([]);
+	newRateService: function (user, params, cb) {
+		this.findOne({ _id: params.company_id }, function (err, company) {
+			if (err) return cb(err);
+			if (!company) return cb([]);
 
 
 			var service = company.services.id(params.service_id);
-			if(!service) return cb([]);
+			if (!service) return cb([]);
 
-			var found =false;
-			for(var key in service.rating){
-				if(service.rating[key].id_customer.equals(user))
+			var found = false;
+			for (var key in service.rating) {
+				if (service.rating[key].id_customer.equals(user))
 					return cb("El usuario ya ha hecho un review al servicio")
 			}
 
@@ -355,8 +510,8 @@ CompanySchema.statics = {
 			rate.date = new Date();
 
 			service.rating.push(rate);
-			company.save(function(err){
-				if(err) return cb(err);				
+			company.save(function (err) {
+				if (err) return cb(err);
 				cb();
 			});
 
@@ -571,7 +726,7 @@ CompanySchema.statics = {
 	searchPromotion: function (id_company, params, cb) {
 		if (!params.state || params.state == "")
 			params.state = "active";
-			var query;
+		var query;
 		if (id_company == 0)
 			query = this.aggregate([{ $unwind: "$promotions" }, { $match: { state: params.state } }]);
 		else
@@ -619,7 +774,7 @@ CompanySchema.statics = {
 				default:
 					var field = "promotions." + key;
 					var match = {};
-				
+
 					match[field] = Utils.like(params[key]);
 					query.match(match);
 			}

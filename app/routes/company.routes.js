@@ -267,41 +267,6 @@ router.route("/cancelPick/:id")
                 Response.printSuccess(res, "");
         });
     });
-
- router.route("/activePick/:id")
-    .put(AuthController.checkCompany(), function(req, res) {
-        CompanyCtrl.activePick(req.params.id, function(err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res, "");
-        });
-    });   
-
-
-router.route("/pick/:id")
-    .get(AuthController.checkCompany(), function(req, res) {
-        CompanyCtrl.getPickById(req.params.id, function(err, pick) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res, pick);
-        });
-    })
-    .delete(AuthController.checkCompany(), function (req, res) {
-        CompanyCtrl.deletePick(req.params.id, function (err, pick) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res,  pick);
-        });
- });
-
-router.route("/cancelPick/:id")
-    .put(AuthController.checkCompany(), function(req, res) {
-        CompanyCtrl.cancelPick(req.params.id, function(err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res, "");
-        });
-    });
  router.route("/activePick/:id")
     .put(AuthController.checkCompany(), function(req, res) {
         CompanyCtrl.activePick(req.params.id, function(err) {

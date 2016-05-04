@@ -3,6 +3,7 @@ var C=require("../../config/config");
 var CompanyModel = require(C.models+"company");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var HistoryCtrl = require(C.ctrl + "history.ctrl");
+var CategoryModel = require(C.models + "category");
 
 var async = require("async");
 var Controller = {};
@@ -17,23 +18,73 @@ Controller.new = function(user, body, cb){
 };
 
 Controller.search = function(user, query, cb){
-    if(user == 0){
-        CompanyModel.searchPromotion(0, query, function(err, promotions){
-                if(err) return cb(err);
-                cb(null, promotions);
-            })
-    }else{
-        CompanyModel.findById(user, function(err, c){
-            if(err) return cb(err); 
-            query.state = c.state;
 
-            CompanyModel.searchPromotion(user, query, function(err, promotions){
-                if(err) return cb(err);
+    async.waterfall([
+        function getPromotions(callback){
+            if(user == 0){
+                CompanyModel.searchPromotion(0, query, function(err, promotions){
+                        if(err) return cb(err);
+                        callback(null, promotions);
+                    })
+            }else{
+                CompanyModel.findById(user, function(err, c){
+                    if(err) return cb(err); 
+                    query.state = c.state;
 
-                cb(null, promotions);
-            })
-        })
-    }
+                    CompanyModel.searchPromotion(user, query, function(err, promotions){
+                        if(err) return cb(err);
+                        callback(null, promotions);
+                    })          
+                })
+            }
+        },
+        function formatPromotions(promotions, callback){
+                async.map(promotions, function(promotion, next){
+                   async.waterfall([
+                        function(callback){
+
+                            user = promotion._id;
+                            var servicesTemp = [];
+                            async.map(promotion.promotions.services, function(service, subNext) {                              
+                                ServiceCtrl.findById(user, service, function(err, serviceData){
+                                    if(!serviceData) return subNext();                  
+                                    servicesTemp.push(serviceData);
+                                    subNext(); 
+                                })
+                            }, function(err, result) {
+                                if (err) return cb(err);
+                                //console.log(servicesTemp);
+                                promotion.promotions.services = servicesTemp;
+                                callback(null, promotion);
+                            });
+
+                        }, function(promotion, callback){
+                            CategoryModel.findById(promotion.category)
+                                .select('name description color icon image')
+                                .exec(function(err, category) {
+                                    if (err) return callback(err);
+                                    promotion.category = category;
+                                    callback(null, promotion);
+                                });
+                        }
+                    ], function(err, result) {
+                        if (err) return next(err);
+                        next(null, result);
+                    });
+                }, function(err, result) {
+                    if (err) return callback(err);
+                    callback(null, result);
+                });
+            }
+            ],function(err, result) {
+                if (err) return cb(err);
+                cb(null, result);
+            });
+
+
+        
+    
+    
 };
 
 Controller.findByIdQuick = function(user, id, cb){

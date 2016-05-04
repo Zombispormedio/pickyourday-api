@@ -146,6 +146,7 @@ Controller.findById = function(user, id, cb){
 
 			CompanyModel.servicePromoted(user, service._id, function(err, promotion){	
 				if(err) return cb(err);
+				
 				if(promotion){
 					service.promotion = promotion;
 					var discount = promotion.discount;

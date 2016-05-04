@@ -149,6 +149,7 @@ PickSchema.statics = {
 
 	changeState: function (id, state, cb) {
 		this.findById(id, function (err, pick) {
+			if(!pick) return cb(-1);
 			pick.state = state;
 			pick.save(function (err) {
                 if (err) return cb(err);

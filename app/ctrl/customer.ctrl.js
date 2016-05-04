@@ -626,6 +626,13 @@ Controller.saveNotification = function(customer_id, body, cb){
     });
 }
 
+Controller.subscribe = function(customer, company, cb){
+    this.subscribe(customer, company, function(err, result){
+        if(err) return cb(err);
+        cb(null, result)
+    })  
+}
+
 
 //******************PROMOTION
 Controller.searchPromotion = function(customer, params, cb){
@@ -690,9 +697,6 @@ Controller.containsService = function(service_id, services) {
     }
     return false;
 };
-
-
-
 
 
 module.exports = Controller;

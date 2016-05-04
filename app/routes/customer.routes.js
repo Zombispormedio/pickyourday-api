@@ -270,6 +270,15 @@ router.route("/company/:id")
         });
     });
 
+router.route("/subscribe/:id")
+    .put(AuthController.checkCustomer(), function (req, res) {
+        CustomerCtrl.subscribe(req.user, req.params.id, function (err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, "Event modified");
+        });
+    });
+
 router.route("/category/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.getCategoryById(req.params.id, function (err, event) {

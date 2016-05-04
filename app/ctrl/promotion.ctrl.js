@@ -53,7 +53,6 @@ Controller.search = function(user, query, cb){
                                 })
                             }, function(err, result) {
                                 if (err) return cb(err);
-                                //console.log(servicesTemp);
                                 promotion.promotions.services = servicesTemp;
                                 callback(null, promotion);
                             });

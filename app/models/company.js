@@ -166,6 +166,8 @@ CompanySchema.statics = {
 			switch (key) {
 				case 'cif':
 				case "name":
+					query.where(key).equals(Utils.like(params[key]));
+					break;
 				case 'category':
 					query.where(key).equals(params[key]);
 					break;
@@ -227,8 +229,8 @@ CompanySchema.statics = {
 				case 'email': {
 					var val = params[key];
                     query.or([
-						{ "email": val },
-                        { "emailSecond": val },
+						{ "email": Utils.like(val) },
+                        { "emailSecond": Utils.like(val) },
 					]);
 					break;
 				}
@@ -271,7 +273,7 @@ CompanySchema.statics = {
 					query.where("premium").equals(params[key]);
 					break;
 				}
-				
+
 				case "other_emails": {
 					query.where("emailSecond").equals(params[key]);
 					break;
@@ -296,7 +298,7 @@ CompanySchema.statics = {
 				}
 
 				case "promotion_name": {
-					query.where("promotions.name").equals(params[key]);
+					query.where("promotions.name").equals(Utils.like(params[key]));
 					break;
 				}
 
@@ -332,7 +334,7 @@ CompanySchema.statics = {
 					break;
 
 				case 'service_name':
-					query.where('services.name').equals(params[key]);
+					query.where('services.name').equals(Utils.like(params[key]));
 					break;
 				case "service_id": {
 					query.where("services._id").equals(params[key]);
@@ -393,16 +395,16 @@ CompanySchema.statics = {
 					query.where("resources._id").equals(params[key]);
 					break;
 				}
-				
+
 				case "resource_name": {
-					query.where("resources.name").equals(params[key]);
+					query.where("resources.name").equals(Utils.like(params[key]));
 					break;
 				}
 				case "resource_surname": {
-					query.where("resources.surname").equals(params[key]);
+					query.where("resources.surname").equals(Utils.like(params[key]));
 					break;
 				}
-				
+
 				case 'resource_to_initDate':
 					query.where('resources.initDate').lt(params[key]);
 					break;

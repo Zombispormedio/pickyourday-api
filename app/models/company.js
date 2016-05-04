@@ -171,22 +171,22 @@ CompanySchema.statics = {
 				case 'category':
 					query.where(key).equals(params[key]);
 					break;
-				case 'toRegister':
+				case 'beforeRegister':
 					query.where('registerDate').lt(params[key]);
 					break;
-				case 'fromRegister':
+				case 'afterRegister':
 					query.where('registerDate').gt(params[key]);
 					break;
-				case 'toLastUpdate':
+				case 'beforeLastUpdate':
 					query.where('lastUpdate').lt(params[key]);
 					break;
-				case 'fromLastUpdate':
+				case 'afterLastUpdate':
 					query.where('lastUpdate').gt(params[key]);
 					break;
-				case 'toAccess':
+				case 'beforeAccess':
 					query.where('lastAccess').lt(params[key]);
 					break;
-				case 'fromAccess':
+				case 'afterAccess':
 					query.where('lastAccess').gt(params[key]);
 					break;
 				case 'keywords':
@@ -562,10 +562,10 @@ CompanySchema.statics = {
 					query.match(match);
 					break;
 				case 'state': break;
-				case 'toDateCreated':
+				case 'beforeDateCreated':
 					query.match({ 'services.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
-				case 'fromDateCreated':
+				case 'afterDateCreated':
 					query.match({ 'services.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterPrice':
@@ -740,16 +740,16 @@ CompanySchema.statics = {
 				case 'statePromotion':
 					query.match({ 'promotions.state': params.statePromotion });
 					break;
-				case 'toInitDate':
+				case 'beforeInitDate':
 					query.match({ 'promotions.initDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'fromInitDate':
+				case 'afterInitDate':
 					query.match({ 'promotions.initDate': { '$gte': new Date(params[key]) } });
 					break;
-				case 'toEndDate':
+				case 'beforeEndDate':
 					query.match({ 'promotions.endDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'fromEndDate':
+				case 'afterEndDate':
 					query.match({ 'promotions.endDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'greaterUseLimit':
@@ -764,10 +764,10 @@ CompanySchema.statics = {
 				case 'lessTimeUsed':
 					query.match({ 'promotions.timesUsed': { '$gte': parseInt(params[key]) } });
 					break;
-				case 'toDateCreated':
+				case 'beforeDateCreated':
 					query.match({ 'promotions.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
-				case 'fromDateCreated':
+				case 'afterDateCreated':
 					query.match({ 'promotions.dateCreated': { '$gte': new Date(params[key]) } });
 					break;
 				case 'service':
@@ -911,10 +911,10 @@ CompanySchema.statics = {
 		for (var key in params) {
 			switch (key) {
 				case 'state': break;
-				case 'toInitDate':
+				case 'beforeInitDate':
 					query.match({ 'resources.initDate': { '$lte': new Date(params[key]) } });
 					break;
-				case 'fromInitDate':
+				case 'afterInitDate':
 					query.match({ 'resources.initDate': { '$gte': new Date(params[key]) } });
 					break;
 				case 'service':

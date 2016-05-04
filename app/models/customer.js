@@ -84,28 +84,28 @@ CustomerSchema.statics = {
         for (var key in params) {
 
             switch (key) {
-                case 'fromBirthDate':
+                case 'afterBirthDate':
                     query.where('birthDate').gt(params[key]);
                     break;
-                case 'toBirthDate':
+                case 'beforeBirthDate':
                     query.where('birthDate').lt(params[key]);
                     break;
-                case 'fromRegister':
+                case 'afterRegister':
                     query.where('registerDate').gt(params[key]);
                     break;
-                case 'toRegister':
+                case 'beforeRegister':
                     query.where('registerDate').lt(params[key]);
                     break;
-                case 'fromLastUpdate':
+                case 'afterLastUpdate':
                     query.where('lastUpdate').gt(params[key]);
                     break;
-                case 'toLastUpdate':
+                case 'beforeLastUpdate':
                     query.where('lastUpdate').lt(params[key]);
                     break;
-                case 'fromAccess':
+                case 'afterAccess':
                     query.where('lastAccess').gt(params[key]);
                     break;
-                case 'toAccess':
+                case 'beforeAccess':
                     query.where('lastAccess').lt(params[key]);
                     break;
 
@@ -181,22 +181,22 @@ CustomerSchema.statics = {
 
         for (var key in params) {
             switch (key) {
-                case 'toInitDate':
+                case 'beforeInitDate':
                     query.match({ 'events.initDate': { '$lte': new Date(params[key]) } }); //en agregate para trabajar con las fechas pide un objeto date,no es como find		
                     break;
-                case 'fromInitDate':
+                case 'afterInitDate':
                     query.match({ 'events.initDate': { '$gte': new Date(params[key]) } });
                     break;
-                case 'toEndDate':
+                case 'beforeEndDate':
                     query.match({ 'events.endDate': { '$lte': new Date(params[key]) } });
                     break;
-                case 'fromEndDate':
+                case 'afterEndDate':
                     query.match({ 'events.endDate': { '$gte': new Date(params[key]) } });
                     break;
-                case 'toDateCreated':
+                case 'beforeDateCreated':
                     query.match({ 'events.dateCreated': { '$lte': new Date(params[key]) } });
                     break;
-                case 'fromDateCreated':
+                case 'afterDateCreated':
                     query.match({ 'events.dateCreated': { '$gte': new Date(params[key]) } });
                     break;
                 default:
@@ -299,16 +299,16 @@ CustomerSchema.statics = {
 
         for (var key in params) {
             switch (key) {
-                case 'toDate':
+                case 'beforeDate':
                     query.match({ 'prepicks.date': { '$lte': new Date(params[key]) } });
                     break;
-                case 'fromDate':
+                case 'afterDate':
                     query.match({ 'prepicks.date': { '$gte': new Date(params[key]) } });
                     break;
-                case 'toDateCreated':
+                case 'beforeDateCreated':
                     query.match({ 'prepicks.dateCreated': { '$lte': new Date(params[key]) } });
                     break;
-                case 'fromDateCreated':
+                case 'afterDateCreated':
                     query.match({ 'prepicks.dateCreated': { '$gte': new Date(params[key]) } });
                     break;
                 default:

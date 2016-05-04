@@ -43,10 +43,10 @@ Service_NameSchema.statics = {
                 case 'lessPrice':
                     query.where('price').lte(params[key]);
                     break;
-                case 'toDateCreated':
+                case 'beforeDateCreated':
                     query.where('dateCreated').lt(params[key]);
                     break;
-                case 'fromDateCreated':
+                case 'afterDateCreated':
                     query.where('dateCreated').gt(params[key]);
                     break;
                 case 'category':

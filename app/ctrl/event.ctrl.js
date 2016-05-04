@@ -63,8 +63,8 @@ Controller.formatEvent = function(user, initDate, endDate, cb){
     var formatDate = [];
 
 
-    paramsTemp.toInitDate = endDate;
-    paramsTemp.fromInitDate  = initDate;
+    paramsTemp.beforeInitDate = endDate;
+    paramsTemp.afterInitDate  = initDate;
 
     self.search(user, paramsTemp,function(err, events){    
         if(err) return cb(err);

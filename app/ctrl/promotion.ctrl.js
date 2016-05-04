@@ -100,7 +100,7 @@ Controller.refreshPromotions = function(cb){
             async.waterfall([
                 function changeStart(next) {
                     var paramsTemp = {};
-                    paramsTemp.toInitDate = date;
+                    paramsTemp.beforeInitDate = date;
                     paramsTemp.state = "waiting";
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "started"};
@@ -114,7 +114,7 @@ Controller.refreshPromotions = function(cb){
                     })
                 },  function changeFinished(next) {
                     var paramsTemp = {};
-                    paramsTemp.toEndDate = date;
+                    paramsTemp.beforeEndDate = date;
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "finished"};
                         async.map(promotions, function(promotion, subNext){

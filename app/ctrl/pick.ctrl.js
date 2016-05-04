@@ -277,13 +277,13 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
             firstDate.setMinutes(0);
         }
        
-        var toInitDate = new Date(firstDate);
-        toInitDate.setHours(23);
-        toInitDate.setMinutes(59);
+        var beforeInitDate = new Date(firstDate);
+        beforeInitDate.setHours(23);
+        beforeInitDate.setMinutes(59);
 
-        var fromInitDate = new Date(firstDate);
-        fromInitDate.setHours(0);
-        fromInitDate.setMinutes(0);
+        var afterInitDate = new Date(firstDate);
+        afterInitDate.setHours(0);
+        afterInitDate.setMinutes(0);
 
         var self = this;
         var paramsTemp = {"company.id_company":id_company};
@@ -297,13 +297,13 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
         async.eachSeries(count, function(day, next){ 
             if(day > 0)
-                toInitDate.setDate(toInitDate.getDate()+1);
-            paramsTemp.toInitDate = toInitDate;
+                beforeInitDate.setDate(beforeInitDate.getDate()+1);
+            paramsTemp.beforeInitDate = beforeInitDate;
             if(day == 0)
-                paramsTemp.fromInitDate = fromInitDate;
+                paramsTemp.afterInitDate = afterInitDate;
             else{
-                fromInitDate.setDate(fromInitDate.getDate()+1);
-                paramsTemp.fromInitDate = fromInitDate;
+                afterInitDate.setDate(afterInitDate.getDate()+1);
+                paramsTemp.afterInitDate = afterInitDate;
             }
             self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
@@ -326,8 +326,8 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
     var formatDate = [];
     var self = this;
     var paramsTemp = {"id_customer":id_customer};
-    paramsTemp.toInitDate = endDate;
-    paramsTemp.fromInitDate  = initDate;
+    paramsTemp.beforeInitDate = endDate;
+    paramsTemp.afterInitDate  = initDate;
     paramsTemp.state =["active"];
 
     self.search(paramsTemp,function(err, picks){    
@@ -345,7 +345,7 @@ Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb)
 
 Controller.cancelPicks = function(cb){
     var paramsTemp = {};
-    paramsTemp.toInitDate = new Date();
+    paramsTemp.beforeInitDate = new Date();
 
     var self = this;
 
@@ -389,12 +389,12 @@ Controller.cancelPicks = function(cb){
 
 Controller.clearPicks = function(cb){
     var paramsTemp = {};
-    toInitDate = new Date();
-    toInitDate.setMinutes(0);
-    toInitDate.setHours(0);
-    toInitDate.setSeconds(0);
-    toInitDate.setDate(toInitDate.getDate()-1);
-    paramsTemp.toInitDate = toInitDate;
+    beforeInitDate = new Date();
+    beforeInitDate.setMinutes(0);
+    beforeInitDate.setHours(0);
+    beforeInitDate.setSeconds(0);
+    beforeInitDate.setDate(beforeInitDate.getDate()-1);
+    paramsTemp.beforeInitDate = beforeInitDate;
     var self = this;
     self.searchQuick(paramsTemp,function(err, picks){
           
@@ -433,8 +433,8 @@ Controller.nextPick = function(company, params, cb){
 
             var paramsTemp = {};
             paramsTemp["company.id_company"]= company;
-            paramsTemp.toInitDate = endDate;
-            paramsTemp.fromInitDate  = initDate;
+            paramsTemp.beforeInitDate = endDate;
+            paramsTemp.afterInitDate  = initDate;
             paramsTemp.state =["active"];
 
             self.searchQuick(paramsTemp, function(err, picks){

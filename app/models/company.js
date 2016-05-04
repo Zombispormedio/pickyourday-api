@@ -1125,9 +1125,8 @@ CompanySchema.statics = {
 
 		this.searchPromotion(id_company, params, function (err, promotion) {
 			if (err) cb(err);
-
 			if (promotion && promotion.length > 0)
-				cb(null, promotion[0]);
+				cb(null, promotion[0].promotions);
 			else
 				cb(null, null);
 		})

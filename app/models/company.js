@@ -577,8 +577,8 @@ CompanySchema.statics = {
 				case 'greaterDuration':
 					query.match({ 'services.duration': { '$gte': parseInt(params[key]) } });
 					break;
-				case 'lessPrice':
-					query.match({ 'services.duration': { '$gte': parseInt(params[key]) } });
+				case 'lessDuration':
+					query.match({ 'services.duration': { '$lte': parseInt(params[key]) } });
 					break;
 				case 'greaterRating':
 					greaterRating = true;

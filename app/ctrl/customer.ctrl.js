@@ -9,6 +9,7 @@ var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var CategoryCtrl = require(C.ctrl + "category.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var CustomerModel = require(C.models + "customer");
+var CompanyModel = require(C.models + "company");
 var PickModel = require(C.models + "pick");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
 
@@ -697,6 +698,15 @@ Controller.containsService = function(service_id, services) {
     }
     return false;
 };
+
+Controller.applyAugmentedReality=function(marker_id, cb){
+    CompanyModel.findOne({"ar_settings.marker_id":marker_id}, function(err, company){
+       if(err)return cb(err);
+     
+       cb(null, {collada:company.ar_settings.animation_url}); 
+    });
+}
+
 
 
 module.exports = Controller;

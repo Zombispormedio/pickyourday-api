@@ -356,6 +356,16 @@ router.route("/activePick/:id")
         });
     });
 
+router.route("/augmented_reality/:marker_id")
+    .get(AuthController.checkCustomer(), function (req, res) {
+        CustomerCtrl.applyAugmentedReality(req.params.marker_id, function (err, result) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, result);
+        });
+    });
+
+
 router.route("/:id")
     .get(AuthController.checkAdmin(), function (req, res) {
         CustomerCtrl.findById(req.params.id, function (err, customer) {

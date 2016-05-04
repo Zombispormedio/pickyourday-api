@@ -146,7 +146,7 @@ var CompanySchema = new Schema({
 	dateExpire: Date,
 	datePayment: Date,
 
-	ra_settings: {
+	ar_settings: {
 		marker_id: Number,
 		animation_url: String
 	}

@@ -702,8 +702,9 @@ Controller.containsService = function(service_id, services) {
 Controller.applyAugmentedReality=function(marker_id, cb){
     CompanyModel.findOne({"ar_settings.marker_id":marker_id}, function(err, company){
        if(err)return cb(err);
+       var ar_settings=company.ar_settings;
      
-       cb(null, {collada:company.ar_settings.animation_url}); 
+       cb(null, {collada:ar_settings.animation_url, message:ar_settings.message}); 
     });
 }
 

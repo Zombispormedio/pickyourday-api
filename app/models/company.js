@@ -149,7 +149,8 @@ var CompanySchema = new Schema({
 	ar_settings: {
 		marker_id: Number,
 		animation_url: String, 
-		message:String
+		message:String,
+		duration:Number
 	}
 
 

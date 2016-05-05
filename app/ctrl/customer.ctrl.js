@@ -704,7 +704,7 @@ Controller.applyAugmentedReality=function(marker_id, cb){
        if(err)return cb(err);
        var ar_settings=company.ar_settings;
      
-       cb(null, {collada:ar_settings.animation_url, message:ar_settings.message}); 
+       cb(null, {collada:ar_settings.animation_url, message:ar_settings.message, duration:ar_settings.duration}); 
     });
 }
 

@@ -90,7 +90,7 @@ Controller.changeState = function(pick, state, cb){
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
         if (err) return cb(err);
-
+        console.log(picks);
         if (!picks || picks.length == 0)
             return cb(null, []);
 
@@ -305,8 +305,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                 afterInitDate.setDate(afterInitDate.getDate()+1);
                 paramsTemp.afterInitDate = afterInitDate;
             }
-            self.search(paramsTemp,function(err, picks){ 
-            console.log(picks);   
+            self.search(paramsTemp,function(err, picks){    
                 if(err) return next(err);
                 if(picks != null && picks.length > 0)
                     for(var pick in picks)

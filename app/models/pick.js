@@ -71,10 +71,10 @@ PickSchema.statics = {
 					query.where(key).equals(params[key]);
 					break;
 				case 'beforeInitDate':
-					query.where('initDate').lt(params[key]);
+					query.where('initDate').lte(params[key]);
 					break;
 				case 'afterInitDate':
-					query.where('initDate').gt(params[key]);
+					query.where('initDate').gte(params[key]);
 					break;
 				case 'beforeDateCreated':
 					query.where('dateCreated').lt(params[key]);

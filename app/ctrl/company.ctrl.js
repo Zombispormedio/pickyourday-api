@@ -422,7 +422,6 @@ Controller.getTimeLine = function(id_company, params, cb){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});
                     timeLine[i].push(datePick);
-                    console.log(timeLine);
                     next(null, null);
                 });
             }, function(err, result){

@@ -422,6 +422,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                     if(err) return next(err);
                     timeLine[i].push({"id":resources[i]._id, "name":resources[i].name, "surname": resources[i].surname});
                     timeLine[i].push(datePick);
+                    console.log(timeLine);
                     next(null, null);
                 });
             }, function(err, result){
@@ -511,7 +512,6 @@ Controller.getTimeLine = function(id_company, params, cb){
                 var dayIterator = 0;
 
                 for(var  dayI=0; dayI<params.rangeDays; dayI++){
-
                     var rangeTimes = ranges[dayI];
 
                     var stepsDay = scheduleDays[dayI].steps;

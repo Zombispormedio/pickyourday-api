@@ -50,7 +50,7 @@ var PickSchema = new Schema({
 PickSchema.statics = {
 	getQuery: function (params, cb) { //en params no meter id, todos los demas datos si
 		var query = this.find({}).sort({ initDate: 1 });
-		console.log(params);
+		
 		for (var key in params) {
 			switch (key) {
 				case "id_customer":

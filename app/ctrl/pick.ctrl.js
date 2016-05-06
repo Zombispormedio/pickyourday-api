@@ -439,6 +439,7 @@ Controller.nextPick = function(company, params, cb){
             paramsTemp.afterInitDate  = initDate;
             paramsTemp.picks =  params.picks;
             paramsTemp.state =["active"];
+            console.log(paramsTemp);
 
             self.searchQuick(paramsTemp, function(err, picks){
                 if(err) return (err);

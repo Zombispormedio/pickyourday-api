@@ -261,7 +261,6 @@ router.route("/pick/:id")
 
 router.route("/cancelPick/:id")
     .put(AuthController.checkCompany(), function(req, res) {
-        console.log(req.params);
         CompanyCtrl.cancelPick(req.params.id, function(err) {
             if (err) Response.printError(res, err);
             else

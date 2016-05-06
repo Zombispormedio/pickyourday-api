@@ -415,8 +415,10 @@ Controller.clearPicks = function(cb){
 
 Controller.nextPick = function(company, params, cb){
     var self= this;
-    if(!params.pick || !params.state)
+    if(!params.pick || !params.state )
         return cb("field not filled: pick, state");
+
+
 
     self.changeState(params.pick, params.state, function(err){
         if(err) return cb(err);
@@ -432,16 +434,17 @@ Controller.nextPick = function(company, params, cb){
             endDate.setMinutes(59);
 
             var paramsTemp = {};
-            paramsTemp["company.id_company"]= company;
+            paramsTemp["company.id_company"]= company._id;
             paramsTemp.beforeInitDate = endDate;
             paramsTemp.afterInitDate  = initDate;
+            paramsTemp.picks =  params.picks;
             paramsTemp.state =["active"];
 
             self.searchQuick(paramsTemp, function(err, picks){
                 if(err) return (err);
                 if(!picks || picks.length == 0)
                     return cb([]);
-
+                if(picks[0]._id != undefined && picks[0]._id.equals(params.Pick)) return cb([]);
                 self.findById(picks[0]._id, cb);
             })
 

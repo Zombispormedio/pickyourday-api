@@ -771,7 +771,13 @@ Controller.activePick = function(id_pick, cb) {
 };
 
 Controller.nextPick = function(company, params, cb){
-    PickCtrl.nextPick(company, params, cb);
+    this.getResourceById(company, params.resource, function(err, resource){
+        if(err) return cb(err);
+        if(!resource) return cb(-1);
+        params.picks = resource.picks;
+        PickCtrl.nextPick(company, params, cb);
+    });
+    
 }
 
 

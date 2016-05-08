@@ -363,10 +363,10 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 	for(var key in arrayBase){
 		plane.push([]);
 		count=0;
-		for(var w = vWidth-1; w>0; w--){
-			for(var h=2; h<=vHeight; h+=2){
-				var v = (w*vHeight)+w + h;
 
+		for(var w = 1; w<vWidth; w++){
+			for(var h=vHeight-2; h>=0; h-=2){
+				var v = (h*(vWidth+1)) + w;
 				plane[key].push(new Vertice(v, result[key][count].position[1]));
 				count++;
 			}

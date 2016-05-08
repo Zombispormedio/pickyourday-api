@@ -728,7 +728,12 @@ Controller.newPick = function(company, params, cb) {
     params.state = "active";
     delete params.service;
 
-    PickCtrl.new(params, cb);
+    PickCtrl.new(params, function(err, pick){
+        if(err) return cb(err);
+        if(!pick) return cb(-1);
+        
+        cb(null, pick);
+    });
 };
 
 Controller.getPickById = function(id, cb) {

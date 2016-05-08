@@ -419,8 +419,6 @@ Controller.nextPick = function(company, params, cb){
     if(!params.pick || !params.state )
         return cb("field not filled: pick, state");
 
-
-
     self.changeState(params.pick, params.state, function(err){
         if(err) return cb(err);
         self.findByIdQuick(params.pick, function(err, pick){

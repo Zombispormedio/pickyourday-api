@@ -147,6 +147,7 @@ Controller.refreshPromotions = function(cb){
     var query = CompanyModel.search({}, function(err, companies){
         if(err) return cb(err);
         async.map(companies, function(companie, callback) {
+
             async.waterfall([
                 function changeStart(next) {
                     var paramsTemp = {};
@@ -155,6 +156,7 @@ Controller.refreshPromotions = function(cb){
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "started"};
                         async.map(promotions, function(promotion, subNext){
+
                             CompanyModel.modifyPromotion(companie._id, promotion._id, params, subNext);
                         }, function(err, result) {
                             if (err) return cb(err);
@@ -168,6 +170,7 @@ Controller.refreshPromotions = function(cb){
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "finished"};
                         async.map(promotions, function(promotion, subNext){
+                            console.log(promotion);
                             CompanyModel.modifyPromotion(companie._id, promotion._id, params, subNext);
                         }, function(err, result) {
                             if (err) return cb(err);

@@ -244,12 +244,12 @@ AuthController.forgotPassword = function (body, cb) {
 
             var source = `<html>
             <body>
-            <h3>Hola, {{name}} 😧😉</h3>
+            <h3>Hola, {{name}} 😧</h3>
            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. 🙄</p>
            <p>Si solicitaste restablecer tu contraseña para {{email}}, copía el siguiente código y pégalo en el formulario.</p>
            <p>Tu código: {{code}}</p>
             <p>Si no hiciste esta solicitud, por favor, ignora este correo electrónico. </p>
-            <h3> Consigue todo tus própositos y no pierdas el tiempo, <a href="http://www.pickyourday.tk/">Pick Your Day</a> 😬☺</h3>
+            <h4> Consigue todos tus própositos y no pierdas el tiempo, <a href="http://www.pickyourday.tk/">Pick Your Day</a> ☺</h4>
             </body>
             </html>`;
             var template = Handlebars.compile(source);
@@ -289,6 +289,79 @@ AuthController.UniqueResetCode = function (cb) {
 
     checkCode(getCode())
 
+
+}
+
+AuthController.resetPassword = function (body, cb) {
+    if (!body || !body.password || !body.code) return cb("Fields not filled in Reset Password");
+
+    var password = body.password;
+    var code = body.code;
+
+    async.waterfall([
+        function (next) {
+            AuthModel.findOne({ reset_code: code, }, function (err, user) {
+                if (err) return next(err);
+                if (!user) return next("Wrong Code in Reset Password")
+
+                next(null, user);
+            });
+        },
+        function save(user, next) {
+            user.reset_code=null;
+            user.password = password;
+
+            user.save(function (err, result) {
+                if (err) return next(err);
+
+                next(null, result);
+            });
+        },
+        function (item, next) {
+            if (item.role == 2) {
+
+                CompanyModel.findOne({ "_id": item.user }, function (err, c) {
+                    if (err) return next(err);
+                    next(null, {
+                        name: c.name, email: c.email
+                    })
+                });
+
+            } else {
+                if (item.role == 0 || item.role == 1) {
+                    CustomerModel.findOne({ "_id": item.user }, function (err, c) {
+                        if (err) return next(err);
+                        next(null, {
+                            name: c.name + " " + c.surname, email: c.email
+                        })
+                    });
+                }
+            }
+        },  function sendMail(user, next) {
+
+            var options = {};
+            options.email = user.email;
+            options.toname = user.name;
+            options.subject = "¡Enhorabuena! Has restablecido tu contraseña de Pick Your Day";
+            options.fromname = "Pick Your Day Support Team";
+
+            var source = `<html>
+            <body>
+            <h3>Hola, {{name}} 🤗</h3>
+           <p>La contraseña de tu cuenta {{email}} se ha restablecido satisfactoria😋</p>
+            <h3> Consigue todos tus própositos y no pierdas el tiempo, <a href="http://www.pickyourday.tk/">Pick Your Day</a> 🤓</h3>
+            </body>
+            </html>`;
+            var template = Handlebars.compile(source);
+
+            var result = template(user);
+
+            options.text = result;
+
+            Mail.send(options, next);
+        }
+
+    ], cb);
 
 }
 

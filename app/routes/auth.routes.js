@@ -56,6 +56,16 @@ router.route("/forgot_password")
     });
 });
 
+router.route("/reset_password")
+    .post(function(req, res){
+    AuthCtrl.resetPassword(req.body,function(err){
+        if(err)
+            Response.printError(res, err);
+        else
+            Response.printSuccess(res, "Password Reset Successfully");
+    });
+});
+
 
 
 module.exports = router;

@@ -144,7 +144,7 @@ Controller.searchThings = function(params, cb) {
             paramsTemp.search_text = params.name;
             ServiceCtrl.searchServiceName(paramsTemp, function(err, default_names) {
                 if (err) return callback(err);
-                
+
                 callback(null, things, default_names);
             });
         }, function getServicesByDefaultName(things, names, callback) {
@@ -159,7 +159,8 @@ Controller.searchThings = function(params, cb) {
             paramsTemp.name = params.name;
             if(params["location.city"])
                 paramsTemp["location.city"] = params["location.city"];
-            //paramsTemp["location.country"] = params["location.country"]; 
+            if(params["location.country"])
+                paramsTemp["location.country"] = params["location.country"]; 
             if (params.category != undefined && params.category != '')
                 paramsTemp.category = params.category;
             ServiceCtrl.search(0, paramsTemp, function(err, services) {

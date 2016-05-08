@@ -413,7 +413,6 @@ CustomerSchema.statics = {
 
         });
     },
-
     unSubscribe: function(id_customer, company, cb){
         this.findById(id_customer, function (err, customer) {
             if (err) return cb(err);

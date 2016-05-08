@@ -118,13 +118,11 @@ Controller.search = function (query, cb) {
                     });
                 },
                 function (p, callback) {
-                    CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
+                    ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
                         if (err) return callback(err);
-                        if (service) {
-                          
+                        if (service) {                          
                             var s = service.toObject();          
-                            p.service = s;
-                            
+                            p.service = s;                          
                         }
                         callback(null, p);
 
@@ -195,7 +193,7 @@ Controller.findById = function (id, cb) {
             },
             function (p, callback) {
 
-                CompanyModel.findServiceById(p.company._id, p.service, function (err, service) {
+                ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
                   
                     if (service) {
                       

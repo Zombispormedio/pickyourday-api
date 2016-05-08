@@ -542,7 +542,6 @@ CompanySchema.statics = {
 	},
 
 	searchService: function (id_company, params, cb) {
-		console.log(params);
 		var query;
 		if (!params.state || params.state == "")
 			params.state = "active";
@@ -1111,7 +1110,6 @@ CompanySchema.statics = {
 					if (resources[r].picks) {
 						for (var p in resources[r].picks) {
 							if (resources[r].picks[p].equals(id_pick)) {
-								console.log("borrar");
 								resources[r].picks.splice(p, 1);
 								found = true;
 								break;

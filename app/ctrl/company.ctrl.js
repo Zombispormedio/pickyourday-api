@@ -552,12 +552,9 @@ Controller.getTimeLine = function(id_company, params, cb){
                         for(var pick=0; pick<picks.length; pick++){
                             var date = picks[pick].init;
                             date = new Date(date);
-                            
-
-                                        
+           
                             var fill = Math.floor(picks[pick].duration/step);
                             var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
-                            console.log("entra: "+ pos + "  count:"+count);
                             if(pos >= 0 && pos < count){
 
                                 for(var f=0; f<fill; f++){
@@ -731,7 +728,7 @@ Controller.newPick = function(company, params, cb) {
     PickCtrl.new(params, function(err, pick){
         if(err) return cb(err);
         if(!pick) return cb(-1);
-        
+
         cb(null, pick);
     });
 };

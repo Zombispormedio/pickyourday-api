@@ -12,7 +12,7 @@ require(C.routes + "routes.js")(app);
 var ConnectDB=require(C.config + "database.js");
 
 var Server = function () {
-    app.listen(C.port, function () {
+    app.listen(port, function () {
          console.log("Conectado: " + app.get("port"));
 			console.log("Iniciado: "+new Date());
       

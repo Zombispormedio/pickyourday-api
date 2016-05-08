@@ -147,7 +147,7 @@ Controller.searchThings = function(params, cb) {
 
                 callback(null, things, default_names);
             });
-        }, function getServicesByDefaultName(things, names, callback) {
+        }, function getServices(things, names, callback) {
             var paramsTemp = {};
             var idDefaultNames = [];
             if (names && names.length > 0)
@@ -155,8 +155,10 @@ Controller.searchThings = function(params, cb) {
                     return a._id;
                 });
             var paramsTemp = {};
-            paramsTemp.idDefaultNames = idDefaultNames;
-            paramsTemp.name = params.name;
+            if(idDefaultNames.length > 0)
+                paramsTemp.idDefaultNames = idDefaultNames;
+            if(params.name)
+                paramsTemp.name = params.name;
             if(params["location.city"])
                 paramsTemp["location.city"] = params["location.city"];
             if(params["location.country"])
@@ -168,30 +170,13 @@ Controller.searchThings = function(params, cb) {
                 things.services = services;
                 callback(null, things);
             });
-        }, function getCompaniesByCategory(things, callback) {
+        }, function getCompanies(things, callback) {
             var paramsTemp = {};
             if (params.category != undefined && params.category != '')
                 paramsTemp.category = params.category;
-            paramsTemp.name = params.name;
-            //paramsTemp["location.city"] = params["location.city"];
-            paramsTemp["location.country"] = params["location.country"];
-            things.params = paramsTemp;
-            CompanyCtrl.search(paramsTemp, function(err, companies) {
-                if (err) return callback(err);
-                if (companies != 'No companies') {
-                    for (var i = 0; i < companies.length; i++)
-                        things.companies.push(companies[i]);
-                }
-                callback(null, things);
-            });
-
-        }, function getCompaniesByKeywords(things, callback) {
-            var paramsTemp = {};
-            if (params.category != undefined && params.category != '')
-                paramsTemp.category = params.category;
-            paramsTemp.keywords = params.name;
-            // paramsTemp["location.city"] = params["location.city"]; 
-            paramsTemp["location.country"] = params["location.country"];
+            paramsTemp.search_text = params.name;
+            paramsTemp["city"] = params["location.city"]; 
+            paramsTemp["country"] = params["location.country"];
             if (things.companies != undefined && things.companies.length > 0) {
                 var idCompanies = things.companies.map(function(a) {
                     return a._id;
@@ -200,7 +185,7 @@ Controller.searchThings = function(params, cb) {
             }
             CompanyCtrl.search(paramsTemp, function(err, companies) {
                 if (err) return callback(err);
-                if (companies != 'No companies')
+                if (companies)
                     for (var i = 0; i < companies.length; i++) {
                         if (companies[i] != null)
                             things.companies.push(companies[i]);

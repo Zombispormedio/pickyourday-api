@@ -18,6 +18,11 @@ function Stat(position, data, size, color){
 	this.data = data || ["", 0, ""];
 }
 
+function Vertice(key, y){
+	this.key = key || 0;
+	this.y = y || 0;
+}
+
 Controller.statsPicks = function(company, query, cb){
 	var timeArray = getDates(query);
 	var servicesArray = [];
@@ -86,7 +91,8 @@ Controller.statsPicks = function(company, query, cb){
             	next();
         	}); 
 		}, function normalize(next){
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, data){
+			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
+				var data ={"stats": stats,"plane":plane};
 				next(null, data);
 			});
 
@@ -167,7 +173,8 @@ Controller.originPicks = function(company, query, cb){
             	next();
         	}); 
 		}, function normalize(next){
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, data){
+			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
+				var data ={"stats": stats,"plane":plane};
 				next(null, data);
 			});
 
@@ -269,7 +276,8 @@ Controller.scoreServices = function(company, query, cb){
         	}); 
 		}, function normalize(next){
 			var legend = {"x": "Valoración", "y": "Cantidad", "z": "Servicio", "w": "Tiempo" }
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, data){
+			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
+				var data ={"stats": stats,"plane":plane};
 				next(null, data);
 			});
 
@@ -309,18 +317,12 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 	var max = maxX;
 	var result = [];
 	var grillX= grill;
-	var grillY= grill;
+	var grillY= grill/2;
 	var grillZ= grill;
 	if(maxY== null)
 		maxY=0;
 	if(maxZ == null)
 		maxZ=0;
-/*
-	if(max < maxY)
-		max = maxY;
-	if(max < maxZ)
-		max = maxZ;*/
-
 	while(!fit){
 		if(maxZ/sizeValue > grillZ/sizeValue){
 			grillZ *=2;
@@ -334,7 +336,7 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 	}
 	while(!fit){
 		if(maxY/sizeValue > grillY/sizeValue){
-			grillY *=2;
+			grillY +=(grill/2);
 		}else fit=true;
 	}
 
@@ -348,16 +350,34 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 				var data = [xValues[x], yValue, zValues[z]];
 				var position = [((x+1)/(maxX+1) *grillX) || 0, (yValue/(maxY) *grillY) || 0, ((z+1)/(maxZ) *grillZ) || 0];
 				result[key].push(new Stat(position, data));
-
-			}
-			
-
+			}	
 		}
 	}
 
-	cb(null, result);
+	var plane = [];
+	var width = grillX;
+	var height = grillZ;
+	var vWidth = maxX+1;
+	var vHeight = maxZ*2;
+	var count=0;
+	for(var key in arrayBase){
+		plane.push([]);
+		count=0;
+		for(var w = vWidth-1; w>0; w--){
+			for(var h=2; h<=vHeight; h+=2){
+				var v = (w*vHeight)+w + h;
+
+				plane[key].push(new Vertice(v, result[key][count].position[1]));
+				count++;
+			}
+		}
+	}
+
+	var resultPlane = {"width": width, "height": height, "vWidth":vWidth, "vHeight": vHeight, "vertices": plane};
 
 
+
+	cb(null, result, resultPlane);
 };
 
 function getDates(query){

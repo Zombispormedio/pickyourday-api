@@ -285,6 +285,14 @@ router.route("/subscribe/:id")
                 Response.printSuccess(res, "Event modified");
         });
     });
+router.route("/unSubscribe/:id")
+    .put(AuthController.checkCustomer(), function (req, res) {
+        CustomerCtrl.unSubscribe(req.user, req.params.id, function (err) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, "Event modified");
+        });
+    });
 
 router.route("/category/:id")
     .get(AuthController.checkCustomer(), function (req, res) {

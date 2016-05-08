@@ -542,6 +542,7 @@ CompanySchema.statics = {
 	},
 
 	searchService: function (id_company, params, cb) {
+		console.log(params);
 		var query;
 		if (!params.state || params.state == "")
 			params.state = "active";
@@ -552,8 +553,10 @@ CompanySchema.statics = {
 		else
 			query = this.aggregate([{ $unwind: "$services" }, { $match: { category: new mongoose.Types.ObjectId(params.category), state: params.state } }]);
 
+		delete params.state;
 		var greaterRating = false;
 		var lessRating = false;
+		var query_or = [];
 
 		for (var key in params) {
 			switch (key) {
@@ -563,7 +566,6 @@ CompanySchema.statics = {
 					match[field] = params[key];
 					query.match(match);
 					break;
-				case 'state': break;
 				case 'beforeDateCreated':
 					query.match({ 'services.dateCreated': { '$lte': new Date(params[key]) } });
 					break;
@@ -589,7 +591,10 @@ CompanySchema.statics = {
 					lessRating = true;
 					break;
 				case 'idDefaultNames':
-					query.match({ 'services.id_name': { '$in': params[key] } });
+					query_or.push({ 'services.id_name': { '$in': params[key] } });
+					break;
+				case 'name':
+					query_or.push({ 'services.name':Utils.like(params[key]) });
 					break;
 				case 'category': break;
 				case 'location.country':
@@ -608,6 +613,8 @@ CompanySchema.statics = {
                 }
 			}
 		}
+		if(query_or.length > 0)
+			query.match({$or: query_or});
 
 		query.exec(function (err, companyService) {
 

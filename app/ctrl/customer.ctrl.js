@@ -141,9 +141,10 @@ Controller.searchThings = function(params, cb) {
     async.waterfall([
         function getDefaultName(callback) {
             var paramsTemp = {};
-            paramsTemp.name = params.name;
+            paramsTemp.search_text = params.name;
             ServiceCtrl.searchServiceName(paramsTemp, function(err, default_names) {
                 if (err) return callback(err);
+                
                 callback(null, things, default_names);
             });
         }, function getServicesByDefaultName(things, names, callback) {
@@ -155,7 +156,9 @@ Controller.searchThings = function(params, cb) {
                 });
             var paramsTemp = {};
             paramsTemp.idDefaultNames = idDefaultNames;
-            paramsTemp["location.city"] = params["location.city"];
+            paramsTemp.name = params.name;
+            if(params["location.city"])
+                paramsTemp["location.city"] = params["location.city"];
             //paramsTemp["location.country"] = params["location.country"]; 
             if (params.category != undefined && params.category != '')
                 paramsTemp.category = params.category;

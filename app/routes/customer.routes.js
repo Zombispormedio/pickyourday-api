@@ -98,10 +98,10 @@ router.route("/pick")
 
 router.route("/promotion")
     .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.searchPromotion(req.user, req.query, function (err, picks) {
+        CustomerCtrl.searchPromotion(req.user, req.query, function (err, promotions) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, picks);
+                Response.printSuccess(res, promotions);
         });
     });
 

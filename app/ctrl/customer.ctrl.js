@@ -611,21 +611,21 @@ Controller.saveNotification = function(customer_id, body, cb){
     });
 
     });
-}
+};
 
 Controller.subscribe = function(customer, company, cb){
-    this.subscribe(customer, company, function(err, result){
+    CustomerModel.subscribe(customer, company, function(err, result){
         if(err) return cb(err);
         cb(null, result)
     })  
-}
+};
 
 Controller.unSubscribe = function(customer, company, cb){
-    this.subscribe(customer, company, function(err, result){
+    CustomerModel.unSubscribe(customer, company, function(err, result){
         if(err) return cb(err);
-        cb(null, result)
+        cb()
     })  
-}
+};
 
 
 //******************PROMOTION

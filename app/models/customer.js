@@ -369,7 +369,7 @@ CustomerSchema.statics = {
         });
     },
     modify: function (id, params, cb) {
-        this.findById(id, function (err, customer) {
+         this.findOne({ _id: id }, function (err, customer) {
             if (err) return cb(err);
 
             if (!customer)
@@ -387,8 +387,8 @@ CustomerSchema.statics = {
         });
     },
 
-    subscribe: function(customer, company,cb){
-        this.findById(id, function (err, customer) {
+    subscribe: function(id_customer, company, cb){
+        this.findById(id_customer, function (err, customer) {
             if (err) return cb(err);
 
             if (!customer)
@@ -414,22 +414,25 @@ CustomerSchema.statics = {
         });
     },
 
-    unSubscribe: function(customer, company, cb){
-        this.findById(id, function (err, customer) {
+    unSubscribe: function(id_customer, company, cb){
+        this.findById(id_customer, function (err, customer) {
             if (err) return cb(err);
 
             if (!customer)
                 return cb(-1);
             var companies = customer.companies;
             if(!companies)
-                return cb(null, []);
-            companies = [];
-
+                companies = [];
+            
+           // console.log(companies);
             for (var key in companies) 
-                if (companies[key].equals(company))
-                    companies.slice(key, 1);
-                
-                    
+                if (companies[key].equals(company)){
+                    console.log(companies); 
+                    companies.splice(key, 1);
+                    break;
+                }
+               
+            
             
             customer.save(function (err) {
                 if (err) return cb(err);

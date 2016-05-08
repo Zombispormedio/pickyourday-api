@@ -120,9 +120,8 @@ Controller.search = function (query, cb) {
                 function (p, callback) {
                     ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
                         if (err) return callback(err);
-                        if (service) {                          
-                            var s = service.toObject();          
-                            p.service = s;                          
+                        if (service) {                                  
+                            p.service = service;                          
                         }
                         callback(null, p);
 
@@ -195,10 +194,8 @@ Controller.findById = function (id, cb) {
 
                 ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
                   
-                    if (service) {
-                      
-                        var s = service.toObject();          
-                        p.service = s;
+                    if (service) {         
+                        p.service = service;
                         
                     }
                     callback(null, p);

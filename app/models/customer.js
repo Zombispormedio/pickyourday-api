@@ -375,9 +375,8 @@ CustomerSchema.statics = {
             if (!customer)
                 return cb(-1);
 
- console.log(params);
+
             customer = Utils.mergeMongoObjects(customer, params);
-            console.log(customer);
             customer.lastUpdate = new Date();
 
             customer.save(function (err) {

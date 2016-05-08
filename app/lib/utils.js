@@ -71,16 +71,17 @@ Utils.removeAccents = function (text)
 
 Utils.mergeMongoObjects=function(dst, src){
 	var keysDST=Object.keys(dst.toObject());
-	var keysSRC=Object.keys(src);
+	var keysSRC=Object.keys(src);  
 	var merge_keys=_.union(keysDST, keysSRC)
 				.filter(function(a){
 					return a!=="__v"&&a!=="_id";
 				});
 	for(var i=0;i<merge_keys.length;i++){
 		var key=merge_keys[i];
-		dst[key]=null;
-		dst[key]=src[key];
-		
+    if(src[key]){
+      dst[key]=null;
+      dst[key]=src[key];
+    }	
 	}
 	
 	return dst;

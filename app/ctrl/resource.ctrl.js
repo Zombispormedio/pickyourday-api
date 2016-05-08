@@ -116,16 +116,18 @@ Controller.search = function(user, query, cb){
 								callback(null, resource);
 							});
 						}, function(resource, callback){
-							async.map(resource.picks, function(idPick, next){						
+							var picksTemp = resource.picks;
+							resource.picks=[];
+							async.map(picksTemp, function(idPick, next){						
 								PickCtrl.findById(idPick, function(err, pick){
-									if(err) return next(err);	
-									idPick=pick;
+									if(!err || pick != null) resource.picks.push(pick);	
 									
-									next(null, idPick);
+									
+									next(null);
 								});
 							},function(err, result){
 								if(err) return callback(err);							
-								resource.picks = result;
+								
 								callback(null, resource);
 							});
 

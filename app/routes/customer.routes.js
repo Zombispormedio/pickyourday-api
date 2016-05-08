@@ -270,7 +270,7 @@ router.route("/service/:id/:company")
     });
 router.route("/company/:id")
     .get(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.getCompanyById(req.params.id, function (err, event) {
+        CustomerCtrl.getCompanyById(req.user, req.params.id, function (err, event) {
             if (err) Response.printError(res, err);
             else
                 Response.printSuccess(res, event);

@@ -582,8 +582,27 @@ Controller.searchCompany = function(params, cb) {
     CompanyCtrl.search(params, cb);
 };
 
-Controller.getCompanyById = function(id, cb) {
-    CompanyCtrl.getProfile(id, cb);
+Controller.getCompanyById = function(id_customer, id, cb) {
+    var self=this;
+    CompanyCtrl.getProfile(id, function(err, company){
+        if(err) return cb(err);
+        if(!company) return cb(-1);
+        self.findById(id_customer, function(err, customer){
+            if(err) return cb(err);
+            if(!customer) return cb(-1);
+            var subscribes = customer.companies;
+            company.subscribed = false;
+            if(subscribes){
+                for (var key in subscribes) 
+                if (subscribes[key].equals(id)){
+                    company.subscribed= true;
+                    break;
+                }                   
+            }
+
+            cb(null, company);
+        })
+    });
 };
 
 

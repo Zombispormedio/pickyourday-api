@@ -16,6 +16,7 @@
     "express-ping": "1.1.0",
     "google-auth-library": "0.9.7",
     "googleapis": "3.1.0",
+    "handlebars": "4.0.5",
     "ical-generator": "0.2.7",
     "immutable": "3.7.6",
     "jsonwebtoken": "5.7.0",
@@ -27,8 +28,7 @@
     "node-uuid": "1.4.7",
     "random-js": "1.0.8",
     "request": "2.69.0",
-    "sendgrid": "2.0.0",
-    "sprintf-js": "1.0.3"
+    "sendgrid": "2.0.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -9,13 +9,13 @@ var port = process.env.PORT || 5000;
 app.set('port', port);
 require(C.routes + "routes.js")(app);
 
-var ConnectDB=require(C.config + "database.js");
+var ConnectDB = require(C.config + "database.js");
 
 var Server = function () {
     app.listen(port, function () {
-         console.log("Conectado: " + app.get("port"));
-			console.log("Iniciado: "+new Date());
-      
+        console.log("Conectado: " + app.get("port"));
+        console.log("Iniciado: " + new Date());
+
     });
 }
 

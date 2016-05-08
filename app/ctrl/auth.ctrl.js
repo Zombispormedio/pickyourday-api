@@ -1,11 +1,13 @@
 var C = require("../../config/config");
-var C = require("../../config/config");
 var Response = require(C.lib + "response");
 var AuthModel = require(C.models + "auth").Auth;
+var CustomerModel = require(C.models + "customer");
+var CompanyModel = require(C.models + "company");
 var SystemCtrl = require(C.ctrl + "system.ctrl");
 var Utils = require(C.lib + "utils");
 var Mail = require(C.lib + "mail");
 var async = require("async");
+var Handlebars = require('handlebars');
 var AuthController = {};
 
 
@@ -189,26 +191,74 @@ AuthController.forgotPassword = function (body, cb) {
 
     var email = body.email;
     async.waterfall([
-        function getUser(next) {
+        function checkUser(next) {
             AuthModel.findOne({ email: email, }, function (err, user) {
                 if (err) return next(err);
                 if (!user) return next("Wrong Email in Forgot Password")
 
                 next(null, user);
             });
-        }, 
+        },
         function getCode(user, next) {
             AuthController.UniqueResetCode(function (err, code) {
                 if (err) return next(err);
                 user.reset_code = code;
                 next(null, user);
             });
-        }, 
-        function save(user, next) {
-            user.save(next);
         },
-        function sendMail(next){
-            
+        function save(user, next) {
+            user.save(function (err, result) {
+                if (err) return next(err);
+                next(null, result)
+            });
+        },
+        function getUser(item, next) {
+            if (item.role == 2) {
+
+                CompanyModel.findOne({ "_id": item.user }, function (err, c) {
+                    if (err) return next(err);
+                    next(null, {
+                        name: c.name, code: item.reset_code, email: c.email
+                    })
+                });
+
+            } else {
+                if (item.role == 0 || item.role == 1) {
+                    CustomerModel.findOne({ "_id": item.user }, function (err, c) {
+                        if (err) return next(err);
+                        next(null, {
+                            name: c.name + " " + c.surname, code: item.reset_code, email: c.email
+                        })
+                    });
+                }
+            }
+        },
+
+        function sendMail(user, next) {
+
+            var options = {};
+            options.email = user.email;
+            options.toname = user.name;
+            options.subject = "Restablece tu contraseña de Pick Your Day";
+            options.fromname = "Pick Your Day Support Team";
+
+            var source = `<html>
+            <body>
+            <h3>Hola, {{name}} 😧😉</h3>
+           <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. 🙄</p>
+           <p>Si solicitaste restablecer tu contraseña para {{email}}, copía el siguiente código y pégalo en el formulario.</p>
+           <p>Tu código: {{code}}</p>
+            <p>Si no hiciste esta solicitud, por favor, ignora este correo electrónico. </p>
+            <h3> Consigue todo tus própositos y no pierdas el tiempo, <a href="http://www.pickyourday.tk/">Pick Your Day</a> 😬☺</h3>
+            </body>
+            </html>`;
+            var template = Handlebars.compile(source);
+
+            var result = template(user);
+
+            options.text = result;
+
+            Mail.send(options, next);
         }
 
     ], cb);

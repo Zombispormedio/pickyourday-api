@@ -102,17 +102,16 @@ Controller.search = function(user, query, cb){
 				async.map(resources, function(resource, next){	
 		            if(!resource) return next();
 					async.waterfall([
-						function(callback){				
-							async.map(resource.services, function(service, next){						
+						function(callback){			
+							var servicestemp = resource.services;	
+							resource.services = [];
+							async.map(servicestemp, function(service, next){						
 								ServiceCtrl.findById(user, service, function(err, serv){
-									if(err) return next(err);	
-									service=serv;
-									
-									next(null, service);
+									if(!err || serv != null) resource.services.push(serv);											
+									next(null);
 								});
 							},function(err, result){
 								if(err) return callback(err);							
-								resource.services = result;
 								callback(null, resource);
 							});
 						}, function(resource, callback){

@@ -1128,13 +1128,13 @@ CompanySchema.statics = {
 
 
 	servicePromoted: function (id_company, id_service, cb) {
-		var params = { 'service': id_service };
+		var params = { 'service': id_service, 'statePromotion': 'started' };
 
 		this.searchPromotion(id_company, params, function (err, promotion) {
 			if (err) cb(err);
-			if (promotion && promotion.length > 0)
+			if (promotion && promotion.length > 0){
 				cb(null, promotion[0].promotions);
-			else
+			}else
 				cb(null, null);
 		})
 	},

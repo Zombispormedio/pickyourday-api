@@ -25,7 +25,10 @@
     "morgan": "1.7.0",
     "node-gcm": "0.14.0",
     "node-uuid": "1.4.7",
-    "request": "2.69.0"
+    "random-js": "1.0.8",
+    "request": "2.69.0",
+    "sendgrid": "2.0.0",
+    "sprintf-js": "1.0.3"
   },
   "devDependencies": {},
   "scripts": {

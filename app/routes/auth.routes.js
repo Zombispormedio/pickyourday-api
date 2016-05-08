@@ -46,6 +46,16 @@ router.route("/role/:role")
     });
 });
 
+router.route("/forgot_password")
+    .post(function(req, res){
+    AuthCtrl.forgotPassword(req.body,function(err){
+        if(err)
+            Response.printError(res, err);
+        else
+            Response.printSuccess(res, "You will receive a message with a code");
+    });
+});
+
 
 
 module.exports = router;

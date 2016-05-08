@@ -358,14 +358,14 @@ Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues
 	var width = grillX;
 	var height = grillZ;
 	var vWidth = maxX+1;
-	var vHeight = maxZ*2;
+	var vHeight = (maxZ*2)+1;
 	var count=0;
 	for(var key in arrayBase){
 		plane.push([]);
 		count=0;
 
 		for(var w = 1; w<vWidth; w++){
-			for(var h=vHeight-2; h>=0; h-=2){
+			for(var h=vHeight-2; h>0; h-=2){
 				var v = (h*(vWidth+1)) + w;
 				plane[key].push(new Vertice(v, result[key][count].position[1]));
 				count++;

@@ -396,8 +396,9 @@ CustomerSchema.statics = {
             var companies = customer.companies;
             if(!companies)
                 companies= [];
-            else
+            
             var found = false;
+
             for (var key in companies) {
                 if (companies[key].equals(company))
                     return cb("Ya estas subscrito")

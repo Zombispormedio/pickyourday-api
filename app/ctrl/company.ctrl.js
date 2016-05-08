@@ -726,6 +726,7 @@ Controller.newPick = function(company, params, cb) {
     delete params.service;
     var self=this;
     PickCtrl.new(params, function(err, pick){
+        console.log(pick);
         if(err) return cb(err);
         if(!pick) return cb(-1);
         if(pick.promotion != null){

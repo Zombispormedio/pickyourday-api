@@ -412,7 +412,7 @@ CustomerSchema.statics = {
             });
 
         });
-    }
+    },
 
     unSubscribe: function(customer, company, cb){
         this.findById(id, function (err, customer) {

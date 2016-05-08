@@ -90,7 +90,6 @@ Controller.changeState = function(pick, state, cb){
 Controller.search = function (query, cb) {
     PickModel.search(query, function (err, picks) {
         if (err) return cb(err);
-        console.log(picks);
         if (!picks || picks.length == 0)
             return cb(null, []);
 

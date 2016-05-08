@@ -431,7 +431,6 @@ Controller.getTimeLine = function(id_company, params, cb){
 
         },
         function scheduleCompany(timeLine, callback){
-
             self.getProfile(id_company, function(err, company){
                 if(err) return callback(err);
                 var timeLineArray = new Array();
@@ -558,29 +557,31 @@ Controller.getTimeLine = function(id_company, params, cb){
                                         
                             var fill = Math.floor(picks[pick].duration/step);
                             var pos = ((date.getHours()*60 + date.getMinutes())-minInit)/step; 
-
+                            console.log("entra: "+ pos + "  count:"+count);
                             if(pos >= 0 && pos < count){
+
                                 for(var f=0; f<fill; f++){
                                     if(!customerData){
                                         temp[r]["steps"][day][pos+f] =1;
                                     }else{
-
+                                        
                                         if(picks[pick]!= null){
-                                            var pick =picks[pick].pick;
-                                            if(pick){
+                                            var pickTemp =picks[pick].pick;
+
+                                            if(pickTemp){
                                                 var customer = pick.customer;
                                                 var name="";
                                                 var phone="";
                                                
                                                 if(customer == null){
-                                                    name=pick.nameCli;
-                                                    phone=pick.phoneCli;
+                                                    name=pickTemp.nameCli;
+                                                    phone=pickTemp.phoneCli;
                                                 }else{
                                                     if(customer.name != undefined)
                                                         name=customer.name + " " + customer.surname;
                                                     phone=customer.phone;
                                                 }
-                                                var service = pick.service;
+                                                var service = pickTemp.service;
                                                 
                                                 var serviceName= "";
                                                 if(name == undefined)

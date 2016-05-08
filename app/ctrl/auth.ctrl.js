@@ -187,49 +187,52 @@ AuthController.forgotPassword = function (body, cb) {
     if (!body || !body.email) return cb("Fields not filled in Forget Password");
 
     var email = body.email;
-    var code = Utils.generateResetCode(5);
-    /* AuthModel.findOne({email:email, }, function(err, user){
-         if(err)return cb(err);
-         if(!user)return user
-     });*/
-     AuthController.UniqueResetCode(function(err, code){
-        console.log(err);
-        console.log(code); 
-     });
-     
-     cb()
+    async.waterfall([
+        function getUser(next) {
+            AuthModel.findOne({ email: email, }, function (err, user) {
+                if (err) return next(err);
+                if (!user) return next("Wrong Email in Forgot Password")
+
+                next(null, user);
+            });
+        }, function getCode(user, next) {
+            AuthController.UniqueResetCode(function (err, code) {
+                if (err) return next(err);
+                user.reset_code = code;
+                next(null, user);
+            });
+        }, function save(user, next) {
+            user.save(next);
+        }
+
+    ], cb);
+
+
 
 
 }
 
 AuthController.UniqueResetCode = function (cb) {
-    var user=void 0;
-    function getCode(){
+    function getCode() {
         return Utils.generateResetCode(5);
     }
-    var code=getCode();
-  
-    async.doWhilst(
-        function () { return user!=void 0 },
-        function (callback) {
-            count++;
-            setTimeout(function () {
-                callback(null, count);
-            }, 1000);
-            
-            AuthModel.findOne({reset_code:code}, function(err, result){
-                if(err)return callback(err);
-                user=result;
-               if(user){
-                   code=getCode();
-               }
-               
-               callback(null, code);
-                
-            })
-            
-            
-        },cb);
+
+    function checkCode(code) {
+        AuthModel.findOne({ reset_code: code }, function (err, result) {
+            if (err) return cb(err);
+            user = result;
+            if (user) {
+                checkCode(getCode());
+            } else {
+                cb(null, code);
+            }
+
+
+        })
+    }
+
+    checkCode(getCode())
+
 
 }
 

@@ -106,7 +106,24 @@ Controller.search = function(user, query, cb){
 						callback(null, service);
 					});
 				}, function(service,callback){
-					CompanyModel.servicePromoted(user, service._id, function(err, promotion){													
+					var id_service;
+					if(user == 0)
+						id_service= service.services._id;
+					else 
+						id_service = service._id
+					CompanyModel.servicePromoted(user, id_service, function(err, promotion){	
+					if(user == 0){												
+						if(promotion){
+
+							service.services.promotion = promotion;
+							var discount = promotion.discount;
+							var price = service.services.price;
+							if(discount > 0 && price > 0){
+								service.services.priceOff = price*(discount/100);
+								service.services.priceDiscounted = price - (price*(discount/100));
+							}
+						} else service.services.promotion = null;
+					}else{
 						if(promotion){
 							service.promotion = promotion;
 							var discount = promotion.discount;
@@ -115,6 +132,8 @@ Controller.search = function(user, query, cb){
 								service.priceDiscounted = service.price - (service.price*(discount/100));
 							}
 						} else service.promotion = null;
+
+					}
 
 						callback(null, service);
 					})		

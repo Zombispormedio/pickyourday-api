@@ -151,7 +151,7 @@ Controller.refreshPromotions = function(cb){
                 function changeStart(next) {
                     var paramsTemp = {};
                     paramsTemp.beforeInitDate = date;
-                    paramsTemp.state = "waiting";
+                    paramsTemp.statePromotion = "waiting";
                     self.search(companie._id, paramsTemp, function(err, promotions){
                         var params = {"state": "started"};
                         async.map(promotions, function(promotion, subNext){
@@ -160,9 +160,9 @@ Controller.refreshPromotions = function(cb){
                             if (err) return cb(err);
                             next();
                         });
-
                     })
-                },  function changeFinished(next) {
+                },  
+                function changeFinished(next) {
                     var paramsTemp = {};
                     paramsTemp.beforeEndDate = date;
                     self.search(companie._id, paramsTemp, function(err, promotions){
@@ -175,7 +175,8 @@ Controller.refreshPromotions = function(cb){
                         });
 
                     })
-                }], function(err, result) {
+                }
+                ], function(err, result) {
                         if (err) return callback(err);
                         callback(null, result);
                     });

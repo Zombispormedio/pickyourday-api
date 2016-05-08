@@ -373,10 +373,11 @@ CustomerSchema.statics = {
             if (err) return cb(err);
 
             if (!customer)
-                return cb("Customer not found");
+                return cb(-1);
 
-
+ console.log(params);
             customer = Utils.mergeMongoObjects(customer, params);
+            console.log(customer);
             customer.lastUpdate = new Date();
 
             customer.save(function (err) {
@@ -424,10 +425,8 @@ CustomerSchema.statics = {
             if(!companies)
                 companies = [];
             
-           // console.log(companies);
             for (var key in companies) 
                 if (companies[key].equals(company)){
-                    console.log(companies); 
                     companies.splice(key, 1);
                     break;
                 }

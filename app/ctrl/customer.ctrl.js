@@ -174,15 +174,12 @@ Controller.searchThings = function(params, cb) {
             var paramsTemp = {};
             if (params.category != undefined && params.category != '')
                 paramsTemp.category = params.category;
-            paramsTemp.search_text = params.name;
-            paramsTemp["city"] = params["location.city"]; 
-            paramsTemp["country"] = params["location.country"];
-            if (things.companies != undefined && things.companies.length > 0) {
-                var idCompanies = things.companies.map(function(a) {
-                    return a._id;
-                });
-                paramsTemp.idCompanies = idCompanies;
-            }
+            if(params.name)
+                paramsTemp.search_text = params.name;
+            if(params["location.city"])
+                paramsTemp["city"] = params["location.city"]; 
+            if(params["location.country"])
+                paramsTemp["country"] = params["location.country"];
             CompanyCtrl.search(paramsTemp, function(err, companies) {
                 if (err) return callback(err);
                 if (companies)
@@ -617,6 +614,13 @@ Controller.saveNotification = function(customer_id, body, cb){
 }
 
 Controller.subscribe = function(customer, company, cb){
+    this.subscribe(customer, company, function(err, result){
+        if(err) return cb(err);
+        cb(null, result)
+    })  
+}
+
+Controller.unSubscribe = function(customer, company, cb){
     this.subscribe(customer, company, function(err, result){
         if(err) return cb(err);
         cb(null, result)

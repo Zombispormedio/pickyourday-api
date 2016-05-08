@@ -396,16 +396,41 @@ CustomerSchema.statics = {
             var companies = customer.companies;
             if(!companies)
                 companies= [];
-            
+
             var found = false;
 
             for (var key in companies) {
                 if (companies[key].equals(company))
-                    return cb("Ya estas subscrito")
+                    return cb(null, "Ya estas subscrito")
             }
 
             if(!found)
                 companies.push(company);
+            customer.save(function (err) {
+                if (err) return cb(err);
+                cb();
+            });
+
+        });
+    }
+
+    unSubscribe: function(customer, company, cb){
+        this.findById(id, function (err, customer) {
+            if (err) return cb(err);
+
+            if (!customer)
+                return cb(-1);
+            var companies = customer.companies;
+            if(!companies)
+                return cb(null, []);
+            companies = [];
+
+            for (var key in companies) 
+                if (companies[key].equals(company))
+                    companies.slice(key, 1);
+                
+                    
+            
             customer.save(function (err) {
                 if (err) return cb(err);
                 cb();

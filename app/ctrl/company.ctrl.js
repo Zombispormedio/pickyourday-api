@@ -724,12 +724,16 @@ Controller.newPick = function(company, params, cb) {
     params.origin = "manual";
     params.state = "active";
     delete params.service;
-
+    var self=this;
     PickCtrl.new(params, function(err, pick){
         if(err) return cb(err);
         if(!pick) return cb(-1);
-
-        cb(null, pick);
+        if(pick.promotion != null){
+             self.usePromotion(pick.company.id_company, pick.promotion, function(err){
+                cb(null, pick);
+             });
+        }else cb(null, pick);
+        
     });
 };
 

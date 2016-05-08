@@ -36,7 +36,7 @@ router.route("")
                 Response.printSuccess(res, customers);
         });
     })
-    .put(AuthController.checkAdmin(), function (req, res) {
+    .put(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.modify(req.user, req.body, function (err, customer) {
             if (err) Response.printError(res, err);
             else

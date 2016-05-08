@@ -37,8 +37,7 @@ Controller.new = function (body, cb) {
             if(service.promotion.initDate <= date && service.promotion.endDate > date)
                 pick.promotion = service.promotion._id;
             else pick.promotion = null;
-        }
-        else pick.promotion = null;
+        }else pick.promotion = null;
         pick.save(function (err) {
             if (err) return cb(err);
             CompanyModel.asignPick(pick.company.id_company, body.resource, pick._id, body.company.id_service, function(err){
@@ -121,7 +120,12 @@ Controller.search = function (query, cb) {
                     ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
                         if (err) return callback(err);
                         if (service) {                                  
-                            p.service = service;                          
+                            p.service = service; 
+                            if(p.promotion == null){
+                                p.service.promotion = null;
+                                delete p.service.priceOff;
+                                delete p.service.priceDiscounted;
+                            }                         
                         }
                         callback(null, p);
 
@@ -191,11 +195,14 @@ Controller.findById = function (id, cb) {
                 });
             },
             function (p, callback) {
-
-                ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
-                  
+                ServiceCtrl.findById(p.company._id, p.service, function (err, service) {                 
                     if (service) {         
                         p.service = service;
+                        if(p.promotion == null){
+                            p.service.promotion = null;
+                            delete p.service.priceOff;
+                            delete p.service.priceDiscounted;
+                        }
                         
                     }
                     callback(null, p);

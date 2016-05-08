@@ -20,6 +20,7 @@ var HistoryPromotionSchema = new Schema({
 	discount: Number,
 	dateCreated: Date,
 	services:[Schema.ObjectId],
+	idPromotion: String, 
 	state: {
 		type: String, 
 		enum: ['waiting', 'started', 'spent', 'finished']
@@ -70,6 +71,9 @@ HistoryPromotionSchema.statics={
 					break;
 				case 'lessTimeUsed':
 					query.where({'timesUsed' : {'$gte' : parseInt(params[key])}});
+					break;
+				case 'idPromotion':
+					query.where({'idPromotion': params[key].toString()});
 					break;
 				default:
 					query.where(key).equals(Utils.like(params[key]));

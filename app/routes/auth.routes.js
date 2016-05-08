@@ -2,6 +2,7 @@ var Router = require("express").Router;
 var C = require("../../config/config");
 var AuthCtrl=require(C.ctrl+"auth.ctrl");
 var Response = require(C.lib+"response");
+var CategoryModel = require(C.models+"category");
 var router = Router();
 router.route("")
     .get(function (req, res) {
@@ -66,6 +67,16 @@ router.route("/reset_password")
     });
 });
 
+
+router.route("/category")
+    .get( function (req, res) {
+          CategoryModel.search({}, function(err, categories){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, categories);
+        } );
+    })
+    
 
 
 module.exports = router;

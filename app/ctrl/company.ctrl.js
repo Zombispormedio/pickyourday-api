@@ -610,7 +610,7 @@ Controller.getTimeLine = function(id_company, params, cb){
                                             temp[r]["steps"][day][pos+f] = {"customer": name, 
                                                                             "phone": phone, 
                                                                             "service":serviceName, 
-                                                                            "id_pick":pick._id}
+                                                                            "id_pick":pickTemp._id}
                                              
                                         }
                                         

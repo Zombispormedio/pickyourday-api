@@ -279,18 +279,18 @@ router.route("/company/:id")
 
 router.route("/subscribe/:id")
     .put(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.subscribe(req.user, req.params.id, function (err) {
+        CustomerCtrl.subscribe(req.user, req.params.id, function (err, result) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Event modified");
+                Response.printSuccess(res, result);
         });
     });
 router.route("/unSubscribe/:id")
     .put(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.unSubscribe(req.user, req.params.id, function (err) {
+        CustomerCtrl.unSubscribe(req.user, req.params.id, function (err, result) {
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, "Event modified");
+                Response.printSuccess(res, result);
         });
     });
 

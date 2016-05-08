@@ -5,6 +5,7 @@ var PickCtrl = require(C.ctrl + "pick.ctrl");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
+var CustomerCtrl = require(C.ctrl + "customer.ctrl");
 var SystemModel = require(C.models + "system");
 var PickModel = require(C.models + "pick");
 var ServiceNameModel = require(C.models + "service_name");
@@ -166,17 +167,20 @@ Controller.notification = function (cb){
      
     // Add the registration tokens of the devices you want to send to 
     var registrationTokens = [];
-    registrationTokens.push(
-"APA91bHNn5BwFf4xQZLWPa_kRXVbeRhMWbis_Z7gcruDuNLDLW0v_WP-r7_kklGs4HQ8SfkUYtYEgHDIlrtXJP-4yQlVE9p66jX7xl-kY6VuqS0yunK_bshc51WQqtoB_uudfFZlBZAekWQYB0Ic9GQDOIZojhePCQ");
-    //registrationTokens.push('regToken2');
-     
+    var key = CustomerCtrl.findById("5713d96a9ccf01030080e865", function(err, customer){
+        registrationTokens.push(
+    customer.notification);
+        //registrationTokens.push('regToken2');
+         
 
-    sender.sendNoRetry(message, { registrationTokens: registrationTokens }, function(err, response) {
-      if(err) console.error(err);
-      else {   console.log(response); console.log("response");
-      }
-      cb();
+        sender.sendNoRetry(message, { registrationTokens: registrationTokens }, function(err, response) {
+          if(err) console.error(err);
+          else {   console.log(response); console.log("response");
+          }
+          cb();
+        });
     });
+    
 
 
      

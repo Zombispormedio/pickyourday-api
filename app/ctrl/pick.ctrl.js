@@ -28,7 +28,6 @@ Controller.new = function (body, cb) {
     pick.dateCreated = new Date();
 
     ServiceCtrl.findById(body.company.id_company, body.company.id_service, function(err, service){
-        console.log(service);
         if(err) return cb(err);
         if(!service) return cb(null, "Service not found in new Pick");
         pick.duration = service.duration;

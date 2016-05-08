@@ -4,6 +4,7 @@ var Response = require(C.lib + "response");
 var AuthModel = require(C.models + "auth").Auth;
 var SystemCtrl = require(C.ctrl + "system.ctrl");
 var Utils = require(C.lib + "utils");
+var Mail = require(C.lib + "mail");
 var async = require("async");
 var AuthController = {};
 
@@ -195,14 +196,19 @@ AuthController.forgotPassword = function (body, cb) {
 
                 next(null, user);
             });
-        }, function getCode(user, next) {
+        }, 
+        function getCode(user, next) {
             AuthController.UniqueResetCode(function (err, code) {
                 if (err) return next(err);
                 user.reset_code = code;
                 next(null, user);
             });
-        }, function save(user, next) {
+        }, 
+        function save(user, next) {
             user.save(next);
+        },
+        function sendMail(next){
+            
         }
 
     ], cb);

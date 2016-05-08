@@ -61,8 +61,7 @@ var CustomerSchema = new Schema({
     location: {
         country: String,
         direction: String, 
-        currentLocation: GeolocationType,
-        geolocation: [GeolocationType],
+        geolocation: {longitude:Number, latitude:Number, name: String}
     },
     events: [EventSchema],
     prepicks: [PrepickSchema],

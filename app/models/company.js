@@ -120,7 +120,7 @@ var CompanySchema = new Schema({
 		city: String,
 		zipcode: String,
 		address: String,
-		geolocation: GeolocationType
+		geolocation: {longitude:Number, latitude:Number, name: String}
 	},
 	category: {
 		type: Schema.ObjectId,

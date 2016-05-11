@@ -1,7 +1,7 @@
 var async = require("async");
 var C = require("../../config/config");
 var PickCtrl = require(C.ctrl + "pick.ctrl");
-var AuthCtrl = require(C.ctrl + "auth.ctrl");
+var AuthModel = require(C.models + "auth").Auth;
 var EventCtrl = require(C.ctrl + "event.ctrl");
 var PrePickCtrl = require(C.ctrl + "prePick.ctrl");
 var CompanyCtrl = require(C.ctrl + "company.ctrl");
@@ -112,9 +112,13 @@ Controller.delete = function(id, cb) {
 
         }, function unableAccess(customer, next) {
 
-            AuthCtrl.UnableAccess(customer.email, function(err) {
+            AuthModel.findOne({ email: customer.email }, function (err, auth) {
                 if (err) return next(err);
-                next(null, customer);
+                auth.remove(function (err) {
+                    if (err) return next(err);
+                    next(null, customer);
+                });
+
             });
 
         }, function deleteCustomer(customer, next) {

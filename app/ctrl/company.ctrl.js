@@ -373,7 +373,7 @@ Controller.payment = function(body, cb){
 }
 
 Controller.delete = function(id, cb) {
-
+    
     if (!id) return cb("Fields not Filled");
 
     async.waterfall([
@@ -405,19 +405,21 @@ Controller.delete = function(id, cb) {
                 }, function done() {
                     next(null, company);
                 });
+            }else{
+                 next(null, company);
             }
 
 
         }, function unableAccess(company, next) {
-
-            AuthCtrl.UnableAccess(company.email, function(err) {
+            console.log( AuthCtrl)
+           AuthCtrl.UnableAccess(company.email, function(err) {
                 if (err) return next(err);
                 next(null, company);
             });
 
         }, function deleteCompany(company, next) {
             company.remove(function(err) {
-                if (err) return next();
+                if (err) return next(err);
                 next();
             });
         }

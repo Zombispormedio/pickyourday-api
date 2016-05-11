@@ -4,6 +4,7 @@ var AuthCtrl=require(C.ctrl+"auth.ctrl");
 var Response = require(C.lib+"response");
 var CategoryModel = require(C.models+"category");
 var router = Router();
+
 router.route("")
     .get(function (req, res) {
         Response.printSuccess(res, "message", "Do you want register?" );

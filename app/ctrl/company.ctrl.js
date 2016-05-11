@@ -20,6 +20,7 @@ var _ = require("lodash");
 var Controller = {};
 
 var paypal = require('paypal-rest-sdk');
+var request = require('request');
 
 Controller.newCompany = function (body, cb) {
     if (!body || !body.cif || !body.email || !body.password) return cb("Fields not Filled");
@@ -332,7 +333,7 @@ Controller.setPremium = function (company_id, body, cb) {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": "http://business-pickyourday.herokuapp.com/#/pago",
+                    "return_url": "http://business-pickyourday.herokuapp.com/#/dashboard",
                     "cancel_url": "http://business-pickyourday.herokuapp.com/#/profile"
                 },
                 "transactions": [{
@@ -368,9 +369,27 @@ Controller.setPremium = function (company_id, body, cb) {
     })
 }
 
-Controller.payment = function (body, cb) {
-    console.log(body);
-    cb();
+
+Controller.payment = function(params, cb){
+    var options = {
+      method: 'POST', 
+      body: {"payer_id": params.PayerID},
+      url: 'https://api.sandbox.paypal.com/v1/payments/payment/'+params.paymentId+'/execute',
+      headers: {         
+        'Authorization': 'Bearer '+params.token
+      },
+      json: true
+    };
+
+
+
+    request(options, function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        console.log(info.stargazers_count + " Stars");
+        console.log(info.forks_count + " Forks");
+      }
+    });
 }
 
 Controller.delete = function (id, cb) {

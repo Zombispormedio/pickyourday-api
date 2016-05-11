@@ -18,11 +18,14 @@ var Utils = require(C.lib + "utils");
 var _=require("lodash");
 var Controller = {};
 
+var paypal = require('paypal-rest-sdk');
+
 Controller.newCompany = function(body, cb) {
     if (!body || !body.cif || !body.email || !body.password) return cb("Fields not Filled");
     var company = new CompanyModel(body);
     company.registerDate = new Date();
     company.state = "demo";
+    company.premium = false;
     company.save(function(err, result) {
         if (err) return cb(err);
         cb(null, result);
@@ -276,6 +279,97 @@ Controller.modify = function(id, body, cb) {
         cb();
     });
 };
+
+Controller.setPremium = function(company_id, body, cb){
+    console.log(body);
+    if(!body || !body.premium)
+        return cb("Fields not filled");
+    var self = this;
+
+    CompanyModel.findById(company_id, function(err, company){
+
+        var price = 0;
+        var product ="";
+        var dateExpire = new Date();
+        dateExpire.setHours(23);
+        dateExpire.setMinutes(0);
+        company.datePayment = new Date();
+
+        switch(body.premium){
+            case 1: //1 month
+                dateExpire.setMonth(dateExpire.getMonth()+1); 
+                product = "Premium durante 1 mes";
+                price = 10;
+            break;
+            case 2: //6 month
+                dateExpire.setMonth(dateExpire.getMonth()+6);
+                product = "Premium durante 3 meses";
+                price = 50; 
+            break;
+            case 3: //12 month
+                dateExpire.setMonth(dateExpire.getMonth()+12);
+                product = "Premium durante 1 año"; 
+                price = 100;
+            break;
+        }
+
+        company.premium=true;
+        company.dateExpire = dateExpire;
+
+        company.save(function(err){
+            if(err) return cb(err);
+            //PAGO CON PAYPAL
+            paypal.configure({
+              'mode': 'sandbox', //sandbox or live
+              'client_id': 'Aer8LzXrVO-cOADG6DJgdGlk_jqVVwhsZvEAK2WsoZjcWLhgd016ljoSXryhu8gKLsWMCyo2OYyrmMqd',
+              'client_secret': 'EGIpx3hwRRXAz-FW75DzdG3PvgCkxsgPR3uO1PZUzun9i7fB7UljPm5SJ7jGgek79MonBNCs3gJImmvr'
+            });
+
+            var date = ((dateExpire.getMonth() + 1) + '/' + dateExpire.getDate() + '/' +  dateExpire.getFullYear());
+            var create_payment_json = {
+                "intent": "authorize",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "redirect_urls": {
+                    "return_url": "http://business-pickyourday.herokuapp.com/#/pago?result=ok",
+                    "cancel_url": "http://business-pickyourday.herokuapp.com/#/pago?result=cancel"
+                },
+                "transactions": [{
+                    "item_list": {
+                        "items": [{
+                            "name": product,
+                            "sku": "premium",
+                            "price": price,
+                            "currency": "EUR",
+                            "quantity": 1
+                        }]
+                    },
+                    "amount": {
+                        "currency": "EUR",
+                        "total": price
+                    },
+                    "description": "La cuenta será premium hasta el "+ date
+                }]
+            };
+
+            paypal.payment.create(create_payment_json, function (error, payment) {
+                if (error) {
+                    cb(error);
+                } else {
+                    console.log("Create Payment Response");
+                    console.log(payment);
+                    cb(null, payment.links[1].href)
+                }
+            });
+
+        });
+            
+    })
+
+
+
+}
 
 Controller.delete = function(id, cb) {
 

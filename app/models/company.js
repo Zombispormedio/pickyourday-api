@@ -713,10 +713,14 @@ CompanySchema.statics = {
 		this.findOne({ _id: id_company }, function (err, company) {
 			if (err) return cb(err);
 			if (!company) return cb("Company not found");
+			var now = new Date();
+			if(company.premium == false || dateExpire < params.initDate){
+				return cb("Company not premium");
+			}
 
 			company.promotions.push(params);
 			var promotion = company.promotions[company.promotions.length - 1];
-			var now = new Date();
+			
 			promotion.dateCreated = now;
 			if (promotion.initDate < now) {
 				promotion.state = "started";

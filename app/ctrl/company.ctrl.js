@@ -287,7 +287,6 @@ Controller.setPremium = function(company_id, body, cb){
     var self = this;
 
     CompanyModel.findById(company_id, function(err, company){
-
         var price = 0;
         var product ="";
         var dateExpire = new Date();
@@ -366,9 +365,11 @@ Controller.setPremium = function(company_id, body, cb){
         });
             
     })
+}
 
-
-
+Controller.payment = function(body, cb){
+    console.log(body);
+    cb();
 }
 
 Controller.delete = function(id, cb) {

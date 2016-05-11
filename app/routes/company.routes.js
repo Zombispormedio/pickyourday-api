@@ -242,6 +242,15 @@ router.route("/developer")
         });
     });
 
+router.route("/payment")
+    .post(function (req, res) { 
+        CompanyCtrl.payment(req.body, function(err){
+            if(err) Response.printError(res, err);
+            else
+                Response.printSuccess(res,  "payment");
+        });
+    });
+
 router.route("/setPremium")
     .post(AuthController.checkCompany(), function(req, res){
         CompanyCtrl.setPremium(req.user, req.body, function(err, url){

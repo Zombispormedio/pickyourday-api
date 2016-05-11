@@ -118,7 +118,7 @@ Controller.search = function (query, cb) {
                 },
                 function (p, callback) {
                     ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
-                        if (err) return callback(err);
+                        if (err) return callback();
                         if (service) {                                  
                             p.service = service; 
                             if(p.promotion == null){

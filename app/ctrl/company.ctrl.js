@@ -359,6 +359,10 @@ Controller.newRateService = function(user, body, cb) {
 
 Controller.getTimeLine = function(id_company, params, cb){
     if(!id_company) return cb("Fields not Filled getTimeLine");
+    var self=this;
+
+    
+
     if(!params) params={};
     if(!params.date)
         params.date= new Date();
@@ -380,7 +384,7 @@ Controller.getTimeLine = function(id_company, params, cb){
 
 
     var timeLine = [];
-    var self=this;
+    
 
     async.waterfall([
         function getResources(callback){

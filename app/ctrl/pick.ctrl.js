@@ -118,7 +118,7 @@ Controller.search = function (query, cb) {
                 },
                 function (p, callback) {
                     ServiceCtrl.findById(p.company._id, p.service, function (err, service) {
-                        if (err) return callback();
+                        if (err) return callback(p);
                         if (service) {                                  
                             p.service = service; 
                             if(p.promotion == null){
@@ -132,6 +132,7 @@ Controller.search = function (query, cb) {
                     });
                 },
                 function (p, callback) {
+					if(!p.service)return callback(p)
                     ServiceNameModel.findById(p.service.id_name)
                         .select('name duration keywords description')
                         .exec(function (err, service_name) {

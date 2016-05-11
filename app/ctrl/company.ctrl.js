@@ -332,8 +332,8 @@ Controller.setPremium = function(company_id, body, cb){
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": "http://business-pickyourday.herokuapp.com/#/pago?result=ok",
-                    "cancel_url": "http://business-pickyourday.herokuapp.com/#/pago?result=cancel"
+                    "return_url": "http://business-pickyourday.herokuapp.com/#/pago",
+                    "cancel_url": "http://business-pickyourday.herokuapp.com/#/profile"
                 },
                 "transactions": [{
                     "item_list": {

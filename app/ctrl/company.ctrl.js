@@ -936,8 +936,21 @@ Controller.modifyService = function (company, id, body, cb) {
     ServiceCtrl.modify(company, id, body, cb);
 };
 
-Controller.deleteService = function (company, params, cb) {
-    ServiceCtrl.delete(company, params, cb);
+Controller.deleteService = function (company, service_id, cb) {
+    
+    async.waterfall([
+        
+        function(next){
+            PickModel.find({"company.id_service":service_id}).remove().exec(next);
+        },
+        function(next){
+            ServiceCtrl.delete(company, service_id, next);
+        }
+        
+        
+    ], cb);
+    
+    
 };
 
 Controller.getServiceById = function (company, id, cb) {

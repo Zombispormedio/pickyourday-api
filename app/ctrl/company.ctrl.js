@@ -957,7 +957,7 @@ Controller.rollback = function(id) {
 };
 
 Controller.updateProfile = function(company_id, params, cb) {
-    var f_params = _.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords", "scheduleActivity"]);
+    var f_params = _.pick(params, ["emailSecond", "name", "description", "images", "phone", "web", "location", "keywords", "scheduleActivity", "state"]);
 
     CompanyModel.update({ _id: company_id }, f_params, function(err, result) {
         if (err) return cb(err);

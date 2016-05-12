@@ -1,5 +1,5 @@
 var C = require("../../config/config");
-
+var Error = require(C.lib + "error")();
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var crypto = require("crypto");
@@ -53,7 +53,7 @@ AuthSchema.methods = {
     authenticate: function(u, cb) {
 
         if (!this.checkPassword(u.password)) {
-            return cb("Password not Valid");
+            return cb(Error.no_authenticate("AuthenticateAuthModel"));
         }
 
         var token = Utils.sign({
@@ -70,7 +70,7 @@ AuthSchema.methods = {
     },
 
     encryptPassword: function(password) {
-        if (!password) return "";
+        if (!password) return Error.no_data("EncryptAuthModel");
         return crypto.createHmac("sha1", this.salt).update(password).digest("hex");
     }
 
@@ -81,7 +81,7 @@ AuthSchema.statics = {
 
     findByToken: function(token, cb) {
         this.findOne({ email: Utils.verify(token).email, token: { "$in": [token] } }, function(err, result) {
-            if (err) return cb(err);
+            if (err) return cb(Error.mongo_find("FindByTokenAuthModel"));
             if (!result) return cb("No Authorization");
             cb(null, result);
         });

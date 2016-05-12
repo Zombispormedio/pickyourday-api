@@ -24,7 +24,7 @@ AuthController.register = function (role, user, id, cb) {
     });
 
     if(user.social){
-         auth=user.social;
+         auth.social=user.social;
     }
     
     auth.save(function (err) {
@@ -53,6 +53,7 @@ AuthController.login = function (u, cb) {
         },
         function (user, next) {
             user.authenticate(u, function (err, token) {
+                if(err)return next(err);
                 user.token.push(token);
                 next(err, user, token);
             });

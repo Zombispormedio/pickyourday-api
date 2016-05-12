@@ -19,6 +19,21 @@ var errors = {
         code:"005",
         message:"Usuario no existe"
         
+    },
+    
+    no_authenticate:{
+        code:"006",
+        message:"Contraseña no valida"
+    },
+    
+    no_data:{
+         code:"007",
+        message:"No hay Datos"
+    },
+    
+    no_authorization:{
+         code:"008",
+        message:"No tienes autorización"
     }
 
     

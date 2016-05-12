@@ -363,7 +363,6 @@ Controller.setPremium = function (company_id, body, cb) {
                     cb(null, payment.links[1].href)
                 }
             });
-
         });
 
     })

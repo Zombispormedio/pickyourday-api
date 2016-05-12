@@ -22,6 +22,10 @@ AuthController.register = function (role, user, id, cb) {
         user: id
     });
 
+    if(user.social){
+         auth=user.social;
+    }
+    
     auth.save(function (err) {
         if (err) return cb(err);
         cb();
@@ -195,6 +199,7 @@ AuthController.forgotPassword = function (body, cb) {
             AuthModel.findOne({ email: email, }, function (err, user) {
                 if (err) return next(err);
                 if (!user) return next("Wrong Email in Forgot Password")
+                if(user.social)return next("Lo siento, te has registrado con "+user.social+". No podemos cambiarte la contraseña.");
 
                 next(null, user);
             });

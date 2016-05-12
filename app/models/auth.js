@@ -24,7 +24,8 @@ var AuthSchema = new Schema({
     token: [String],
     user: Schema.ObjectId,
     developer: { access_token: String, secret_token: String },
-    reset_code:String
+    reset_code:String,
+    social:String
 
 });
 AuthSchema.virtual('password').set(function(password) {

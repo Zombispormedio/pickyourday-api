@@ -2,23 +2,26 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var google = require('googleapis');
 var OAuth2Client = google.auth.OAuth2;
-var Immutable=require("immutable");
+var Immutable = require("immutable");
 var chance = require("chance").Chance();
 
-const SEED_LENGTH=15;
+var C = require("../../config/config");
+var Error = require(C.lib + "error")();
+
+const SEED_LENGTH = 15;
 
 var SystemSchema = new Schema({
 
-    drive:{},
-    role_seeds:{
-        "admin":String,
-        "customer":String,
-        "company_boss":String,
-        "company_worker":String
+    drive: {},
+    role_seeds: {
+        "admin": String,
+        "customer": String,
+        "company_boss": String,
+        "company_worker": String
     },
-    test_data:{
-        customers:{},
-        companies:{}
+    test_data: {
+        customers: {},
+        companies: {}
     }
 
 });
@@ -26,24 +29,25 @@ var SystemSchema = new Schema({
 
 SystemSchema.statics = {
 
-    getDriveClient:function(cb){
-        var self=this;
+    getDriveClient: function (cb) {
+        var local = "getDriveClientSystemModel"
+        var self = this;
 
-        this.findOne({drive:{$ne:null}}, function(err, system){
-            if(err)return cb(err);
-            var result=system.drive;
-           
+        this.findOne({ drive: { $ne: null } }, function (err, system) {
+            if (err) return cb(Error.mongo_find(local, err));
+            var result = system.drive;
+
 
             var oauth2Client = new OAuth2Client(result.CLIENT_ID, result.CLIENT_SECRET, result.REDIRECT_URL);
             oauth2Client.setCredentials(result.token);
-      
 
-            self.refreshTokensDrive(oauth2Client, system, function(err, oauth){
-                
-                if(err)return cb(err);
-                var client={
-                    drive:google.drive({ version: 'v2', auth: oauth }),
-                    hostname:result.path
+
+            self.refreshTokensDrive(oauth2Client, system, function (err, oauth) {
+
+                if (err) return cb(err);
+                var client = {
+                    drive: google.drive({ version: 'v2', auth: oauth }),
+                    hostname: result.path
                 };
                 cb(null, client);
             });
@@ -53,22 +57,24 @@ SystemSchema.statics = {
         });
     },
 
-    refreshTokensDrive:function(oauth, system, cb){
-        var now=new Date();
-        var expiry_date=new Date();
-        if(expiry_date>now){
-            return  cb(null, oauth);
+    refreshTokensDrive: function (oauth, system, cb) {
+        var local = "refreshTokensDriveSystemModel";
+
+        var now = new Date();
+        var expiry_date = new Date();
+        if (expiry_date > now) {
+            return cb(null, oauth);
         }
-    
-       
-        oauth.refreshAccessToken(function(err, tokens) {
-      
-            if(err)return cb(err);
-            system.drive.token=tokens;
+
+
+        oauth.refreshAccessToken(function (err, tokens) {
+
+            if (err) return cb(Error.refresh(local, err));
+            system.drive.token = tokens;
             oauth.setCredentials(tokens);
 
-            system.save(function(err){
-                if(err)return cb(err);
+            system.save(function (err) {
+                if (err) return cb(Error.mongo_save(local, err));
                 cb(null, oauth);
             });
 
@@ -76,7 +82,7 @@ SystemSchema.statics = {
 
     },
 
-    generateSeeds:function(len){
+    generateSeeds: function (len) {
         var set = Immutable.Set();
 
         while (set.size < len)
@@ -85,9 +91,9 @@ SystemSchema.statics = {
         return set.toArray().join("");
     },
 
-    generateRoleSeeds:function(num){
-        var self=this;
-        var seed=self.generateSeeds;
+    generateRoleSeeds: function (num) {
+        var self = this;
+        var seed = self.generateSeeds;
 
         var set = Immutable.Set();
 
@@ -98,14 +104,14 @@ SystemSchema.statics = {
 
     },
 
-    generateRoleCode:function(seed){
+    generateRoleCode: function (seed) {
 
         var temp_seed = seed.split("");
 
         var code = "";
 
         while (code.length < SEED_LENGTH) {
-            var random_index = chance.integer({min: 0, max: temp_seed.length - 1 });
+            var random_index = chance.integer({ min: 0, max: temp_seed.length - 1 });
             var letter = temp_seed[random_index];
             code += letter;
 
@@ -115,38 +121,46 @@ SystemSchema.statics = {
         return code;
     },
 
-    resetRoles:function(cb){
-        var self=this;
-        this.findOne({ role_seeds:{$ne:null}}, function(err, system){
-            if(err)return cb(err);
-            var roles=Object.keys(system.role_seeds.toObject());
+    resetRoles: function (cb) {
+        var local = " resetRolesSystemModel";
 
-            var seeds=self.generateRoleSeeds(roles.length);
+        var self = this;
+        this.findOne({ role_seeds: { $ne: null } }, function (err, system) {
+            if (err) return cb(Error.mongo_find(local, err));
 
-            system.role_seeds=roles.reduce(function(prev, a, index){
+            var roles = Object.keys(system.role_seeds.toObject());
+
+            var seeds = self.generateRoleSeeds(roles.length);
+
+            system.role_seeds = roles.reduce(function (prev, a, index) {
                 console.log(seeds[index].length);
-                prev[a]=seeds[index];
+                prev[a] = seeds[index];
                 return prev;
             }, {});
 
-            system.save(cb);
+            system.save(function (err, result) {
+                if (err) return cb(Error.mongo_save(local, err));
+                cb(null, result);
+            });
         });
     },
-    getSeeds:function(cb){
-        this.findOne({ role_seeds:{$ne:null}}, function(err, system){
-            if(err)return cb(err);
+    getSeeds: function (cb) {
+        var local = "getSeedsSystemModel";
+
+        this.findOne({ role_seeds: { $ne: null } }, function (err, system) {
+            if (err) return cb(Error.mongo_find(local, err));
 
             cb(null, system.role_seeds.toObject());
 
         });
     },
 
-    commonToSeed:function(code, seed){
+    commonToSeed: function (code, seed) {
         var code_set = Immutable.Set(code.split("")).toArray().join("");
 
-        var seed_set=Immutable.Set(seed.split("")).toArray().join("");
+        var seed_set = Immutable.Set(seed.split("")).toArray().join("");
 
-        return code_set===seed_set;
+        return code_set === seed_set;
     }
 
 

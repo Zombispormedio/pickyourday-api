@@ -82,19 +82,19 @@ AuthSchema.statics = {
     findByToken: function(token, cb) {
         this.findOne({ email: Utils.verify(token).email, token: { "$in": [token] } }, function(err, result) {
             if (err) return cb(Error.mongo_find("FindByTokenAuthModel"));
-            if (!result) return cb("No Authorization");
+            if (!result) return cb(Error.no_authorization("FindByTokenAuthModel"));
             cb(null, result);
         });
     },
     removeToken: function(token, cb) {
         this.findOne({ email: Utils.verify(token).email, token: { "$in": [token] } }, function(err, result) {
-            if (err) return cb(err);
-            if (!result) return cb("No Authorization");
+            if (err) return cb(Error.mongo_find("RemoveTokenAuthModel"));
+            if (!result) return cb(Error.no_authorization("RemoveTokenAuthModel"));
 
             var index = result.token.indexOf(token);
             result.token.splice(index, 1);
             result.save(function(err) {
-                if (err) return cb(err);
+                if (err) return cb(Error.mongo_save("RemoveTokenAuthModel"));
                 cb();
             });
 

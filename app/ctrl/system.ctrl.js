@@ -11,6 +11,8 @@ var PickModel = require(C.models + "pick");
 var ServiceNameModel = require(C.models + "service_name");
 var CategoryModel = require(C.models + "category");
 var Utils = require(C.lib + "utils");
+var Error = require(C.lib + "error")();
+
 var async = require("async");
 var path = require("path");
 var fs = require("fs");
@@ -22,9 +24,15 @@ Controller.searchCategory = function (params, cb) {
     CategoryCtrl.search(params, cb);
 };
 Controller.countCategory = function (params, cb) {
-    if(params.p)delete params.p;
-     var query=CategoryModel.getQuery(params);
-       query.count().exec(cb);
+    var local = "countCategorySystemCtrl"
+
+    if (params.p) delete params.p;
+    var query = CategoryModel.getQuery(params);
+    query.count().exec(function (err, result) {
+        if (err) return cb(Error.mongo_count(local, err));
+
+        cb(null, result);
+    });
 };
 
 Controller.newCategory = function (params, cb) {
@@ -57,9 +65,15 @@ Controller.searchPick = function (params, cb) {
 };
 
 Controller.countPick = function (params, cb) {
-    if(params.p)delete params.p;
-     var query=PickModel.getQuery(params);
-       query.count().exec(cb);
+    var local = "countPickSystemCtrl";
+
+    if (params.p) delete params.p;
+    var query = PickModel.getQuery(params);
+    query.count().exec(function (err, result) {
+        if (err) return cb(Error.mongo_count(local, err));
+
+        cb(null, result);
+    });
 };
 
 Controller.getPickById = function (id, cb) {
@@ -81,9 +95,15 @@ Controller.searchServiceName = function (params, cb) {
 };
 
 Controller.countServiceName = function (params, cb) {
-    if(params.p)delete params.p;
-     var query=ServiceNameModel.getQuery(params);
-       query.count().exec(cb);
+    var local = "countServiceNameSystemCtrl";
+
+    if (params.p) delete params.p;
+    var query = ServiceNameModel.getQuery(params);
+    query.count().exec(function (err, result) {
+        if (err) return cb(Error.mongo_count(local, err));
+
+        cb(null, result);
+    });
 };
 
 Controller.newServiceName = function (params, cb) {
@@ -103,13 +123,13 @@ Controller.getServiceNameById = function (id, cb) {
 };
 
 //******************MAINTENANCE
-Controller.clearPicks = function(cb){
-    PickCtrl.cancelPicks(function(err){
+Controller.clearPicks = function (cb) {
+    PickCtrl.cancelPicks(function (err) {
         PickCtrl.clearPicks(cb);
     });
 };
 
-Controller.refreshPromotions = function(cb){
+Controller.refreshPromotions = function (cb) {
     PromotionCtrl.refreshPromotions(cb);
 };
 
@@ -138,12 +158,12 @@ Controller.deletePreference = function (id, cb) {
 };
 
 Controller.getPreferenceById = function (id, cb) {
-    PreferencesCtrl.findById(id,cb);
+    PreferencesCtrl.findById(id, cb);
 };
 
 
 //*******************NOTIFICACTION
-Controller.notification = function (cb){
+Controller.notification = function (cb) {
     var message = new gcm.Message({
 
         data: {
@@ -155,45 +175,48 @@ Controller.notification = function (cb){
             body: "This is a notification that will be displayed ASAP."
         }
     });
-     
+
     message.addData({
         key1: 'message1'
     });
 
     message.addData("content-available", 1);
-     
+
     // Set up the sender with you API key 
     var sender = new gcm.Sender('AIzaSyBhkbCm9SOVYiWhgcmEmSDOTgrigfjOV8U');
-     
+
     // Add the registration tokens of the devices you want to send to 
     var registrationTokens = [];
-    var key = CustomerCtrl.findById("5713d96a9ccf01030080e865", function(err, customer){
+    var key = CustomerCtrl.findById("5713d96a9ccf01030080e865", function (err, customer) {
         registrationTokens.push(
-    customer.notification);
+            customer.notification);
         //registrationTokens.push('regToken2');
-         
 
-        sender.sendNoRetry(message, { registrationTokens: registrationTokens }, function(err, response) {
-          if(err) console.error(err);
-          else {   console.log(response); console.log("response");
-          }
-          cb();
+
+        sender.sendNoRetry(message, { registrationTokens: registrationTokens }, function (err, response) {
+            if (err) console.error(err);
+            else {
+                console.log(response); console.log("response");
+            }
+            cb();
         });
     });
-    
 
 
-     
+
+
 }
 
 
 //*******************Images
 
 Controller.uploadImage = function (type, image, cb) {
+    var local="UploadImageSystemCtrl";
+    
     var img = {};
     img.filename = Utils.generateID();
 
-    
+
 
     async.waterfall([function download(next) {
 
@@ -215,7 +238,7 @@ Controller.uploadImage = function (type, image, cb) {
 
                 var buffer = new Buffer(image.base64, 'base64');
                 fs.writeFile(img.filename, buffer, function (err) {
-                    if (err) return next(err);
+                    if (err) return next(Error.writing_file(local, err));
                     img.mimeType = image.filetype;
                     next(null, img);
                 });
@@ -230,7 +253,7 @@ Controller.uploadImage = function (type, image, cb) {
             if (err) return next(err);
             next(null, img, client);
         });
-    },function upload(img, client, next) {
+    }, function upload(img, client, next) {
 
         client.drive.files.insert({
             resource: {
@@ -248,9 +271,9 @@ Controller.uploadImage = function (type, image, cb) {
                 body: fs.createReadStream(img.filename)
             }
         }, function (err) {
-            if(err)return next(err);
-            var url=client.hostname+img.filename;
-            fs.unlink(img.filename, function(err){
+            if (err) return next(Error.drive_insert(local, err));
+            var url = client.hostname + img.filename;
+            fs.unlink(img.filename, function (err) {
                 console.log(err);
             });
             next(null, url);
@@ -258,35 +281,35 @@ Controller.uploadImage = function (type, image, cb) {
 
 
     }], function (err, result) {
-        if(err)return cb(err);
-        cb(null, {src:result});
+        if (err) return cb(err);
+        cb(null, { src: result });
     });
 
 };
 
-Controller.generateRoleCode=function(role, cb){
+Controller.generateRoleCode = function (role, cb) {
 
-    SystemModel.getSeeds(function(err, seeds){
-        if(err)return cb(err);
+    SystemModel.getSeeds(function (err, seeds) {
+        if (err) return cb(err);
 
-        var seed="";
-        switch(role){
+        var seed = "";
+        switch (role) {
 
-            case 0:{
-                seed=seeds.admin;
+            case 0: {
+                seed = seeds.admin;
                 break;
             }
-            case 1:{
-                seed=seeds.customer;
+            case 1: {
+                seed = seeds.customer;
                 break;
             }
 
-            case 2:{
-                seed=seeds.company_boss;
+            case 2: {
+                seed = seeds.company_boss;
                 break;
             }
-            case 3:{
-                seed=seeds.company_worker;
+            case 3: {
+                seed = seeds.company_worker;
                 break;
             }
 
@@ -294,7 +317,7 @@ Controller.generateRoleCode=function(role, cb){
 
         }
 
-        var role_code=SystemModel.generateRoleCode(seed);
+        var role_code = SystemModel.generateRoleCode(seed);
         cb(null, role_code);
 
     });
@@ -303,39 +326,40 @@ Controller.generateRoleCode=function(role, cb){
 
 };
 
-Controller.verifyRoleCode=function(code, cb){
+Controller.verifyRoleCode = function (code, cb) {
+    var local="VerifyRoleCodeSystemCtrl";
+    
+    SystemModel.getSeeds(function (err, seeds) {
+        if (err) return cb(err);
 
-    SystemModel.getSeeds(function(err, seeds){
-        if(err)return cb(err);
-
-        var key_master="";
-        var found=false;
-        var keys=Object.keys(seeds);
-        var i=0;
-        while(found===false&&i<keys.length){
-            var key=keys[i];
-            var seed=seeds[key];
-            if(SystemModel.commonToSeed(code, seed)){
-                found=true;
-                key_master=key;
+        var key_master = "";
+        var found = false;
+        var keys = Object.keys(seeds);
+        var i = 0;
+        while (found === false && i < keys.length) {
+            var key = keys[i];
+            var seed = seeds[key];
+            if (SystemModel.commonToSeed(code, seed)) {
+                found = true;
+                key_master = key;
 
             }
 
             i++;
 
         }
-        if(!found)return cb("No role");
+        if (!found) return cb(Error.no_role(local));
 
-        var role=-1;
+        var role = -1;
 
-        switch(key_master){
-            case "admin":role=0;
+        switch (key_master) {
+            case "admin": role = 0;
                 break;
-            case "customer": role=1;
+            case "customer": role = 1;
                 break;
-            case "company_boss": role=2;
+            case "company_boss": role = 2;
                 break;
-            case "company_worker": role=3;
+            case "company_worker": role = 3;
                 break;
         }
 
@@ -345,13 +369,6 @@ Controller.verifyRoleCode=function(code, cb){
     });
 
 };
-
-
-
-
-
-
-
 
 
 

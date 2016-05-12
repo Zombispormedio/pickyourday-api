@@ -53,51 +53,69 @@ Controller.statsPicks = function (company, query, cb) {
 			maxZ = servicesArray.length;
 			var percent_total = timeArray.length * states.length;
 			var percent = 0;
-			async.eachSeries(states, function (state, subNext) {
-				var datesPick = [];
-				async.eachSeries(timeArray, function (date, subSubNext) {
-					var picksServices = [];
 
-					async.eachSeries(servicesArray, function (service, subSubSubNext) {
+			var paramsTemp = {};
+			paramsTemp["company.id_company"] = company;
 
-						var paramsTemp = {};
-						paramsTemp["company.id_service"] = service;
-						paramsTemp["company.id_company"] = company;
-						paramsTemp.state = state;
-						paramsTemp.beforeInitDate = date.end;
-						paramsTemp.afterInitDate = date.init;
-						var query = HPickModel.getQuery(paramsTemp);
+			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
 
-						query.count().exec(function (err, num_picks) {
+				async.eachSeries(states, function (state, subNext) {
+					var datesPick = [];
+					async.eachSeries(timeArray, function (date, subSubNext) {
+						var picksServices = [];
 
-							if (maxY < num_picks)
-								maxY = num_picks;
+						async.eachSeries(servicesArray, function (service, subSubSubNext) {
 
-							picksServices.push(num_picks);
+							var paramsTemp = {};
+							paramsTemp["company.id_service"] = service;
+							paramsTemp["company.id_company"] = company;
+							paramsTemp.state = state;
+							paramsTemp.beforeInitDate = date.end;
+							paramsTemp.afterInitDate = date.init;
+							
+							var picksFiltered = picks.filter(function(p){
 
-							subSubSubNext();
+								var valid=true;
+								if(!p.company.id_service.equals(service)  && p.state == state && p.initDate < date.init && p.initDate > date.end)
+									valid =false;
+
+								return valid;
+							})
+							if(picksFiltered != null)
+								picksServices.push(picksFiltered.length);
+							else
+								picksServices.push(0);
+
+								subSubSubNext();
+							
+
+
+						}, function (err) {
+							if (err) return subSubNext(err);
+							datesPick.push(picksServices);
+
+							subSubNext();
 						});
-
+						percent++;
+						console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
 
 					}, function (err) {
-						if (err) return subSubNext(err);
-						datesPick.push(picksServices);
+						if (err) return subNext(err);
+						arrayData.push(datesPick);
 
-						subSubNext();
+						subNext();
 					});
-					percent++;
-					console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
-
 				}, function (err) {
-					if (err) return subNext(err);
-					arrayData.push(datesPick);
-
-					subNext();
+					if (err) return next(err);
+					next();
 				});
-			}, function (err) {
-				if (err) return next(err);
-				next();
+
+
+
 			});
+
+
+			
 		}, function normalize(next) {
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
 

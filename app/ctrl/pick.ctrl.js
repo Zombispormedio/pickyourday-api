@@ -296,6 +296,37 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
         paramsTemp=Utils.filterParams(paramsTemp);
         paramsTemp.state =state;
 
+        self.search(paramsTemp,function(err, picks){ 
+            if(err) return next(err);
+            for(var day in count){
+               if(day > 0)
+                    beforeInitDate.setDate(beforeInitDate.getDate()+1);
+                    paramsTemp.beforeInitDate = beforeInitDate;
+                if(day == 0)
+                    paramsTemp.afterInitDate = afterInitDate;
+                else{
+                    afterInitDate.setDate(afterInitDate.getDate()+1);
+                    paramsTemp.afterInitDate = afterInitDate;
+                } 
+
+                var picksFiltered = picks.filter(function(p){
+                    var valid=true;
+                    if(p.initDate < paramsTemp.afterInitDate &&
+                     p.initDate > paramsTemp.beforeInitDate)
+                    valid = false;
+                    return valid;
+                })
+
+                for(var pick in picksFiltered)
+                    formatDate[day].push({"pick":picksFiltered[pick], "init":picksFiltered[pick].initDate, "duration":picksFiltered[pick].duration});  
+                
+
+                
+            }
+            cb(null, formatDate);
+        });
+        /*
+
         async.eachSeries(count, function(day, next){ 
             if(day > 0)
                 beforeInitDate.setDate(beforeInitDate.getDate()+1);
@@ -319,7 +350,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
             if(err) return cb(err);           
             cb(null, formatDate);
         }); 
-
+*/
 
     };
 

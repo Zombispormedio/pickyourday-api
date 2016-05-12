@@ -5,12 +5,12 @@ var methodOverride = require("method-override");
 var cors = require("cors");
 var compression = require('compression');
 var health = require('express-ping');
+var timeout = require('connect-timeout');
 
 module.exports = function (app) {
 
 
-    //Configuracion
-    //Localizar ficheros estaticos
+    app.use(timeout('600s'));
 
     // muestra todos las peticiones por consola
     app.use(morgan('dev'));

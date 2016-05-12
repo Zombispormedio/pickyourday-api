@@ -3,7 +3,10 @@ var C = require("../../config/config");
 var CompanyCtrl = require(C.ctrl+"company.ctrl");
 var DeveloperCtrl = require(C.ctrl + "developer.ctrl");
 var AuthController = require(C.ctrl+"auth.ctrl");
+var Response = require(C.lib+"response");
+
 var Response = require("../lib/response");
+
 var router = Router();
 
 router.route("")

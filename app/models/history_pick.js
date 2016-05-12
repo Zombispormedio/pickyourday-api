@@ -38,7 +38,7 @@ var HistoryPickSchema = new Schema({
 });
 
 HistoryPickSchema.statics={
-	search:function(params, cb){ //en params no meter id, todos los demas datos si
+	getQuery:function(params){ //en params no meter id, todos los demas datos si
 		var query = this.find({}).sort({initDate: 1});
 		for(var key in params){
 			switch(key){
@@ -78,8 +78,12 @@ HistoryPickSchema.statics={
 					query.where(key).equals(Utils.like(params[key]));
 			}
 		}	
-		query.exec(cb);
+		return query;
 		
+	},
+	
+	search(params, cb){
+		this.getQuery(params).exec(cb);
 	}
 };
 

@@ -7,10 +7,12 @@
     "test": "test"
   },
   "dependencies": {
+    "apicache": "0.0.14",
     "async": "2.0.0-rc.1",
     "body-parser": "1.15.0",
     "chance": "1.0.1",
     "compression": "1.6.1",
+    "connect-timeout": "1.7.0",
     "cors": "2.7.1",
     "express": "4.13.4",
     "express-ping": "1.1.0",
@@ -28,9 +30,9 @@
     "node-uuid": "1.4.7",
     "paypal-rest-sdk": "1.6.8",
     "random-js": "1.0.8",
+    "redis": "2.6.0-2",
     "request": "2.69.0",
-    "sendgrid": "2.0.0",
-    "paypal-rest-sdk": "1.6.8"
+    "sendgrid": "2.0.0"
   },
   "devDependencies": {},
   "scripts": {

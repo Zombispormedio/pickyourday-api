@@ -4,26 +4,26 @@ var CompanyModel = require(C.models + "company");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var HistoryCtrl = require(C.ctrl + "history.ctrl");
-
+var HPickModel = require(C.models + "history_pick");
 
 var async = require("async");
 var Utils = require(C.lib + "utils");
-var _=require("lodash");
+var _ = require("lodash");
 var Controller = {};
 
-function Stat(position, data, size, color){
+function Stat(position, data, size, color) {
 	this.position = position || [];
-	this.size = size || [1,1,1];
+	this.size = size || [1, 1, 1];
 	this.color = color || [1, 0, 0, 0.1];
 	this.data = data || ["", 0, ""];
 }
 
-function Vertice(key, y){
+function Vertice(key, y) {
 	this.key = key || 0;
 	this.y = y || 0;
 }
 
-Controller.statsPicks = function(company, query, cb){
+Controller.statsPicks = function (company, query, cb) {
 	var timeArray = getDates(query);
 	var servicesArray = [];
 	var arrayData = [];
@@ -40,71 +40,78 @@ Controller.statsPicks = function(company, query, cb){
 
 	var self = this;
 	async.waterfall([
-		function getServices(next){
-			self.getServices(company,{}, function(err, services, values){
-				if(err) return cb(err);
+		function getServices(next) {
+			self.getServices(company, {}, function (err, services, values) {
+				if (err) return cb(err);
 				zValues = values;
-				servicesArray= services;
+				servicesArray = services;
+
 				next();
 			})
-		}, function getPicks(next){
+		}, function getPicks(next) {
 
 			maxZ = servicesArray.length;
-			async.eachSeries(states, function(state, subNext){
+			var percent_total = timeArray.length * states.length;
+			var percent = 0;
+			async.eachSeries(states, function (state, subNext) {
 				var datesPick = [];
-				async.eachSeries(timeArray, function(date, subSubNext){
-					var picksServices= [];
-					async.eachSeries(servicesArray, function(service, subSubSubNext){
-						
+				async.eachSeries(timeArray, function (date, subSubNext) {
+					var picksServices = [];
+
+					async.eachSeries(servicesArray, function (service, subSubSubNext) {
+
 						var paramsTemp = {};
 						paramsTemp["company.id_service"] = service;
 						paramsTemp["company.id_company"] = company;
 						paramsTemp.state = state;
 						paramsTemp.beforeInitDate = date.end;
 						paramsTemp.afterInitDate = date.init;
-						HistoryCtrl.getPicks(paramsTemp, function(err, picks){
-							var count = 0;
-							if(picks)
-								count = picks.length;
-							
-							if(maxY < count)
-								maxY = count;
+						var query = HPickModel.getQuery(paramsTemp);
 
-							picksServices.push(count);
+						query.count().exec(function (err, num_picks) {
+
+							if (maxY < num_picks)
+								maxY = num_picks;
+
+							picksServices.push(num_picks);
 
 							subSubSubNext();
+						});
 
-						})
-					}, function(err){
-		            	if(err) return cb(err);
-		            	datesPick.push(picksServices);           
-		            	subSubNext();
-		        	}); 
 
-				}, function(err){
-	            	if(err) return cb(err);
-	            	arrayData.push(datesPick);  
-	            	subNext();
-	        	}); 
-			}, function(err){
-            	if(err) return cb(err);    
-            	next();
-        	}); 
-		}, function normalize(next){
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
-				var data ={"stats": stats,"plane":plane};
-				next(null, data);
+					}, function (err) {
+						if (err) return subSubNext(err);
+						datesPick.push(picksServices);
+
+						subSubNext();
+					});
+					percent++;
+					console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
+
+				}, function (err) {
+					if (err) return subNext(err);
+					arrayData.push(datesPick);
+
+					subNext();
+				});
+			}, function (err) {
+				if (err) return next(err);
+				next();
 			});
+		}, function normalize(next) {
+			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+
+			next(null, data);
 
 		}
 
-		],function(err, result){
-        	if(err) return cb(err);  
-       		cb(null, result);
-    	});  
+	], function (err, result) {
+		if (err) return cb(err);
+		cb(null, result);
+	});
 };
 
-Controller.originPicks = function(company, query, cb){
+Controller.originPicks = function (company, query, cb) {
 	var timeArray = getDates(query);
 	var servicesArray = [];
 	var arrayData = [];
@@ -122,34 +129,34 @@ Controller.originPicks = function(company, query, cb){
 
 	var self = this;
 	async.waterfall([
-		function getServices(next){
-			self.getServices(company,{}, function(err, services, values){
-				if(err) return cb(err);
+		function getServices(next) {
+			self.getServices(company, {}, function (err, services, values) {
+				if (err) return cb(err);
 				zValues = values;
-				servicesArray= services;
+				servicesArray = services;
 				next();
 			})
-		}, function getPicks(next){
+		}, function getPicks(next) {
 
 			maxZ = servicesArray.length;
-			async.eachSeries(origins, function(origin, subNext){
+			async.eachSeries(origins, function (origin, subNext) {
 				var datesPick = [];
-				async.eachSeries(timeArray, function(date, subSubNext){
-					var picksServices= [];
-					async.eachSeries(servicesArray, function(service, subSubSubNext){
-						
+				async.eachSeries(timeArray, function (date, subSubNext) {
+					var picksServices = [];
+					async.eachSeries(servicesArray, function (service, subSubSubNext) {
+
 						var paramsTemp = {};
 						paramsTemp["company.id_service"] = service;
 						paramsTemp["company.id_company"] = company;
 						paramsTemp.origin = [origin];
 						paramsTemp.beforeInitDate = date.end;
 						paramsTemp.afterInitDate = date.init;
-						HistoryCtrl.getPicks(paramsTemp, function(err, picks){
+						HistoryCtrl.getPicks(paramsTemp, function (err, picks) {
 							var count = 0;
-							if(picks)
+							if (picks)
 								count = picks.length;
-							
-							if(maxY < count)
+
+							if (maxY < count)
 								maxY = count;
 
 							picksServices.push(count);
@@ -157,37 +164,37 @@ Controller.originPicks = function(company, query, cb){
 							subSubSubNext();
 
 						})
-					}, function(err){
-		            	if(err) return cb(err);
-		            	datesPick.push(picksServices);           
-		            	subSubNext();
-		        	}); 
+					}, function (err) {
+						if (err) return cb(err);
+						datesPick.push(picksServices);
+						subSubNext();
+					});
 
-				}, function(err){
-	            	if(err) return cb(err);
-	            	arrayData.push(datesPick);  
-	            	subNext();
-	        	}); 
-			}, function(err){
-            	if(err) return cb(err);    
-            	next();
-        	}); 
-		}, function normalize(next){
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
-				var data ={"stats": stats,"plane":plane};
-				next(null, data);
+				}, function (err) {
+					if (err) return cb(err);
+					arrayData.push(datesPick);
+					subNext();
+				});
+			}, function (err) {
+				if (err) return cb(err);
+				next();
 			});
+		}, function normalize(next) {
+			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+
+			next(null, data);
+
 
 		}
 
-		],function(err, result){
-        	if(err) return cb(err);  
-       		cb(null, result);
-    	}); 
+	], function (err, result) {
+		if (err) return cb(err);
+		cb(null, result);
+	});
 
 }
 
-Controller.scoreServices = function(company, query, cb){
+Controller.scoreServices = function (company, query, cb) {
 	var timeArray = getDates(query);
 	var servicesArray = [];
 	var arrayData = [];
@@ -205,183 +212,183 @@ Controller.scoreServices = function(company, query, cb){
 
 	var self = this;
 	async.waterfall([
-		function getServices(next){
-			ServiceCtrl.search(company, {}, function(err, services){
-				if(err) return cb(err);
-				if(services && services.length > 0){
-			        servicesArray = services;
-			        zValues = services.map(function(a) {
-			        	if(a.name == undefined)
-			        		return a.id_name.name;
-			            return a.name;
-			        });
-			        next();
+		function getServices(next) {
+			ServiceCtrl.search(company, {}, function (err, services) {
+				if (err) return cb(err);
+				if (services && services.length > 0) {
+					servicesArray = services;
+					zValues = services.map(function (a) {
+						if (a.name == undefined)
+							return a.id_name.name;
+						return a.name;
+					});
+					next();
 
-			    }else cb(-1);
+				} else cb(-1);
 			})
-		}, function getScores(next){
+		}, function getScores(next) {
 			maxZ = servicesArray.length;
-			
-			var limitInit= new Date();
+
+			var limitInit = new Date();
 			limitInit.setMinutes(1);
 			limitInit.setSeconds(0);
 			limitInit.setHours(1);
 			limitInit.setMilliseconds(0);
-			var limitEnd =_.clone(limitInit);
+			var limitEnd = _.clone(limitInit);
 			limitEnd.setMinutes(0);
 			var size;
-			if(query.month != undefined && query.month != ""){											
-				limitInit.setMonth(limitInit.getMonth()-parseInt(query.month));
-				size=query.month;
-			}else{
-				limitInit.setDate(limitInit.getDate()-30);
-				size=30;
+			if (query.month != undefined && query.month != "") {
+				limitInit.setMonth(limitInit.getMonth() - parseInt(query.month));
+				size = query.month;
+			} else {
+				limitInit.setDate(limitInit.getDate() - 30);
+				size = 30;
 			}
 
 			var result = [];
-		
-			async.eachSeries(servicesArray, function(service, subNext){
+
+			async.eachSeries(servicesArray, function (service, subNext) {
 				var reviews = service.rating;
 				var scoreService = [];
-				for(var i=0; i<size; i++){
+				for (var i = 0; i < size; i++) {
 					scoreService.push([]);
-					for(var z in scores){
+					for (var z in scores) {
 						scoreService[i].push(0);
 					}
 				}
-				for(var rev in reviews){
+				for (var rev in reviews) {
 					var rate = reviews[rev].rating;
 					var date = reviews[rev].date;
-					if(date >= limitInit && date <= limitEnd ){
-						if(query.month == undefined || query.month == ""){
-							var day = Utils.countDays(limitInit,date);
-							if(day >=0)
-								scoreService[day][rate-1]++; 
-						}else{
-							var month = Utils.countDays(limitInit,date);
-							if(month >=0)
-								scoreService[month][rate-1]++; 
+					if (date >= limitInit && date <= limitEnd) {
+						if (query.month == undefined || query.month == "") {
+							var day = Utils.countDays(limitInit, date);
+							if (day >= 0)
+								scoreService[day][rate - 1]++;
+						} else {
+							var month = Utils.countDays(limitInit, date);
+							if (month >= 0)
+								scoreService[month][rate - 1]++;
 						}
 					}
 				}
-				
+
 
 
 				arrayData.push(scoreService);
 				subNext();
 
-			}, function(err){
-				          
-            	next();
-        	}); 
-		}, function normalize(next){
-			var legend = {"x": "Valoración", "y": "Cantidad", "z": "Servicio", "w": "Tiempo" }
-			self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, function(err, stats, plane){
-				var data ={"stats": stats,"plane":plane};
-				next(null, data);
+			}, function (err) {
+
+				next();
 			});
+		}, function normalize(next) {
+			var legend = { "x": "Valoración", "y": "Cantidad", "z": "Servicio", "w": "Tiempo" }
+			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+
+			next(null, data);
+
 
 		}
 
-		],function(err, result){
-        	if(err) return cb(err);  
-       		cb(null, result);
-    	}); 
+	], function (err, result) {
+		if (err) return cb(err);
+		cb(null, result);
+	});
 }
 
-Controller.getServices = function(company, query, cb){
+Controller.getServices = function (company, query, cb) {
 	var servicesArray = [];
 	var values = [];
-	ServiceCtrl.search(company, {}, function(err, services){
-		if(err) return cb(err);
-		
-		if(services && services.length > 0){
-	        servicesArray = services.map(function(a) {
-	            return a._id;
-	        });
-	        values = services.map(function(a) {
-	        	if(a.name == undefined)
-	        		return a.id_name.name;
-	            return a.name;
-	        });
-	        cb(null, servicesArray, values);
+	ServiceCtrl.search(company, {}, function (err, services) {
+		if (err) return cb(err);
 
-	    }else cb(-1);
+		if (services && services.length > 0) {
+			servicesArray = services.map(function (a) {
+				return a._id;
+			});
+			values = services.map(function (a) {
+				if (a.name == undefined)
+					return a.id_name.name;
+				return a.name;
+			});
+			cb(null, servicesArray, values);
+
+		} else cb(-1);
 	})
 
 }
 
-Controller.normalize4 = function(arrayBase, arrayData, maxX, maxY, maxZ, xValues, zValues, grill, cb){
+Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValues, zValues, grill) {
 	var sizeValue = 10;
 	var fit = false;
 	var max = maxX;
 	var result = [];
-	var grillX= grill;
-	var grillY= grill/2;
-	var grillZ= grill;
-	if(maxY== null)
-		maxY=0;
-	if(maxZ == null)
-		maxZ=0;
-	while(!fit){
-		if(maxZ/sizeValue > grillZ/sizeValue){
-			grillZ *=2;
-		}else fit=true;
+	var grillX = grill;
+	var grillY = grill / 2;
+	var grillZ = grill;
+	if (maxY == null)
+		maxY = 0;
+	if (maxZ == null)
+		maxZ = 0;
+	while (!fit) {
+		if (maxZ / sizeValue > grillZ / sizeValue) {
+			grillZ *= 2;
+		} else fit = true;
 	}
-	fit=false;
-	while(!fit){
-		if(maxX/sizeValue > grillX/sizeValue){
-			grillX *=2;
-		}else fit=true;
+	fit = false;
+	while (!fit) {
+		if (maxX / sizeValue > grillX / sizeValue) {
+			grillX *= 2;
+		} else fit = true;
 	}
-	while(!fit){
-		if(maxY/sizeValue > grillY/sizeValue){
-			grillY +=(grill/2);
-		}else fit=true;
+	while (!fit) {
+		if (maxY / sizeValue > grillY / sizeValue) {
+			grillY += (grill / 2);
+		} else fit = true;
 	}
 
-	for(var key in arrayBase){
+	for (var key in arrayBase) {
 		result.push([]);
-		for(var x in arrayData){
+		for (var x in arrayData) {
 			x = parseInt(x);
-			for(var z in arrayData[x][key]){
+			for (var z in arrayData[x][key]) {
 				z = parseInt(z);
 				var yValue = arrayData[x][key][z];
 				var data = [xValues[x], yValue, zValues[z]];
-				var position = [((x+1)/(maxX+1) *grillX) || 0, (yValue/(maxY) *grillY) || 0, ((z+1)/(maxZ) *grillZ) || 0];
+				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY) * grillY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));
-			}	
+			}
 		}
 	}
 
 	var plane = [];
 	var width = grillX;
 	var height = grillZ;
-	var vWidth = maxX+1;
-	var vHeight = (maxZ*2)+1;
-	var count=0;
-	for(var key in arrayBase){
+	var vWidth = maxX + 1;
+	var vHeight = (maxZ * 2) + 1;
+	var count = 0;
+	for (var key in arrayBase) {
 		plane.push([]);
-		count=0;
+		count = 0;
 
-		for(var w = 1; w<vWidth; w++){
-			for(var h=vHeight-2; h>0; h-=2){
-				var v = (h*(vWidth+1)) + w;
+		for (var w = 1; w < vWidth; w++) {
+			for (var h = vHeight - 2; h > 0; h -= 2) {
+				var v = (h * (vWidth + 1)) + w;
 				plane[key].push(new Vertice(v, result[key][count].position[1]));
 				count++;
 			}
 		}
 	}
 
-	var resultPlane = {"width": width, "height": height, "vWidth":vWidth, "vHeight": vHeight, "vertices": plane};
+	var resultPlane = { "width": width, "height": height, "vWidth": vWidth, "vHeight": vHeight, "vertices": plane };
 
 
+	return { stats: result, plane: resultPlane };
 
-	cb(null, result, resultPlane);
 };
 
-function getDates(query){
-	var initDate= new Date();
+function getDates(query) {
+	var initDate = new Date();
 	initDate.setMinutes(1);
 	initDate.setSeconds(0);
 	initDate.setHours(1);
@@ -389,30 +396,30 @@ function getDates(query){
 
 	var timeArray = [];
 
-	if(query.month != undefined && query.month != ""){
+	if (query.month != undefined && query.month != "") {
 		var size = query.month;
-		initDate.setMonth(initDate.getMonth()-size);
-		if(size ==0) size=1;
-		for(var i=0; i<size; i++){
+		initDate.setMonth(initDate.getMonth() - size);
+		if (size == 0) size = 1;
+		for (var i = 0; i < size; i++) {
 			var endDate = _.clone(initDate);
-			endDate.setMonth(endDate.getMonth()+1);
+			endDate.setMonth(endDate.getMonth() + 1);
 			endDate.setMinutes(0);
-			timeArray.push({"init": _.clone(initDate), "end": endDate});
-			initDate.setMonth(initDate.getMonth()+1);
+			timeArray.push({ "init": _.clone(initDate), "end": endDate });
+			initDate.setMonth(initDate.getMonth() + 1);
 		}
-	}else{
+	} else {
 		var size = query.day || 30;
 
 		initDate.setDate(initDate.getDate() - size);
 
-		if(size ==0) size=1;
-		for(var i=0; i<size; i++){
+		if (size == 0) size = 1;
+		for (var i = 0; i < size; i++) {
 			var endDate = _.clone(initDate);
 			endDate.setHours(24);
 			endDate.setMinutes(59);
 			endDate.setSeconds(59);
-			timeArray.push({"init": _.clone(initDate), "end": endDate});
-			initDate.setDate(initDate.getDate()+1);
+			timeArray.push({ "init": _.clone(initDate), "end": endDate });
+			initDate.setDate(initDate.getDate() + 1);
 
 		}
 	}

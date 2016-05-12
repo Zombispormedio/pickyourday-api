@@ -6,14 +6,15 @@ var CompanyModel = require(C.models + "company");
 var SystemCtrl = require(C.ctrl + "system.ctrl");
 var Utils = require(C.lib + "utils");
 var Mail = require(C.lib + "mail");
+var Error = require(C.lib + "error")();
 var async = require("async");
 var Handlebars = require('handlebars');
 var AuthController = {};
 
 
 AuthController.register = function (role, user, id, cb) {
-
-    if (!user || !user.email || !user.password) return cb("Fields not Filled");
+   
+    if (!user || !user.email || !user.password) return cb(Error.not_fields("AuthRegister"));
 
     var auth = new AuthModel({
         email: user.email,
@@ -27,7 +28,7 @@ AuthController.register = function (role, user, id, cb) {
     }
     
     auth.save(function (err) {
-        if (err) return cb(err);
+        if (err) return cb(Error.mongo_save("AuthRegister", err));
         cb();
     });
 };
@@ -41,9 +42,9 @@ AuthController.login = function (u, cb) {
     async.waterfall([
         function (next) {
             AuthModel.findOne({ email: u.email }, function (err, user) {
-                if (err) { return next(err); }
+                if (err) { return next(Error.mongo_find("AuthLogin", err)); }
 
-                if (!user) { return next("No users", false); }
+                if (!user) { return next(Error.no_users("AuthLogin"), false); }
 
                 u.role = user.role;
 
@@ -191,14 +192,14 @@ AuthController.getRole = function (code, cb) {
 
 
 AuthController.forgotPassword = function (body, cb) {
-    if (!body || !body.email) return cb("Fields not filled in Forget Password");
+    if (!body || !body.email) return cb("Por favor, rellena en Olvidar Contraseña");
 
     var email = body.email;
     async.waterfall([
         function checkUser(next) {
             AuthModel.findOne({ email: email, }, function (err, user) {
                 if (err) return next(err);
-                if (!user) return next("Wrong Email in Forgot Password")
+                if (!user) return next("Email incorrecto")
                 if(user.social)return next("Lo siento, te has registrado con "+user.social+". No podemos cambiarte la contraseña.");
 
                 next(null, user);

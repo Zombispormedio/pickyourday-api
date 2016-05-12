@@ -1,9 +1,16 @@
-/*var C=require("../config/config");
+var C=require("../config/config");
 
-module.exports=function(){
+var AuthCtrl=require(C.ctrl+"auth.ctrl");
+
+AuthCtrl.register(null, null, null, function(err){
+    console.log(err);
+})
+
+
+/*module.exports=function(){
     
 }*/
-
+/*
 var redis = require("redis"),
     client = redis.createClient({
         host: process.env.REDIS_HOST,
@@ -30,4 +37,4 @@ client.hkeys("hash key", function (err, replies) {
         console.log("    " + i + ": " + reply);
     });
     client.quit();
-});
+});*/

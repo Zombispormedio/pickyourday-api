@@ -1058,6 +1058,10 @@ Controller.scoreServices = function (company, query, cb) {
     StatsCtrl.scoreServices(company, query, cb);
 }
 
+Controller.moneyResources = function(company, query, cb){
+    StatsCtrl.moneyResources(company, query, cb);
+}
+
 
 //*******************RESOURCE
 Controller.newResource = function (company, params, cb) {

@@ -229,6 +229,14 @@ router.route("/scoreService")
         } );
     });
 
+router.route("/moneyResources")
+    .get(AuthController.checkCompany(), function (req, res) {
+        CompanyCtrl.moneyResources(req.user, req.query, function(err, stats){
+            if(err) Response.printError(res, err);
+                else
+            Response.printSuccess(res, stats);
+        } );
+    });
 router.route("/developer")
     .get(AuthController.checkCompany(), function(req, res) {
        DeveloperCtrl.getDeveloper(req.oauth, function(err, pair_token) {

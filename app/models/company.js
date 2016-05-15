@@ -1146,7 +1146,7 @@ CompanySchema.statics = {
 					if (err) return cb(err);
 					cb(null, resource);
 				});
-			}
+			}else cb(-1);
 		});
 	},
 

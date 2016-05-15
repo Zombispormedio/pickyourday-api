@@ -239,23 +239,22 @@ Controller.findById = function (id, cb) {
 
 Controller.delete = function (id, cb) {
     if (!id) return cb("Fields not Filled");
+    var self = this;
+    this.findById(id, function(Err, pickFormated){
+        var pickTemp = pickFormated;
+        self.findByIdQuick(id, function(err, pick){
+            PickModel.find({ _id:id }).remove().exec(function(err, result){
+                if (err) return cb(err);
 
-    this.findByIdQuick(id, function(Err, pick){
-        var pickTemp = pick;
-        PickModel.find({ _id:id }).remove().exec(function(err, result){
-            if (err) return cb(err);
+                if (result.result.n == 0)
+                    return cb([-1]);
 
-            if (result.result.n == 0)
-                return cb([-1]);
-
-            CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err, resource){
-                if(err) return cb(err);
-                HistoryCtrl.savePick(pickTemp, resource, cb);
-                
+                CompanyModel.removePickAsigned(pickTemp.company._id, pickTemp._id, function(err, resource){
+                    if(err) return cb(err);                  
+                        HistoryCtrl.savePick(pick, resource, pickTemp.service, cb);
+                    })                                              
             });
-
-            
-        });
+        }); 
     })
 
 };

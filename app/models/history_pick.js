@@ -22,6 +22,7 @@ var HistoryPickSchema = new Schema({
 	dateCreated: Date,
 	deleteDate: Date,
 	observation: String,
+	price: Number,
 	promotion: Schema.ObjectId,
 	nameCli: String,
 	phoneCli: String,

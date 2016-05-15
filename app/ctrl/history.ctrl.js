@@ -9,12 +9,19 @@ var _=require("lodash");
 var Utils = require(C.lib + "utils");
 var Controller = {};
 
-Controller.savePick = function(pick, resource,  cb){
-	if(!pick) return cb([]);
+Controller.savePick = function(pick, resource, service, cb){
+	if(!pick) return cb(-2);
+	delete pick._id;
 	var p = new HPick(pick);
 	p.deleteDate = new Date();
 	p.resource = resource;
+	if(service.promotion == null)
+		p.price = service.price;
+	else
+		p.price = service.priceDiscounted;
 
+	if(p.price == undefined)
+		p.price = 0;
     p.save(function (err) {
         if (err) return cb(err);
         cb();       

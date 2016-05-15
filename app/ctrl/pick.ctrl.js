@@ -315,9 +315,9 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
                     console.log(p.initDate +" initDate");
                     console.log(paramsTemp.afterInitDate  +" afterInitDate");
                     console.log(paramsTemp.beforeInitDate +" beforeInitDate");
-                    if(p.initDate < paramsTemp.afterInitDate &&
+                    if(p.initDate < paramsTemp.afterInitDate ||
                      p.initDate > paramsTemp.beforeInitDate)
-                    valid = false;
+                        valid = false;
                     return valid;
                 })
 

@@ -713,9 +713,6 @@ CompanySchema.statics = {
 								company.resources[res].services.splice(serv, 1);								
 							}
 						}
-							
-								
-						
 					}
 				}
 			}

@@ -973,8 +973,6 @@ Controller.deleteService = function (company, service_id, cb) {
                 next();
             });
         }
-        
-        
     ], cb);
     
     
@@ -1003,9 +1001,7 @@ Controller.refreshPremium = function(cb){
 
 
     })
-
-
-}
+};
 
 Controller.getServiceById = function (company, id, cb) {
     ServiceCtrl.findById(company, id, cb);

@@ -83,10 +83,10 @@ router.route("/clearPicks")
 
 router.route("/refreshpromotion")
     .get(function(req, res){
-        SystemCtrl.refreshPromotions(function(err,promotions){
+        SystemCtrl.refreshPromotions(function(err){
             if (err) Response.printError(res, err);
             else
-                Response.printSuccess(res, promotions);
+                Response.printSuccess(res, "");
         });
     });
 

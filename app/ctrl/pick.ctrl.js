@@ -311,6 +311,9 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
 
                 var picksFiltered = picks.filter(function(p){
                     var valid=true;
+                    console.log(p.initDate +" initDate");
+                    console.log(aramsTemp.afterInitDate  +" afterInitDate");
+                    console.log(paramsTemp.beforeInitDate +" beforeInitDate");
                     if(p.initDate < paramsTemp.afterInitDate &&
                      p.initDate > paramsTemp.beforeInitDate)
                     valid = false;

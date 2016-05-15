@@ -325,33 +325,7 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
             }
             cb(null, formatDate);
         });
-        /*
-
-        async.eachSeries(count, function(day, next){ 
-            if(day > 0)
-                beforeInitDate.setDate(beforeInitDate.getDate()+1);
-            paramsTemp.beforeInitDate = beforeInitDate;
-            if(day == 0)
-                paramsTemp.afterInitDate = afterInitDate;
-            else{
-                afterInitDate.setDate(afterInitDate.getDate()+1);
-                paramsTemp.afterInitDate = afterInitDate;
-            }
-            self.search(paramsTemp,function(err, picks){    
-                if(err) return next(err);
-                if(picks != null && picks.length > 0)
-                    for(var pick in picks)
-                        formatDate[day].push({"pick":picks[pick], "init":picks[pick].initDate, "duration":picks[pick].duration});  
-                
-
-                next(null, null);
-            });
-        }, function(err, result){
-            if(err) return cb(err);           
-            cb(null, formatDate);
-        }); 
-*/
-
+    
     };
 
 Controller.formatDatePickCustomer = function(id_customer, initDate, endDate, cb){

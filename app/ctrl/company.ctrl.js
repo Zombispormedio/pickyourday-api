@@ -491,8 +491,14 @@ Controller.getTimeLine = function (id_company, params, cb) {
         params.date = new Date();
     else params.date = new Date(params.date);
 
-    var now = new Date();
-    if(now.getDate() != params.date.getDate()){
+    var nextDay = new Date();
+    nextDay.setHours(0);
+    nextDay.setMinutes(0);
+    nextDay.setSeconds(0);
+    nextDay.setMilliseconds(0);
+    nextDay.setDate(nextDay.getDate()+1);
+
+    if(nextDay > params.date){
         params.date.setHours(0);
         params.date.setMinutes(0);
         params.date.setSeconds(0);

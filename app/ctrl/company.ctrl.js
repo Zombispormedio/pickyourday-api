@@ -371,6 +371,7 @@ Controller.setPremium = function (company_id, body, cb) {
 
 
 Controller.payment = function(id, params, cb){
+    console.log(params);
     var options = {
       method: 'POST', 
       body: {"payer_id": params.PayerID},

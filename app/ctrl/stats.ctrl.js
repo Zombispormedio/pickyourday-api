@@ -82,9 +82,12 @@ Controller.statsPicks = function (company, query, cb) {
 
 								return valid;
 							})
-							if(picksFiltered != null)
-								picksServices.push(picksFiltered.length);
-							else
+							if(picksFiltered != null){
+								var count=picksFiltered.length;
+								picksServices.push(count);
+								if (maxY < count)
+								maxY = count;
+							}else
 								picksServices.push(0);
 
 								subSubSubNext();
@@ -306,6 +309,8 @@ Controller.moneyResources =function(company, query,cb){
 									
 								    return previous + key.price;
 								}, 0);
+								if (maxY < total)
+								maxY = total;
 
 								picksServices.push(total);
 							}else
@@ -523,7 +528,8 @@ Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValue
 			x = parseInt(x);
 			for (var z in arrayData[x][key]) {
 				z = parseInt(z);
-				var yValue = arrayData[x][key][z];
+				var yValue = arrayData[x][key][z] || 0;
+				console.log(yValue);
 				var data = [xValues[x], yValue, zValues[z]];
 				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY) * grillY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));

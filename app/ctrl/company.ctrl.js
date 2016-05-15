@@ -497,16 +497,12 @@ Controller.getTimeLine = function (id_company, params, cb) {
     if (!id_company) return cb("Fields not Filled getTimeLine");
     var self = this;
 
-    console.log(params);
-
-
 
     if (!params) params = {};
     if (!params.date)
         params.date = new Date();
     else params.date = new Date(params.date);
 
-    console.log(params.date + "  params.date");
     var nextDay = new Date();
     nextDay.setHours(0);
     nextDay.setMinutes(0);

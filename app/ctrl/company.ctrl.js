@@ -989,9 +989,8 @@ Controller.deleteService = function (company, service_id, cb) {
 Controller.refreshPremium = function(cb){
     var paramsTemp = {};
     paramsTemp.premium = true;
-    var self = this;
 
-    self.search(paramsTemp, function(err, companies){
+    CompanyModel.search(paramsTemp, function(err, companies){
         var now = new Date();
         async.map(companies, function(company, next){
             if(company.dateExpire > now){

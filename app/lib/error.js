@@ -7,13 +7,18 @@ var errors = {
 
     mongo_save: {
         code: "002",
-        message: "Error de Guardado"
+        message: "Error guardando"
     },
 
     mongo_find: {
         code: "003",
-        message: "Error Buscando"
+        message: "Error buscando"
     },
+	
+	mongo_update:{
+		 code: "004",
+        message: "Error actualizando"
+	},
 
     no_users: {
         code: "005",

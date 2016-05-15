@@ -481,6 +481,8 @@ Controller.getTimeLine = function (id_company, params, cb) {
     if (!id_company) return cb("Fields not Filled getTimeLine");
     var self = this;
 
+    console.log(params);
+
 
 
     if (!params) params = {};
@@ -940,10 +942,17 @@ Controller.deleteService = function (company, service_id, cb) {
     async.waterfall([
         
         function(next){
-            PickModel.find({"company.id_service":service_id}).remove().exec(next);
+            PickModel.find({"company.id_service":service_id}).remove().exec( function(err){
+                if(err) return next(err);
+                next();
+            });
+            
         },
         function(next){
-            ServiceCtrl.delete(company, service_id, next);
+            ServiceCtrl.delete(company, service_id, function(err){
+                if(err) return next(err);
+                next();
+            });
         }
         
         
@@ -951,6 +960,33 @@ Controller.deleteService = function (company, service_id, cb) {
     
     
 };
+
+Controller.refreshPremium = function(cb){
+    var paramsTemp = {};
+    paramsTemp.premium = true;
+    var self = this;
+
+    self.search(paramsTemp, function(err, companies){
+        var now = new Date();
+        async.map(companies, function(company, next){
+            if(company.dateExpire > now){
+                company.premium= false;
+                var promotions = company.promotions;
+                if(promotions != null){
+                    for(var promo in promotions)
+                        promotions[promo].state = "finished";
+                }
+                company.save(next)
+            }
+        }, function(err){
+            cb();
+        });
+
+
+    })
+
+
+}
 
 Controller.getServiceById = function (company, id, cb) {
     ServiceCtrl.findById(company, id, cb);

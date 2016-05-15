@@ -326,6 +326,7 @@ Controller.setPremium = function (company_id, body, cb) {
                 'client_secret': 'EGIpx3hwRRXAz-FW75DzdG3PvgCkxsgPR3uO1PZUzun9i7fB7UljPm5SJ7jGgek79MonBNCs3gJImmvr'
             });
 
+
             var date = ((dateExpire.getMonth() + 1) + '/' + dateExpire.getDate() + '/' + dateExpire.getFullYear());
             var create_payment_json = {
                 "intent": "authorize",
@@ -333,8 +334,8 @@ Controller.setPremium = function (company_id, body, cb) {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": "http://business-pickyourday.herokuapp.com/#/dashboard",
-                    "cancel_url": "http://business-pickyourday.herokuapp.com/#/profile"
+                    "return_url": "http://localhost:5045/#/dashboard",
+                    "cancel_url": "http://localhost:5045/#/profile"
                 },
                 "transactions": [{
                     "item_list": {

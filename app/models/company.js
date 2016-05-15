@@ -697,10 +697,30 @@ CompanySchema.statics = {
 			if (!company)
 				return cb("Company not found");
 
-			if (!company.services.id(id))
+			if (!company.services || !company.services.id(id))
 				return cb("Service not found in DeleteService");
 
 			company.services.id(id).remove();
+
+			var resources = company.resources;
+			if(resources){
+				for(var res in resources){
+					var services =resources[res].services;
+
+					if(services){
+						for(var serv in services){
+							if(services[serv].equals(id)){
+								console.log("asd");
+								delete services[serv];
+							}
+						}
+							
+								
+						
+					}
+				}
+			}
+
 			company.lastUpdate = new Date();
 			company.save(function (err) {
 				if (err) return cb(err);
@@ -843,6 +863,8 @@ CompanySchema.statics = {
 
 			company.promotions.id(id).remove();
 			company.lastUpdate = new Date();
+
+
 			company.save(function (err) {
 				if (err) return cb(err);
 				cb();

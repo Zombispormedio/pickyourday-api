@@ -5,7 +5,8 @@ var PickCtrl = require(C.ctrl + "pick.ctrl");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var PromotionCtrl = require(C.ctrl + "promotion.ctrl");
 var PreferencesCtrl = require(C.ctrl + "preferences.ctrl");
-var CustomerCtrl = require(C.ctrl + "customer.ctrl");
+var CustomerCtrl = require(C.ctrl + "company.ctrl");
+var CompanyCtrl = require(C.ctrl + "customer.ctrl");
 var SystemModel = require(C.models + "system");
 var PickModel = require(C.models + "pick");
 var ServiceNameModel = require(C.models + "service_name");
@@ -129,8 +130,11 @@ Controller.clearPicks = function (cb) {
     });
 };
 
-Controller.refreshPromotions = function (cb) {
-    PromotionCtrl.refreshPromotions(cb);
+Controller.refreshPromotions = function(cb){
+    CompanyCtrl.refreshPremium(function(err){
+        PromotionCtrl.refreshPromotions(cb);
+    })
+    
 };
 
 

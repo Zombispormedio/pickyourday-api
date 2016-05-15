@@ -382,14 +382,16 @@ Controller.payment = function(id, params, cb){
       json: true
     };
 
-
     request(options, function callback(error, response, body) {
+        console.log(error);
+        console.log(response.statusCode);
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
         console.log(info.stargazers_count + " Stars");
         console.log(info.forks_count + " Forks");
         cb(error);
       }else{
+        console.log(id);
         CompanyModel.findById(id, function (err, company) {
             if(err) return cb(err);
             if(!company) return cb(-1);

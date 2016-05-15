@@ -731,7 +731,7 @@ CompanySchema.statics = {
 			if (!company) return cb("Company not found");
 			var now = new Date();
 			if(company.premium == false || company.dateExpire < params.initDate){
-				return cb("Company not premium");
+				return cb("La compañia no es premium");
 			}
 
 			company.promotions.push(params);

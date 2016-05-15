@@ -248,9 +248,9 @@ Controller.delete = function (id, cb) {
             if (result.result.n == 0)
                 return cb([-1]);
 
-            CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err){
+            CompanyModel.removePickAsigned(pickTemp.company.id_company, pickTemp._id, function(err, resource){
                 if(err) return cb(err);
-                HistoryCtrl.savePick(pickTemp, cb);
+                HistoryCtrl.savePick(pickTemp, resource, cb);
                 
             });
 

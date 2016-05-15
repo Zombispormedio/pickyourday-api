@@ -1127,6 +1127,7 @@ CompanySchema.statics = {
 			if (err) return cb(err);
 			if (company) {
 				var resources = company.resources;
+				var resource = null;
 				for (var r in resources) {
 					var found = false;
 					if (resources[r].picks) {
@@ -1134,6 +1135,7 @@ CompanySchema.statics = {
 							if (resources[r].picks[p].equals(id_pick)) {
 								resources[r].picks.splice(p, 1);
 								found = true;
+								resource = resources[r];
 								break;
 							}
 						}
@@ -1142,7 +1144,7 @@ CompanySchema.statics = {
 				}
 				company.save(function (err) {
 					if (err) return cb(err);
-					cb();
+					cb(null, resource);
 				});
 			}
 		});

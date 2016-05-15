@@ -117,8 +117,9 @@ Controller.statsPicks = function (company, query, cb) {
 
 			
 		}, function normalize(next) {
+			var legend = { "x": "Picks cancelados/terminados", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-
+			data.legend = legend;
 			next(null, data);
 
 		}
@@ -198,8 +199,9 @@ Controller.originPicks = function (company, query, cb) {
 				next();
 			});
 		}, function normalize(next) {
+			var legend = { "x": "Origen pick Prepick/movil/manual", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-
+			data.legend = legend;
 			next(null, data);
 
 
@@ -300,9 +302,9 @@ Controller.scoreServices = function (company, query, cb) {
 				next();
 			});
 		}, function normalize(next) {
-			var legend = { "x": "Valoración", "y": "Cantidad", "z": "Servicio", "w": "Tiempo" }
+			var legend = { "x": "Valoraciones 1/2/3/4/5", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-
+			data.legend = legend;
 			next(null, data);
 
 

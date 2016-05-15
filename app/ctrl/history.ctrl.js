@@ -9,10 +9,12 @@ var _=require("lodash");
 var Utils = require(C.lib + "utils");
 var Controller = {};
 
-Controller.savePick = function(pick, cb){
+Controller.savePick = function(pick, resource,  cb){
 	if(!pick) return cb([]);
 	var p = new HPick(pick);
 	p.deleteDate = new Date();
+	p.resource = resource;
+
     p.save(function (err) {
         if (err) return cb(err);
         cb();       

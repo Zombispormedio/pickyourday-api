@@ -710,8 +710,8 @@ CompanySchema.statics = {
 					if(services){
 						for(var serv in services){
 							if(services[serv].equals(id)){
+								company.resources[res].services.splice(serv, 1);
 								
-								delete company.resources[res].services[serv];
 							}
 						}
 							

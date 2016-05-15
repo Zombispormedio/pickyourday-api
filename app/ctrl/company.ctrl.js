@@ -314,7 +314,7 @@ Controller.setPremium = function (company_id, body, cb) {
                 break;
         }
 
-        company.premium = true;
+       
         company.dateExpire = dateExpire;
 
         company.save(function (err) {
@@ -371,7 +371,8 @@ Controller.setPremium = function (company_id, body, cb) {
 
 
 Controller.payment = function(id, params, cb){
-    console.log(params);
+     
+
     var options = {
       method: 'POST', 
       body: {"payer_id": params.PayerID},
@@ -383,14 +384,22 @@ Controller.payment = function(id, params, cb){
     };
 
 
-
     request(options, function callback(error, response, body) {
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
         console.log(info.stargazers_count + " Stars");
         console.log(info.forks_count + " Forks");
+        cb(error);
       }else{
-        console.log(body);
+        CompanyModel.findById(id, function (err, company) {
+            company.premium = true;
+            
+            company.save(function (err) {
+                if(err) return cb(err);
+                cb();
+            });
+        });
+        
       }
     });
 }

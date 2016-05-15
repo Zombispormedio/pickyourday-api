@@ -218,7 +218,7 @@ Controller.originPicks = function (company, query, cb) {
 
 }
 
-Controller.moneyResources =function(company, query,cb){
+Controller.workResources =function(company, query, type, cb){
 	var timeArray = getDates(query);
 	var servicesArray = [];
 	var resourcesArray = [];
@@ -306,8 +306,10 @@ Controller.moneyResources =function(company, query,cb){
 
 							if(picksFiltered != null){
 								var total = picksFiltered.reduce(function (previous, key) {
-									
-								    return previous + key.price;
+									if(type == 0)
+								    	return previous + key.price;
+								   	else if(type == 1)
+								    	return previous + key.duration;
 								}, 0);
 								if (maxY < total)
 								maxY = total;
@@ -336,7 +338,11 @@ Controller.moneyResources =function(company, query,cb){
 
 		},
 		function normalize(next) {
-			var legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" }
+			var legend;
+			if(type == 0)
+				legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" };
+			else if(type == 1)
+				legend = { "x": "Empleados", "y": "Tiempo trabajado", "z": "Servicios", "w": "Tiempo" };
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
 			data.legend = legend;
 			next(null, data);
@@ -349,136 +355,7 @@ Controller.moneyResources =function(company, query,cb){
 
 }
 
-Controller.moneyResources =function(company, query,cb){
-	var timeArray = getDates(query);
-	var servicesArray = [];
-	var resourcesArray = [];
-	var arrayData = [];
 
-	var maxY = 0;
-	var maxX = 0;
-	var maxZ = 0;
-
-
-	var xValues;
-	var zValues;
-	var yValues;
-
-	var self = this;
-
-	async.waterfall([
-		function getServices(next) {
-			self.getServices(company, {}, function (err, services, values) {
-				if (err) return cb(err);
-				zValues = values;
-				servicesArray = services;
-				maxZ = servicesArray.length;
-				next();
-			})
-		},
-		function getResources(next) {
-			self.getResources(company, {}, function (err, resources, values) {
-				if (err) return cb(err);
-				xValues = values;
-				resourcesArray = resources;
-				maxX = resourcesArray.length;
-				next();
-			})
-		},
-		function getPicks(next){
-			var limitInit = new Date();
-			limitInit.setMinutes(1);
-			limitInit.setSeconds(0);
-			limitInit.setHours(1);
-			limitInit.setMilliseconds(0);
-			var limitEnd = _.clone(limitInit);
-			limitEnd.setMinutes(0);
-			var size;
-			if (query.month != undefined && query.month != "") {
-				limitInit.setMonth(limitInit.getMonth() - parseInt(query.month));
-				size = query.month;
-			} else {
-				limitInit.setDate(limitInit.getDate() - 30);
-				size = 30;
-			}
-
-			var result = [];
-			var paramsTemp = {};
-			paramsTemp["company.id_company"] = company;
-			paramsTemp.state = ["finished"];
-
-			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
-				if(err) return cb(err);
-
-				async.eachSeries(resourcesArray, function (res, subNext) {
-
-					var datesPick = [];
-					async.eachSeries(timeArray, function (date, subSubNext) {
-						var picksServices = [];
-
-						async.eachSeries(servicesArray, function (service, subSubSubNext) {
-							var picksFiltered = [];
-							var count=0;
-
-							var picksTemp = _.clone(picks);
-
-							if(picks != null)
-								picksFiltered = picksTemp.filter(function(p){
-									var valid=true;
-									if(p.resource == null || p.price == null)
-										valid = false;
-									else if(!p.company.id_service.equals(service)  &&  !p.resource.equals(res)  && p.initDate < date.init && p.initDate > date.end)
-										valid =false;
-									if(valid)
-										picks.splice(count, 1);
-									count++;
-									return valid;
-								})
-
-							if(picksFiltered != null){
-								var total = picksFiltered.reduce(function (previous, key) {
-									
-								    return previous + key.price;
-								}, 0);
-								if (maxY < total)
-								maxY = total;
-
-								picksServices.push(total);
-							}else
-								picksServices.push(0);
-
-								subSubSubNext();
-						}, function (err) {
-							if (err) return subSubNext(err);
-							datesPick.push(picksServices);
-							subSubNext();
-						});
-					}, function (err) {
-						if (err) return subNext(err);
-						arrayData.push(datesPick);
-						subNext();
-					});
-				}, function (err) {
-					if (err) return next(err);
-					next();
-				});
-
-			});
-
-		},
-		function normalize(next) {
-			var legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" }
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-			data.legend = legend;
-			next(null, data);
-		}
-
-	], function (err, result) {
-		if (err) return cb(err);
-		cb(null, result);
-	});
-
-}
 
 Controller.scoreServices = function (company, query, cb) {
 	var timeArray = getDates(query);

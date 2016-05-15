@@ -1059,11 +1059,11 @@ Controller.scoreServices = function (company, query, cb) {
 }
 
 Controller.moneyResources = function(company, query, cb){
-    StatsCtrl.moneyResources(company, query, cb);
+    StatsCtrl.workResources(company, query, 0,  cb);
 }
 
 Controller.workResources = function(company, query, cb){
-    StatsCtrl.workResources(company, query, cb);
+    StatsCtrl.workResources(company, query, 1,  cb);
 }
 
 

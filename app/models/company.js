@@ -705,13 +705,12 @@ CompanySchema.statics = {
 			var resources = company.resources;
 			if(resources){
 				for(var res in resources){
-					var services =resources[res].services;
+					var services =_.clone(resources[res].services);
 
 					if(services){
 						for(var serv in services){
 							if(services[serv].equals(id)){
-								company.resources[res].services.splice(serv, 1);
-								
+								company.resources[res].services.splice(serv, 1);								
 							}
 						}
 							

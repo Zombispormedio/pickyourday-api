@@ -272,8 +272,12 @@ Controller.moneyResources =function(company, query,cb){
 			var paramsTemp = {};
 			paramsTemp["company.id_company"] = company;
 			paramsTemp.state = ["finished"];
+
 			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
+				if(err) return cb(err);
+
 				async.eachSeries(resourcesArray, function (res, subNext) {
+
 					var datesPick = [];
 					async.eachSeries(timeArray, function (date, subSubNext) {
 						var picksServices = [];
@@ -281,21 +285,21 @@ Controller.moneyResources =function(company, query,cb){
 						async.eachSeries(servicesArray, function (service, subSubSubNext) {
 							var picksFiltered = [];
 							var count=0;
-							var picksTemp = _.clone(picks);
-							if(picks != null)
-							picksFiltered = picksTemp.filter(function(p){
-								var valid=true;
-								if(p.resource == null || p.price == null)
-									valid = false;
-								else if(!p.company.id_service.equals(service)  &&  !p.resource.equals(res)  && p.initDate < date.init && p.initDate > date.end)
-									valid =false;
-								if(valid)
-									picks.splice(count, 1);
-								count++;
-								return valid;
-							})
 
-							
+							var picksTemp = _.clone(picks);
+
+							if(picks != null)
+								picksFiltered = picksTemp.filter(function(p){
+									var valid=true;
+									if(p.resource == null || p.price == null)
+										valid = false;
+									else if(!p.company.id_service.equals(service)  &&  !p.resource.equals(res)  && p.initDate < date.init && p.initDate > date.end)
+										valid =false;
+									if(valid)
+										picks.splice(count, 1);
+									count++;
+									return valid;
+								})
 
 							if(picksFiltered != null){
 								var total = picksFiltered.reduce(function (previous, key) {

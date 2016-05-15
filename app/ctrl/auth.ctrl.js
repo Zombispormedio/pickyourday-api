@@ -40,6 +40,7 @@ AuthController.register = function (role, user, id, cb) {
 
 AuthController.login = function (u, cb) {
     var local = "LoginAuthController";
+    var self = this;
     async.waterfall([
         function (next) {
             AuthModel.findOne({ email: u.email }, function (err, user) {
@@ -58,6 +59,41 @@ AuthController.login = function (u, cb) {
                 user.token.push(token);
                 next(err, user, token);
             });
+        },
+
+        function lastAccess(auth, token, next) {
+
+            if (self.Roles.Company(auth.role)) {
+
+                CompanyModel.findOne({ "_id": auth.user }, function (err, c) {
+                    if (err) return next(Error.mongo_find(null, err));
+                    
+                    c.lastAccess=new Date();   
+                    c.save(function (err) {
+                        if (err) return next(Error.mongo_save(null, err));
+
+                        next(null, auth, token);
+                    });
+
+
+                });
+
+            } else {
+                if (self.Roles.Customer(auth.role)) {
+                    CustomerModel.findOne({ "_id": auth.user }, function (err, c) {
+                        if (err) return next(Error.mongo_find(null, err));
+                        
+                        c.lastAccess=new Date();  
+                        c.save(function (err) {
+                            if (err) return next(Error.mongo_save(null, err));
+
+                            next(null, auth, token);
+                        });
+                    });
+                }
+            }
+
+
         },
         function (user, token, next) {
             user.save(function (err) {
@@ -172,7 +208,7 @@ AuthController.logout = function (token, cb) {
     AuthModel.removeToken(token, function (err) {
         if (err) {
             err.place.push(local);
-           return cb(err);
+            return cb(err);
         }
         cb();
     });
@@ -222,8 +258,8 @@ AuthController.getRole = function (code, cb) {
 
 
 AuthController.forgotPassword = function (body, cb) {
-    var local="forgotPasswordAuthCtrl";
-    
+    var local = "forgotPasswordAuthCtrl";
+
     if (!body || !body.email) return cb(Error.not_fields(local, "Por favor, rellena en Olvidar Contraseña"));
 
     var email = body.email;
@@ -232,7 +268,7 @@ AuthController.forgotPassword = function (body, cb) {
             AuthModel.findOne({ email: email, }, function (err, user) {
                 if (err) return next(Error.mongo_find(null, err));
                 if (!user) return next(Error.no_users(null, "Email incorrecto"))
-                if (user.social) return next(Error.forgot_social(null,"Lo siento, te has registrado con " + user.social + ". No podemos cambiarte la contraseña."));
+                if (user.social) return next(Error.forgot_social(null, "Lo siento, te has registrado con " + user.social + ". No podemos cambiarte la contraseña."));
 
                 next(null, user);
             });
@@ -299,8 +335,8 @@ AuthController.forgotPassword = function (body, cb) {
             Mail.send(options, next);
         }
 
-    ], function(err){
-        if(err){
+    ], function (err) {
+        if (err) {
             err.place.push(local);
             return cb(err);
         }
@@ -313,8 +349,8 @@ AuthController.forgotPassword = function (body, cb) {
 }
 
 AuthController.UniqueResetCode = function (cb) {
-    var local="UniqueResetCodeAuthCtrl";
-    
+    var local = "UniqueResetCodeAuthCtrl";
+
     function getCode() {
         return Utils.generateResetCode(5);
     }
@@ -339,8 +375,8 @@ AuthController.UniqueResetCode = function (cb) {
 }
 
 AuthController.resetPassword = function (body, cb) {
-    var local="ResetPasswordAuthCtrl";
-    
+    var local = "ResetPasswordAuthCtrl";
+
     if (!body || !body.password || !body.code) return cb(Error.not_fields(local));
 
     var password = body.password;
@@ -350,7 +386,7 @@ AuthController.resetPassword = function (body, cb) {
         function (next) {
             AuthModel.findOne({ reset_code: code, }, function (err, user) {
                 if (err) return next(Error.mongo_find(null, err));
-                if (!user) return next(Error.no_data(null,"Wrong Code in Reset Password"))
+                if (!user) return next(Error.no_data(null, "Wrong Code in Reset Password"))
 
                 next(null, user);
             });
@@ -409,13 +445,13 @@ AuthController.resetPassword = function (body, cb) {
             Mail.send(options, next);
         }
 
-    ], function(err){
-        if(err){
+    ], function (err) {
+        if (err) {
             err.place.push(local);
-            
+
             return cb(err);
         }
-        
+
         cb();
     });
 

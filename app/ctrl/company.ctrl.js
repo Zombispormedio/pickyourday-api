@@ -334,7 +334,7 @@ Controller.setPremium = function (company_id, body, cb) {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": "http://localhost:5045/#/dashboard",
+                    "return_url": "http://localhost:5045/#/payment",
                     "cancel_url": "http://localhost:5045/#/profile"
                 },
                 "transactions": [{
@@ -370,7 +370,7 @@ Controller.setPremium = function (company_id, body, cb) {
 }
 
 
-Controller.payment = function(params, cb){
+Controller.payment = function(id, params, cb){
     var options = {
       method: 'POST', 
       body: {"payer_id": params.PayerID},

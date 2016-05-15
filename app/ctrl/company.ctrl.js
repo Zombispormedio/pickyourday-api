@@ -391,6 +391,8 @@ Controller.payment = function(id, params, cb){
         cb(error);
       }else{
         CompanyModel.findById(id, function (err, company) {
+            if(err) return cb(err);
+            if(!company) return cb(-1);
             company.premium = true;
             
             company.save(function (err) {

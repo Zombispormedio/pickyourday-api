@@ -491,10 +491,13 @@ Controller.getTimeLine = function (id_company, params, cb) {
         params.date = new Date();
     else params.date = new Date(params.date);
 
+    var now = new Date();
+    if(now.getDate() != params.date.getDate()){
         params.date.setHours(0);
-    params.date.setMinutes(0);
-    params.date.setSeconds(0);
-    params.date.setMilliseconds(0);
+        params.date.setMinutes(0);
+        params.date.setSeconds(0);
+        params.date.setMilliseconds(0);
+    }
 
     if (params.rangeDays == undefined || params.rangeDays == "")
         params.rangeDays = 30;

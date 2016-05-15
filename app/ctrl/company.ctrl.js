@@ -1062,6 +1062,10 @@ Controller.moneyResources = function(company, query, cb){
     StatsCtrl.moneyResources(company, query, cb);
 }
 
+Controller.workResources = function(company, query, cb){
+    StatsCtrl.workResources(company, query, cb);
+}
+
 
 //*******************RESOURCE
 Controller.newResource = function (company, params, cb) {

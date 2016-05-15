@@ -272,7 +272,8 @@ Controller.formatDatePick = function(id_company, date, allDay, rangeDays, picks,
         var firstDate = new Date();
         if(date)
             firstDate = new Date(date);
-
+        console.log(date +" date");
+        console.log(firstDate +" firstDate");
         if(allDay){
             firstDate.setHours(0);
             firstDate.setMinutes(0);

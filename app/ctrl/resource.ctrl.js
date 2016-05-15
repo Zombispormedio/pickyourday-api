@@ -87,7 +87,8 @@ Controller.findById = function(user, id, params, cb){
 
 Controller.search = function(user, query, cb){
     CompanyModel.findById(user, function(err, c){
-        if(err) return cb(err); 
+        if(err) return cb(err);
+        if(!c) return cb(-1);
         query.state = c.state;
 
 		CompanyModel.searchResources(user, query, function(err, resources){

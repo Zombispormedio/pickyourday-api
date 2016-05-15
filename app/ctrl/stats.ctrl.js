@@ -273,15 +273,15 @@ Controller.moneyResources =function(company, query,cb){
 			paramsTemp["company.id_company"] = company;
 			paramsTemp.state = ["finished"];
 			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
-
 				async.eachSeries(resourcesArray, function (res, subNext) {
 					var datesPick = [];
 					async.eachSeries(timeArray, function (date, subSubNext) {
 						var picksServices = [];
 
 						async.eachSeries(servicesArray, function (service, subSubSubNext) {
-							
-							var picksFiltered = picks.filter(function(p){
+							var picksFiltered = [];
+							if(picks)
+							 picksFiltered = picks.filter(function(p){
 								var valid=true;
 								if(p.resource == null || p.price == null)
 									valid = false;
@@ -297,15 +297,12 @@ Controller.moneyResources =function(company, query,cb){
 									
 								    return previous + key.price;
 								}, 0);
-								console.log(total);
+
 								picksServices.push(total);
 							}else
 								picksServices.push(0);
 
 								subSubSubNext();
-							
-
-
 						}, function (err) {
 							if (err) return subSubNext(err);
 							datesPick.push(picksServices);
@@ -329,7 +326,6 @@ Controller.moneyResources =function(company, query,cb){
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
 			data.legend = legend;
 			next(null, data);
-
 		}
 
 	], function (err, result) {

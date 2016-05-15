@@ -489,11 +489,12 @@ Controller.getTimeLine = function (id_company, params, cb) {
     if (!params) params = {};
     if (!params.date)
         params.date = new Date();
-    params.date.setHours(0);
+    else params.date = new Date(params.date);
+
+        params.date.setHours(0);
     params.date.setMinutes(0);
     params.date.setSeconds(0);
     params.date.setMilliseconds(0);
-    else params.date = new Date(params.date);
 
     if (params.rangeDays == undefined || params.rangeDays == "")
         params.rangeDays = 30;

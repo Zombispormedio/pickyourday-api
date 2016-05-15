@@ -389,6 +389,9 @@ Controller.payment = function(id, params, cb){
         var info = JSON.parse(body);
         console.log(info.stargazers_count + " Stars");
         console.log(info.forks_count + " Forks");
+      }else{
+        console.log(response);
+        console.log(body);
       }
     });
 }

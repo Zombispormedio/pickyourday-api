@@ -728,7 +728,7 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                             var pickTemp = picks[pick].pick;
 
                                             if (pickTemp) {
-                                                var customer = pickTemp.id_customer;
+                                                var customer = pickTemp.customer;
                                                 var name = "";
                                                 var phone = "";
                                                 console.log(pickTemp);

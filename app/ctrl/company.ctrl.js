@@ -731,6 +731,7 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                                 var customer = pickTemp.id_customer;
                                                 var name = "";
                                                 var phone = "";
+                                                console.log(pickTemp);
                                                 if (customer == null) {
                                                     name = pickTemp.nameCli;
                                                     phone = pickTemp.phoneCli;

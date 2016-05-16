@@ -77,7 +77,7 @@ Controller.statsPicks = function (company, query, cb) {
 							var picksFiltered = picks.filter(function(p){
 
 								var valid=true;
-								if(!p.company.id_service.equals(service)  && p.state == state && p.initDate < date.init && p.initDate > date.end)
+								if(!p.company.id_service.equals(service)  && p.state != state && p.initDate < date.init && p.initDate > date.end)
 									valid =false;
 
 								return valid;
@@ -162,45 +162,50 @@ Controller.originPicks = function (company, query, cb) {
 		}, function getPicks(next) {
 
 			maxZ = servicesArray.length;
-			async.eachSeries(origins, function (origin, subNext) {
-				var datesPick = [];
-				async.eachSeries(timeArray, function (date, subSubNext) {
-					var picksServices = [];
-					async.eachSeries(servicesArray, function (service, subSubSubNext) {
+			var paramsTemp = {};
+			paramsTemp["company.id_company"] = company;
 
-						var paramsTemp = {};
-						paramsTemp["company.id_service"] = service;
-						paramsTemp["company.id_company"] = company;
-						paramsTemp.origin = [origin];
-						paramsTemp.beforeInitDate = date.end;
-						paramsTemp.afterInitDate = date.init;
-						HistoryCtrl.getPicks(paramsTemp, function (err, picks) {
-							var count = 0;
-							if (picks)
-								count = picks.length;
+			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
+				async.eachSeries(origins, function (origin, subNext) {
+					var datesPick = [];
+					async.eachSeries(timeArray, function (date, subSubNext) {
+						var picksServices = [];
+						async.eachSeries(servicesArray, function (service, subSubSubNext) {
 
-							if (maxY < count)
+							var picksFiltered = picks.filter(function(p){								
+								if(p.company.id_service.equals(service) &&
+								   p.origin == origin &&
+								   p.initDate > date.init &&
+								   p.initDate < date.end)
+									return true
+								return false;
+							})
+							if(picksFiltered != null){
+								var count=picksFiltered.length;
+								picksServices.push(count);
+								if (maxY < count)
 								maxY = count;
+							}else
+								picksServices.push(0);
 
-							picksServices.push(count);
+								subSubSubNext();
 
-							subSubSubNext();
+							
+						}, function (err) {
+							if (err) return cb(err);
+							datesPick.push(picksServices);
+							subSubNext();
+						});
 
-						})
 					}, function (err) {
 						if (err) return cb(err);
-						datesPick.push(picksServices);
-						subSubNext();
+						arrayData.push(datesPick);
+						subNext();
 					});
-
 				}, function (err) {
 					if (err) return cb(err);
-					arrayData.push(datesPick);
-					subNext();
+					next();
 				});
-			}, function (err) {
-				if (err) return cb(err);
-				next();
 			});
 		}, function normalize(next) {
 			var legend = { "x": "Origen pick Prepick/movil/manual", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }

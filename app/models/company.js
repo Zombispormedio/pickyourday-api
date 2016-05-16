@@ -176,6 +176,9 @@ CompanySchema.statics = {
 				case 'beforeRegister':
 					query.where('registerDate').lt(params[key]);
 					break;
+				case 'state':
+					query.where('state').equals(params[key]);
+					break;
 				case 'afterRegister':
 					query.where('registerDate').gt(params[key]);
 					break;

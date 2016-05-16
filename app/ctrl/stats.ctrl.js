@@ -75,7 +75,6 @@ Controller.statsPicks = function (company, query, cb) {
 							paramsTemp.afterInitDate = date.init;
 							
 							var picksFiltered = picks.filter(function(p){
-
 								var valid=true;
 								if(!p.company.id_service.equals(service)  && p.state != state && p.initDate < date.init && p.initDate > date.end)
 									valid =false;
@@ -101,7 +100,7 @@ Controller.statsPicks = function (company, query, cb) {
 							subSubNext();
 						});
 						percent++;
-						console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
+						//console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
 
 					}, function (err) {
 						if (err) return subNext(err);

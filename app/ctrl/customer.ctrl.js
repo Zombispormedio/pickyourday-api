@@ -184,6 +184,7 @@ Controller.searchThings = function(params, cb) {
                 paramsTemp["city"] = params["location.city"]; 
             if(params["location.country"])
                 paramsTemp["country"] = params["location.country"];
+            paramsTemp.state = "active";
             CompanyCtrl.search(paramsTemp, function(err, companies) {
                 if (err) return callback(err);
                 if (companies)

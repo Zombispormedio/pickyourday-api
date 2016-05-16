@@ -620,7 +620,7 @@ CompanySchema.statics = {
 
 		query.exec(function (err, companyService) {
 
-			if (companyService.length != 0)
+			if (companyService && companyService.length != 0)
 				if (greaterRating || lessRating) {
 					var rates = getServiceRating(companyService);
 					var noDeleted = 0;
@@ -662,6 +662,7 @@ CompanySchema.statics = {
 				return cb("Company not found");
 
 			var service = company.services.id(id);
+
 			if (!service)
 				return cb("Service not found FindServiceById");
 
@@ -1031,6 +1032,16 @@ CompanySchema.statics = {
 		});
 	},
 
+	serviceAsigned: function(id_company, id_service, cb){
+		var paramsTemp ={};
+		paramsTemp.service = id_service;
+		 this.searchResources(id_company, paramsTemp, function (err, resources) {
+			if (err) return cb(err);
+			if(resources && resources.length > 0)
+				cb(null, true)
+			else cb(null, false)
+		});	
+	},
 	formatReviews: function (id_company, cb) {
 		var query = this.aggregate(
 			[{ "$project": { "hourly": "$review" } },

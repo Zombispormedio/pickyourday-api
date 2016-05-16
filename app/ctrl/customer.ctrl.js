@@ -171,8 +171,34 @@ Controller.searchThings = function(params, cb) {
                 paramsTemp.category = params.category;
             ServiceCtrl.search(0, paramsTemp, function(err, services) {
                 if (err) return callback(err);
-                things.services = services;
-                callback(null, things);
+                var result = [];
+                var valid=true;;
+                var servicesValids = []
+
+                async.map(services, function (service, next) {
+                    CompanyModel.serviceAsigned(service._id, service.services._id, function(err, result){
+                        if(result) servicesValids.push(service);
+                        next();
+                    })
+
+                }, function (err) {
+                    if(servicesValids)
+                        for(var i=0; i<servicesValids.length; i++){                            
+                                for(var s=0; s<result.length; s++){
+                                    if(services[i].services._id.equals(result[s])){
+                                        valid = false;
+                                        break;
+                                    }
+                                }
+                            if(valid)
+                                result.push(services[i]);
+                        }
+                                                    
+                    things.services = result;
+                    callback(null, things);
+                });
+                
+
             });
         }, function getCompanies(things, callback) {
             var paramsTemp = {};

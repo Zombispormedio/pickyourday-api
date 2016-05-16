@@ -110,13 +110,21 @@ Controller.search = function (query, cb) {
                             function (subCallback) {
                                 async.map(resource.services, function (service, next) {
                                     ServiceCtrl.findById(comp._id, service, function (err, serv) {
-                                        if (err) return next(err);
+                                        if (err) return next(null);
                                         service = serv;
                                         next(null, service);
                                     });
                                 }, function (err, result) {
                                     if (err) return subCallback(err);
-                                    resource.services = result;
+                                    resource.services = _.clone(result);
+
+                                    if(resource.services)
+                                        for(var s=0; s<resource.services.length; s++){
+                                            
+                                            if(resource.services[s] == null || resource.services[s] == undefined)
+                                                result.splice(s,1);
+                                        }
+                                    resource.services = _.clone(result);
                                     subCallback(null, resource);
                                 });
                             }
@@ -730,15 +738,16 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                                 } else {
                                                     if (customer.name != undefined)
                                                         name = customer.name + " " + customer.surname;
+                                                    else name = customer.email;
                                                     phone = customer.phone;
                                                 }
                                                 var service = pickTemp.service;
 
                                                 var serviceName = "";
                                                 if (name == undefined)
-                                                    name = "";
+                                                    name = "Sin nombre";
                                                 if (phone == undefined)
-                                                    phone = "";
+                                                    phone = "Sin teléfono";
 
                                             }
                                             if (service) {

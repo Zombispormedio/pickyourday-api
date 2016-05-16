@@ -120,7 +120,7 @@ Controller.search = function (query, cb) {
 
                                     if(resource.services)
                                         for(var s=0; s<resource.services.length; s++){
-                                            
+
                                             if(resource.services[s] == null || resource.services[s] == undefined)
                                                 result.splice(s,1);
                                         }
@@ -731,13 +731,13 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                                 var customer = pick.customer;
                                                 var name = "";
                                                 var phone = "";
-
+                                                console.log(customer.email);
                                                 if (customer == null) {
                                                     name = pickTemp.nameCli;
                                                     phone = pickTemp.phoneCli;
                                                 } else {
-                                                    if (customer.name != undefined)
-                                                        name = customer.name + " " + customer.surname;
+                                                    if (customer.name != undefined || customer.name != null || customer.name != "" )
+                                                        name = customer.name;
                                                     else name = customer.email;
                                                     phone = customer.phone;
                                                 }

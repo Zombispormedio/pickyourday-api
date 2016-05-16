@@ -449,6 +449,7 @@ Controller.delete = function (id, cb) {
 
             AuthModel.findOne({ email: company.email }, function (err, auth) {
                 if (err) return next(err);
+                if(!auth)return next(null, company);
                 auth.remove(function (err) {
                     if (err) return next(err);
                     next(null, company);

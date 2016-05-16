@@ -264,7 +264,7 @@ router.route("/developer")
     });
 
 router.route("/payment")
-    .post(function (req, res) { 
+    .post(AuthController.checkCompany(), function (req, res) { 
         CompanyCtrl.payment(req.user, req.body, function(err){
             if(err) Response.printError(res, err);
             else

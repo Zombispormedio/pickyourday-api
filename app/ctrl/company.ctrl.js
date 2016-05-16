@@ -283,7 +283,6 @@ Controller.modify = function (id, body, cb) {
 };
 
 Controller.setPremium = function (company_id, body, cb) {
-    console.log(body);
     if (!body || !body.premium)
         return cb("Fields not filled");
     var self = this;
@@ -359,8 +358,8 @@ Controller.setPremium = function (company_id, body, cb) {
                 if (error) {
                     cb(error);
                 } else {
-                    console.log("Create Payment Response");
-                    console.log(payment);
+                    console.log("Create Payment ok");
+                   // console.log(payment);
                     cb(null, payment.links[1].href)
                 }
             });
@@ -384,8 +383,8 @@ Controller.payment = function(id, params, cb){
     };
 
     request(options, function callback(error, response, body) {
-        console.log(error);
-        console.log(response.statusCode);
+        console.log("error: "+error );
+        console.log("status:" +response.statusCode);
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
         console.log(info.stargazers_count + " Stars");

@@ -731,12 +731,12 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                                 var customer = pick.customer;
                                                 var name = "";
                                                 var phone = "";
-
+                                                console.log(customer);
                                                 if (customer == null) {
                                                     name = pickTemp.nameCli;
                                                     phone = pickTemp.phoneCli;
                                                 } else {
-                                                    console.log(customer.email);
+
                                                     if (customer.name != undefined || customer.name != null || customer.name != "" )
                                                         name = customer.name;
                                                     else name = customer.email;

@@ -167,17 +167,22 @@ Controller.originPicks = function (company, query, cb) {
 
 			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
 				async.eachSeries(origins, function (origin, subNext) {
+					var picksTemp = _.clone(picks);
 					var datesPick = [];
 					async.eachSeries(timeArray, function (date, subSubNext) {
 						var picksServices = [];
 						async.eachSeries(servicesArray, function (service, subSubSubNext) {
+							var count =0;
+							var picksFiltered = picksTemp.filter(function(p){	
 
-							var picksFiltered = picks.filter(function(p){								
 								if(p.company.id_service.equals(service) &&
 								   p.origin == origin &&
 								   p.initDate > date.init &&
-								   p.initDate < date.end)
+								   p.initDate < date.end){
+								   	picks.splice(count, 1);
 									return true
+									}
+									count++;
 								return false;
 							})
 							if(picksFiltered != null){

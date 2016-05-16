@@ -728,16 +728,15 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                             var pickTemp = picks[pick].pick;
 
                                             if (pickTemp) {
-                                                var customer = pick.id_customer;
+                                                var customer = pickTemp.id_customer;
                                                 var name = "";
                                                 var phone = "";
-                                                console.log(pick);
                                                 if (customer == null) {
                                                     name = pickTemp.nameCli;
                                                     phone = pickTemp.phoneCli;
                                                 } else {
 
-                                                    if (customer.name != undefined || customer.name != null || customer.name != "" )
+                                                    if (customer.name != undefined || customer.name != "" )
                                                         name = customer.name;
                                                     else name = customer.email;
                                                     phone = customer.phone;

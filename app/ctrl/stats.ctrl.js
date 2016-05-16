@@ -537,7 +537,7 @@ Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValue
 			for (var z in arrayData[x][key]) {
 				z = parseInt(z);
 				var yValue = arrayData[x][key][z] || 0;
-				console.log(yValue);
+				
 				var data = [xValues[x], yValue, zValues[z]];
 				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY) * grillY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));

@@ -736,7 +736,7 @@ Controller.getTimeLine = function (id_company, params, cb) {
                                                     name = pickTemp.nameCli;
                                                     phone = pickTemp.phoneCli;
                                                 } else {
-                                                    console.log(pickTemp.customer.email);
+                                            
                                                     if (customer.name != undefined && customer.name != "" )
                                                         name = customer.name;
                                                     else name = customer.email;
@@ -1020,6 +1020,31 @@ Controller.refreshPremium = function(cb){
 
     })
 };
+
+Controller.refreshCompanies = function(cb){
+    var paramsTemp = {};
+    paramsTemp.state = "active";
+    CompanyModel.search(paramsTemp, function(err, companies){
+        async.map(companies, function(company, next){
+            if(Company){
+                if(!company.services || company.services.length <=0)
+                    company.state = "demo";
+                if(!company.resources || company.resources.length <=0)
+                    company.state = "demo";
+                if(!company.scheduleActivity || company.scheduleActivity.length <=0 )
+                    company.state = "demo";
+                if(!company.name || company.name =="" )
+                    company.state = "demo";
+                company.save(next);
+            }else next();
+
+           
+            
+        }, function(err){
+            cb();
+        });
+    });
+}
 
 Controller.getServiceById = function (company, id, cb) {
     ServiceCtrl.findById(company, id, cb);

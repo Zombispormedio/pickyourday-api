@@ -533,8 +533,10 @@ CompanySchema.statics = {
 			company.services.push(params);
 			var service = company.services[company.services.length - 1];
 			service.dateCreated = new Date();
-			if (service.duration == "" || !service.duration || service.duration < 5)
-				service.duration = serviceName.duration;
+			if(!service.price || service.price == "")
+				service.price = 0;
+			if(!service.duration || service.duration == "" || service.duration < 5)
+				service.duration = 5;
 			company.save(function (err) {
 				if (err) return cb(err);
 				cb();
@@ -683,6 +685,11 @@ CompanySchema.statics = {
 			for (var key in params) {
 				service[key] = params[key];
 			}
+
+			if(!service.price || service.price == "")
+				service.price = 0;
+			if(!service.duration || service.duration == "" || service.duration < 5)
+				service.duration = 5;
 
 			company.lastUpdate = new Date();
 

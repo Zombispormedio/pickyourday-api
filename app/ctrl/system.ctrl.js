@@ -131,9 +131,12 @@ Controller.clearPicks = function (cb) {
 };
 
 Controller.refreshPromotions = function(cb){
-    CompanyCtrl.refreshPremium(function(err){
-        PromotionCtrl.refreshPromotions(cb);
+    CompanyCtrl.refreshCompanies(function(err){
+        CompanyCtrl.refreshPremium(function(err){
+            PromotionCtrl.refreshPromotions(cb);
+        })  
     })
+
     
 };
 

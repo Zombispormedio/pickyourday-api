@@ -1026,7 +1026,7 @@ Controller.refreshCompanies = function(cb){
     paramsTemp.state = "active";
     CompanyModel.search(paramsTemp, function(err, companies){
         async.map(companies, function(company, next){
-            if(Company){
+            if(company){
                 if(!company.services || company.services.length <=0)
                     company.state = "demo";
                 if(!company.resources || company.resources.length <=0)

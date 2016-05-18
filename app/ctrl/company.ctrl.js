@@ -1004,7 +1004,7 @@ Controller.refreshPremium = function(cb){
     CompanyModel.search(paramsTemp, function(err, companies){
         var now = new Date();
         async.map(companies, function(company, next){
-            if(company.dateExpire > now){
+            if(company.dateExpire < now){
                 company.premium= false;
                 var promotions = company.promotions;
                 if(promotions != null){

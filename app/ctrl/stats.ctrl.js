@@ -419,7 +419,7 @@ Controller.scoreServices = function (company, query, cb) {
 				arrayData.push(scoreService);
 			}
 
-			var legend = { "x": "Valoraciones 1 / 2 / 3 / 4 / 5", "y": "Cantidad de votos", "z": "Servicios", "w": "Tiempo" }
+			var legend = { "x": "Servicios", "y": "Cantidad de votos", "z": "Valoraciones 1 / 2 / 3 / 4 / 5", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ , zValues, xValues, 100);
 			data.legend = legend;
 			next(null, data);

@@ -118,9 +118,9 @@ Controller.originPicks = function (company, query, cb) {
 	var maxX = 4;
 	var maxZ = 0;
 
-	var origins = ['prepick', 'mobile', 'manual', 'promotion'];
+	var origins = ['prepick', 'mobile', 'manual'];
 
-	var xValues = ["Prepick", "Movil", "Compañia", "Promocion"];
+	var xValues = ["Prepick", "Movil", "Compañia"];
 	var zValues;
 	var yValues;
 
@@ -407,11 +407,11 @@ Controller.scoreServices = function (company, query, cb) {
 						if (query.month == undefined || query.month == "") {
 							var day = Utils.countDays(limitInit, date);
 							if (day >= 0)
-								scoreService[day][rate - 1]++;
+								scoreService[rate - 1][day]++;
 						} else {
 							var month = Utils.countDays(limitInit, date);
 							if (month >= 0)
-								scoreService[month][rate - 1]++;
+								scoreService[rate - 1][month]++;
 						}
 					}
 				}
@@ -419,7 +419,7 @@ Controller.scoreServices = function (company, query, cb) {
 				arrayData.push(scoreService);
 			}
 
-			var legend = { "x": "Valoraciones 1 / 2 / 3 / 4 / 5", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
+			var legend = { "x": "Valoraciones 1 / 2 / 3 / 4 / 5", "y": "Cantidad de votos", "z": "Servicios", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
 			data.legend = legend;
 			next(null, data);

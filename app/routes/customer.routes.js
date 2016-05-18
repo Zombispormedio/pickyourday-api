@@ -105,9 +105,6 @@ router.route("/promotion")
         });
     });
 
-
-
-
 router.route("/event")
     .post(AuthController.checkCustomer(), function (req, res) {
         CustomerCtrl.newEvent(req.user, req.body, function (err) {
@@ -124,13 +121,6 @@ router.route("/event")
                 Response.printSuccess(res, events);
         });
     })
-    .delete(AuthController.checkCustomer(), function (req, res) {
-        CustomerCtrl.deleteEvent(req.user, req.body, function (err) {
-            if (err) Response.printError(res, err);
-            else
-                Response.printSuccess(res, "Event deleted");
-        });
-    });
 
 router.route("/prePick")
     .get(AuthController.checkCustomer(), function (req, res) {
@@ -326,7 +316,15 @@ router.route("/event/:id")
             else
                 Response.printSuccess(res, "Event modified");
         });
+    })
+    .delete(AuthController.checkCustomer(), function (req, res) {
+        CustomerCtrl.deleteEvent(req.params.id, function (err, pick) {
+            if (err) Response.printError(res, err);
+            else
+                Response.printSuccess(res, pick);
+        });
     });
+
 
 router.route("/prePick/:id")
     .get(AuthController.checkCustomer(), function (req, res) {

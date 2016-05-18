@@ -999,7 +999,6 @@ Controller.deleteService = function (company, service_id, cb) {
 
 Controller.refreshPremium = function(cb){
     var paramsTemp = {};
-    paramsTemp.premium = true;
 
     CompanyModel.search(paramsTemp, function(err, companies){
         var now = new Date();

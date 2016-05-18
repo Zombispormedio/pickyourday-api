@@ -59,28 +59,29 @@ Controller.statsPicks = function (company, query, cb) {
 			paramsTemp["company.id_company"] = company;
 
 			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
-
-				async.eachSeries(states, function (state, subNext) {
-					var datesPick = [];
-					async.eachSeries(timeArray, function (date, subSubNext) {
-						var picksServices = [];
-
-						async.eachSeries(servicesArray, function (service, subSubSubNext) {
-
-							var paramsTemp = {};
-							paramsTemp["company.id_service"] = service;
-							paramsTemp["company.id_company"] = company;
-							paramsTemp.state = state;
-							paramsTemp.beforeInitDate = date.end;
-							paramsTemp.afterInitDate = date.init;
-							
-							var picksFiltered = picks.filter(function(p){
+				var state;
+				var date;
+				var service;
+				var datesPick;
+				var picksServices;
+				var picksFiltered;
+				
+				for(var x=0; x<states.length; x++){
+					state = states[x];
+					datesPick = [];
+					for(var y=0; y<timeArray.length; y++){
+						date = timeArray[y];
+						picksServices = [];
+						for(var z=0; z<servicesArray.length; z++){
+							service=servicesArray[z];
+							picksFiltered = picks.filter(function(p){
 								var valid=true;
 								if(!p.company.id_service.equals(service)  && p.state != state && p.initDate < date.init && p.initDate > date.end)
 									valid =false;
 
 								return valid;
 							})
+
 							if(picksFiltered != null){
 								var count=picksFiltered.length;
 								picksServices.push(count);
@@ -88,43 +89,18 @@ Controller.statsPicks = function (company, query, cb) {
 								maxY = count;
 							}else
 								picksServices.push(0);
+						}
+						datesPick.push(picksServices);
 
-								subSubSubNext();
-							
+					}
+					arrayData.push(datesPick);
+				}
 
-
-						}, function (err) {
-							if (err) return subSubNext(err);
-							datesPick.push(picksServices);
-
-							subSubNext();
-						});
-						percent++;
-						//console.log("Loading StatsPicks: "+(((percent / percent_total) * 100).toFixed(2)) + "%");
-
-					}, function (err) {
-						if (err) return subNext(err);
-						arrayData.push(datesPick);
-
-						subNext();
-					});
-				}, function (err) {
-					if (err) return next(err);
-					next();
-				});
-
-
-
+				var legend = { "x": "Picks -  cancelados / terminados", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+				data.legend = legend;
+				next(null, data);
 			});
-
-
-			
-		}, function normalize(next) {
-			var legend = { "x": "Picks cancelados/terminados", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-			data.legend = legend;
-			next(null, data);
-
 		}
 
 	], function (err, result) {
@@ -164,16 +140,26 @@ Controller.originPicks = function (company, query, cb) {
 			var paramsTemp = {};
 			paramsTemp["company.id_company"] = company;
 
-			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
-				async.eachSeries(origins, function (origin, subNext) {
-					var picksTemp = _.clone(picks);
-					var datesPick = [];
-					async.eachSeries(timeArray, function (date, subSubNext) {
-						var picksServices = [];
-						async.eachSeries(servicesArray, function (service, subSubSubNext) {
-							var count =0;
-							var picksFiltered = picksTemp.filter(function(p){	
-
+			HistoryCtrl.getPicks(paramsTemp, function(err, picks){				
+				var origin;
+				var date;
+				var service;
+				var datesPick;
+				var picksServices;
+				var picksFiltered;
+				var picksTemp;
+				var count;
+				for(var x=0; x<origins.length; x++){
+					origin = origins[x];
+					datesPick = [];
+					for(var y=0; y<timeArray.length; y++){
+						date = timeArray[y];
+						picksServices = [];
+						for(var z=0; z<servicesArray.length; z++){
+							service=servicesArray[z];
+							count =0;
+							picksTemp =_.clone(picks);
+							picksFiltered = picksTemp.filter(function(p){	
 								if(p.company.id_service.equals(service) &&
 								   p.origin == origin &&
 								   p.initDate > date.init &&
@@ -184,6 +170,7 @@ Controller.originPicks = function (company, query, cb) {
 									count++;
 								return false;
 							})
+
 							if(picksFiltered != null){
 								var count=picksFiltered.length;
 								picksServices.push(count);
@@ -191,33 +178,17 @@ Controller.originPicks = function (company, query, cb) {
 								maxY = count;
 							}else
 								picksServices.push(0);
+						}
+						datesPick.push(picksServices);
+					}
+					arrayData.push(datesPick);
+				}
 
-								subSubSubNext();
-
-							
-						}, function (err) {
-							if (err) return cb(err);
-							datesPick.push(picksServices);
-							subSubNext();
-						});
-
-					}, function (err) {
-						if (err) return cb(err);
-						arrayData.push(datesPick);
-						subNext();
-					});
-				}, function (err) {
-					if (err) return cb(err);
-					next();
-				});
-			});
-		}, function normalize(next) {
-			var legend = { "x": "Origen pick Prepick/movil/manual", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-			data.legend = legend;
-			next(null, data);
-
-
+				var legend = { "x": "Origen pick -  Prepick / movil / manual ", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+				data.legend = legend;
+				next(null, data);
+				});		
 		}
 
 	], function (err, result) {
@@ -287,19 +258,25 @@ Controller.workResources =function(company, query, type, cb){
 
 			HistoryCtrl.getPicks(paramsTemp, function(err, picks){
 				if(err) return cb(err);
-
-				async.eachSeries(resourcesArray, function (res, subNext) {
-
-					var datesPick = [];
-					async.eachSeries(timeArray, function (date, subSubNext) {
-						var picksServices = [];
-
-						async.eachSeries(servicesArray, function (service, subSubSubNext) {
-							var picksFiltered = [];
-							var count=0;
-
-							var picksTemp = _.clone(picks);
-
+				var res;
+				var date;
+				var service;
+				var datesPick;
+				var picksServices;
+				var picksFiltered;
+				var picksTemp;
+				var count;
+				for(var x=0; x<resourcesArray.length; x++){
+					res = resourcesArray[x];
+					datesPick = [];
+					for(var y=0; y<timeArray.length; y++){
+						date = timeArray[y];
+						picksServices = [];
+						for(var z=0; z<servicesArray.length; z++){
+							service=servicesArray[z];
+							picksTemp =_.clone(picks);
+							picksFiltered = [];
+							count=0;
 							if(picks != null)
 								picksFiltered = picksTemp.filter(function(p){
 									var valid=true;
@@ -326,35 +303,25 @@ Controller.workResources =function(company, query, type, cb){
 								picksServices.push(total);
 							}else
 								picksServices.push(0);
+						}
+						datesPick.push(picksServices);
+					}
+					arrayData.push(datesPick);
+				}
 
-								subSubSubNext();
-						}, function (err) {
-							if (err) return subSubNext(err);
-							datesPick.push(picksServices);
-							subSubNext();
-						});
-					}, function (err) {
-						if (err) return subNext(err);
-						arrayData.push(datesPick);
-						subNext();
-					});
-				}, function (err) {
-					if (err) return next(err);
-					next();
-				});
+				var legend;
+				if(type == 0)
+					legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" };
+				else if(type == 1)
+					legend = { "x": "Empleados", "y": "Tiempo trabajado", "z": "Servicios", "w": "Tiempo" };
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+				data.legend = legend;
+				next(null, data);
+
+			
 
 			});
 
-		},
-		function normalize(next) {
-			var legend;
-			if(type == 0)
-				legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" };
-			else if(type == 1)
-				legend = { "x": "Empleados", "y": "Tiempo trabajado", "z": "Servicios", "w": "Tiempo" };
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
-			data.legend = legend;
-			next(null, data);
 		}
 
 	], function (err, result) {
@@ -417,17 +384,22 @@ Controller.scoreServices = function (company, query, cb) {
 				size = 30;
 			}
 
-			var result = [];
-
-			async.eachSeries(servicesArray, function (service, subNext) {
-				var reviews = service.rating;
-				var scoreService = [];
-				for (var i = 0; i < size; i++) {
-					scoreService.push([]);
-					for (var z in scores) {
-						scoreService[i].push(0);
-					}
+			var scoreService =[];
+			for (var i = 0; i < size; i++) {
+				scoreService.push([]);
+				for (var x in scores) {
+					scoreService[i].push(0);
 				}
+			}
+
+			var result = [];
+			var service;
+			for(var z=0; z<servicesArray.length; z++){
+				
+				service=servicesArray[z];
+				var reviews = service.rating;
+				var scoreServiceTemp = _.clone(scoreService);
+
 				for (var rev in reviews) {
 					var rate = reviews[rev].rating;
 					var date = reviews[rev].date;
@@ -444,24 +416,16 @@ Controller.scoreServices = function (company, query, cb) {
 					}
 				}
 
-
-
 				arrayData.push(scoreService);
-				subNext();
+			}
 
-			}, function (err) {
-
-				next();
-			});
-		}, function normalize(next) {
-			var legend = { "x": "Valoraciones 1/2/3/4/5", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
+			var legend = { "x": "Valoraciones 1 / 2 / 3 / 4 / 5", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
 			data.legend = legend;
 			next(null, data);
-
-
 		}
 
+		
 	], function (err, result) {
 		if (err) return cb(err);
 		cb(null, result);
@@ -546,9 +510,9 @@ Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValue
 			for (var z in arrayData[x][key]) {
 				z = parseInt(z);
 				var yValue = arrayData[x][key][z] || 0;
-				
+				//console.log(yValue + " - " + maxY + " - " + grillY );
 				var data = [xValues[x], yValue, zValues[z]];
-				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY) * grillY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
+				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY * grillY)) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));
 			}
 		}

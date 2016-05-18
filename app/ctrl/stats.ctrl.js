@@ -115,7 +115,7 @@ Controller.originPicks = function (company, query, cb) {
 	var arrayData = [];
 
 	var maxY = 0;
-	var maxX = 4;
+	var maxX = 3;
 	var maxZ = 0;
 
 	var origins = ['prepick', 'mobile', 'manual'];
@@ -420,7 +420,7 @@ Controller.scoreServices = function (company, query, cb) {
 			}
 
 			var legend = { "x": "Valoraciones 1 / 2 / 3 / 4 / 5", "y": "Cantidad de votos", "z": "Servicios", "w": "Tiempo" }
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ , zValues, xValues, 100);
 			data.legend = legend;
 			next(null, data);
 		}

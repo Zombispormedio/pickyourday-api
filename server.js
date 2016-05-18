@@ -19,15 +19,4 @@ var Server = function () {
     });
 }
 
-
 ConnectDB(Server);
-
-
-
-
-
-
-
-
-
-

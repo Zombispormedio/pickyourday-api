@@ -1011,7 +1011,11 @@ Controller.refreshPremium = function(cb){
                     for(var promo in promotions)
                         promotions[promo].state = "finished";
                 }
-                company.save(next)
+                company.save(next);
+            }else{
+
+                company.premium= true;
+                company.save(next);
             }
         }, function(err){
             cb();

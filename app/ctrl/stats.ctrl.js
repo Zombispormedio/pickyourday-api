@@ -65,6 +65,7 @@ Controller.statsPicks = function (company, query, cb) {
 				var datesPick;
 				var picksServices;
 				var picksFiltered;
+
 				
 				for(var x=0; x<states.length; x++){
 					state = states[x];
@@ -75,9 +76,9 @@ Controller.statsPicks = function (company, query, cb) {
 						for(var z=0; z<servicesArray.length; z++){
 							service=servicesArray[z];
 							picksFiltered = picks.filter(function(p){
-								var valid=true;
-								if(!p.company.id_service.equals(service)  && p.state != state && p.initDate < date.init && p.initDate > date.end)
-									valid =false;
+								var valid=false;
+								if(p.company.id_service.equals(service)  && p.state == state && p.initDate > date.init && p.initDate < date.end)
+									valid =true;
 
 								return valid;
 							})
@@ -95,6 +96,8 @@ Controller.statsPicks = function (company, query, cb) {
 					}
 					arrayData.push(datesPick);
 				}
+
+				
 
 				var legend = { "x": "Picks -  cancelados / terminados", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
 				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
@@ -418,6 +421,8 @@ Controller.scoreServices = function (company, query, cb) {
 
 				arrayData.push(scoreService);
 			}
+
+
 
 			var legend = { "x": "Servicios", "y": "Cantidad de votos", "z": "Valoraciones 1/2/3/4/5", "w": "Tiempo" }
 			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ , zValues, xValues, 100);

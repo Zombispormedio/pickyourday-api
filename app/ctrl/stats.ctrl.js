@@ -100,7 +100,7 @@ Controller.statsPicks = function (company, query, cb) {
 				
 
 				var legend = { "x": "Picks -  cancelados / terminados", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
-				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, " picks ");
 				data.legend = legend;
 				next(null, data);
 			});
@@ -188,7 +188,7 @@ Controller.originPicks = function (company, query, cb) {
 				}
 
 				var legend = { "x": "Origen pick -  Prepick / movil / manual ", "y": "Cantidad", "z": "Servicios", "w": "Tiempo" }
-				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, " picks ");
 				data.legend = legend;
 				next(null, data);
 				});		
@@ -314,11 +314,15 @@ Controller.workResources =function(company, query, type, cb){
 				}
 
 				var legend;
-				if(type == 0)
+				var yText;
+				if(type == 0){
 					legend = { "x": "Empleados", "y": "Dinero", "z": "Servicios", "w": "Tiempo" };
-				else if(type == 1)
+					yText = " € ";
+				}else if(type == 1){
 					legend = { "x": "Empleados", "y": "Tiempo trabajado", "z": "Servicios", "w": "Tiempo" };
-				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100);
+					yText = " min. ";
+				}
+				var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ, xValues, zValues, 100, yText);
 				data.legend = legend;
 				next(null, data);
 
@@ -425,8 +429,8 @@ Controller.scoreServices = function (company, query, cb) {
 
 
 
-			var legend = { "x": "Servicios", "y": "Cantidad de votos", "z": "Valoraciones 1/2/3/4/5", "w": "Tiempo" }
-			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ , zValues, xValues, 100);
+			var legend = { "x": "Servicios", "y": "Cantidad de votos", "z": "Valoraciones 1/2/3/4/5", "w": "Tiempo" };
+			var data = self.normalize4(timeArray, arrayData, maxX, maxY, maxZ , zValues, xValues, 100, " votos ");
 			data.legend = legend;
 			next(null, data);
 		}
@@ -480,7 +484,7 @@ Controller.getResources = function (company, query, cb) {
 
 }
 
-Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValues, zValues, grill) {
+Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValues, zValues, grill, yText) {
 	var sizeValue = 10;
 	var fit = false;
 	var max = maxX;
@@ -516,8 +520,7 @@ Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValue
 			for (var z in arrayData[x][key]) {
 				z = parseInt(z);
 				var yValue = arrayData[x][key][z] || 0;
-				//console.log(yValue + " - " + maxY + " - " + grillY );
-				var data = [xValues[x], yValue, zValues[z]];
+				var data = [xValues[x], yValue + yText, zValues[z]];
 				var position = [((x + 1) / (maxX + 1) * grillX) || 0, ( (yValue * grillY) / maxY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));
 			}

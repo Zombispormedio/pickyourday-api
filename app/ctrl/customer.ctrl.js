@@ -490,6 +490,9 @@ Controller.pickAvailable = function(customer, params, cb) {
 Controller.searchPick = function(customer, params, cb) {
     params.id_customer = customer;
     params.state = "active";
+    var now = new Date();
+    now.setDate(now.getDate()+2);
+    params.beforeInitDate = now;
     PickCtrl.search(params, cb);
 };
 

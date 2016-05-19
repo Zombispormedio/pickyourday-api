@@ -512,7 +512,7 @@ Controller.normalize4 = function (arrayBase, arrayData, maxX, maxY, maxZ, xValue
 				var yValue = arrayData[x][key][z] || 0;
 				//console.log(yValue + " - " + maxY + " - " + grillY );
 				var data = [xValues[x], yValue, zValues[z]];
-				var position = [((x + 1) / (maxX + 1) * grillX) || 0, (yValue / (maxY * grillY)) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
+				var position = [((x + 1) / (maxX + 1) * grillX) || 0, ( (yValue * grillY) / maxY) || 0, ((z + 1) / (maxZ) * grillZ) || 0];
 				result[key].push(new Stat(position, data));
 			}
 		}

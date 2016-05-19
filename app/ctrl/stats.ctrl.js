@@ -284,7 +284,7 @@ Controller.workResources =function(company, query, type, cb){
 								picksFiltered = picksTemp.filter(function(p){
 									var valid=false;
 	
-									else if(p.company.id_service.equals(service)  &&  p.resource.equals(res)  && p.initDate > date.init && p.initDate < date.end)
+									if(p.company.id_service.equals(service)  &&  p.resource.equals(res)  && p.initDate > date.init && p.initDate < date.end)
 										valid =true;
 									if(p.resource == null || p.price == null)
 										valid = false;

@@ -30,7 +30,7 @@ Controller.delete = function(user, id, cb){
 Controller.modify = function(user, id, body,cb){
 	if(!id )
 		return cb("Fields not filled");
-
+	console.log(body);
 	CompanyModel.modifyResource(user, id, body, function(err){
 		if(err) return cb(err);		
 		cb();

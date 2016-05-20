@@ -95,7 +95,7 @@ Controller.search = function (query, cb) {
         if(query.limit){
             var picksClone = _.clone(picks);
             picks = [];
-            if(picksClone && picksClone.length> query.limit)
+            if(picksClone && picksClone.length<  query.limit)
                 query.limit = picksClone.length;
         
             for(var p=0;p<query.limit; p++)

@@ -91,6 +91,15 @@ Controller.search = function (query, cb) {
         if (err) return cb(err);
         if (!picks || picks.length == 0)
             return cb(null, []);
+        var picksClone = _.clone(picks);
+        picks = [];
+        if(picksClone && picksClone.length> query.limit)
+            query.limit = picksClone.length;
+        if(query.limit){
+            for(var p=0;p< query.limit; p++)
+                picks.push(picksClone[p]);
+        }
+
 
         async.map(picks, function (pick, next) {
             async.waterfall([

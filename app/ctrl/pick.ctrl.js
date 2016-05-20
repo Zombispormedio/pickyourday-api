@@ -8,6 +8,7 @@ var ServiceNameModel = require(C.models + "service_name");
 var CategoryModel = require(C.models + "category");
 var ServiceCtrl = require(C.ctrl + "service.ctrl");
 var HistoryCtrl = require(C.ctrl + "history.ctrl");
+var _=require("lodash");
 
 var Utils=require(C.lib+"utils");
 var Controller = {};

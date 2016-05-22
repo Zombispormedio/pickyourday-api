@@ -341,8 +341,8 @@ Controller.setPremium = function (company_id, body, cb) {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": "http://localhost:5045/#/payment",
-                    "cancel_url": "http://localhost:5045/#/profile"
+                    "return_url": "http://business-pickyourday.herokuapp.com/#/payment",
+                    "cancel_url": "http://business-pickyourday.herokuapp.com/#/profile"
                 },
                 "transactions": [{
                     "item_list": {

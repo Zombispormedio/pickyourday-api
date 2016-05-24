@@ -174,8 +174,9 @@ Controller.searchThings = function(params, cb) {
                 var result = [];
                 var valid=true;;
                 var servicesValids = []
-
-                async.map(services, function (service, next) {
+                things.services = services;
+                callback(null, things);
+                /*async.map(services, function (service, next) {
                     CompanyModel.serviceAsigned(service._id, service.services._id, function(err, result){
                         if(result) servicesValids.push(service);
                         next();
@@ -197,7 +198,7 @@ Controller.searchThings = function(params, cb) {
                     things.services = result;
                     callback(null, things);
                 });
-                
+                */
 
             });
         }, function getCompanies(things, callback) {
